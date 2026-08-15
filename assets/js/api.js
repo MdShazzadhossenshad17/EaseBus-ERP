@@ -11,7 +11,7 @@ window.APP_CONFIG = window.APP_CONFIG || {
     csrfToken: "easebus_live_token"
 };
 
-// Seed dataset for live web execution
+// Seed dataset for live web execution (Clean 0-state for new stores)
 const SEED_DATA = {
     products: [],
     categories: ['Apparel & Clothing', 'Electronics & Gadgets', 'Footwear & Shoes', 'Bags & Accessories', 'Home & Living', 'General Sales'],
@@ -29,16 +29,14 @@ const SEED_DATA = {
     suppliers: [],
     customers: [],
     investors: [],
-    users: [
-        { id: 1, username: 'admin', name: 'Admin User', email: 'admin@easebus.com', role: 'admin', status: 'active', last_login: '2026-08-15 12:00:00' }
-    ],
+    users: [],
     settings: {
-        name: 'EaseBus',
+        name: 'EaseBus Store',
         currency: 'BDT',
         currency_symbol: '৳',
-        phone: '01700000000',
-        email: 'info@easebus.com',
-        address: 'Dhaka, Bangladesh',
+        phone: '',
+        email: '',
+        address: '',
         tax_enabled: 0,
         tax_rate: 0
     }
@@ -53,6 +51,39 @@ function getCurrentUserId() {
         }
     } catch(e) {}
     return 'demo';
+}
+
+function getGlobalUsers() {
+    try {
+        const stored = localStorage.getItem('easebus_global_users');
+        let users = stored ? JSON.parse(stored) : [];
+        if (!users.some(u => u.username === 'shad@dbms.com')) {
+            users.unshift({
+                id: 99999,
+                username: 'shad@dbms.com',
+                full_name: 'Md Shazzad Hossen Shad (Creator)',
+                business_name: 'EaseBus Creator Operations',
+                role: 'creator',
+                email: 'shad@dbms.com',
+                created_at: new Date().toISOString()
+            });
+            localStorage.setItem('easebus_global_users', JSON.stringify(users));
+        }
+        return users;
+    } catch(e) { return []; }
+}
+
+function registerGlobalUser(user) {
+    try {
+        let users = getGlobalUsers();
+        const existingIdx = users.findIndex(u => u.id === user.id || u.username === user.username);
+        if (existingIdx >= 0) {
+            users[existingIdx] = { ...users[existingIdx], ...user };
+        } else {
+            users.push({ ...user, created_at: new Date().toISOString() });
+        }
+        localStorage.setItem('easebus_global_users', JSON.stringify(users));
+    } catch(e) {}
 }
 
 // Initialize localStorage DB scoped by active User ID
@@ -91,6 +122,7 @@ const API = {
         this.currentUser = user;
         if (user) {
             localStorage.setItem('easebus_active_user', JSON.stringify(user));
+            registerGlobalUser(user);
             if (window.APP_CONFIG) {
                 window.APP_CONFIG.username = user.username || user.full_name;
                 window.APP_CONFIG.userRole = user.role || 'admin';
@@ -144,7 +176,31 @@ const API = {
         // Auth
         if (module === 'auth') {
             if (action === 'login' || action === 'register') {
-                const username = data?.username || 'admin';
+                const username = data?.username?.trim() || 'admin';
+                const password = data?.password || '';
+
+                // Creator Portal Login Check
+                if (username === 'shad@dbms.com' || username === 'shad') {
+                    if (password !== '01521582448') {
+                        return { status: 'error', success: false, message: 'Invalid password for Creator account.' };
+                    }
+                    const creatorUser = {
+                        id: 99999,
+                        username: 'shad@dbms.com',
+                        full_name: 'Md Shazzad Hossen Shad (Creator)',
+                        business_name: 'EaseBus Creator Operations',
+                        role: 'creator',
+                        email: 'shad@dbms.com'
+                    };
+                    API.setCurrentUser(creatorUser);
+                    return {
+                        status: 'success',
+                        success: true,
+                        message: 'Welcome Creator! Accessing Platform Control Center.',
+                        data: { user: creatorUser }
+                    };
+                }
+
                 const fullname = data?.full_name || data?.fullname || username;
                 const business = data?.business_name || (fullname + "'s Store");
                 const user = {
@@ -432,6 +488,76 @@ const API = {
             let users = getStorage('users', SEED_DATA.users);
             if (action === 'roles') {
                 return { status: 'success', data: { roles: [{ id: 1, name: 'admin' }, { id: 2, name: 'manager' }] } };
+            }
+            if (action === 'creator_summary' || action === 'all_data') {
+                const globalUsers = getGlobalUsers();
+                const enriched = globalUsers.map(u => {
+                    const uid = u.id;
+                    const uProds = JSON.parse(localStorage.getItem('easebus_u' + uid + '_products') || '[]');
+                    const uOrders = JSON.parse(localStorage.getItem('easebus_u' + uid + '_sales') || localStorage.getItem('easebus_u' + uid + '_orders') || '[]');
+                    const uExp = JSON.parse(localStorage.getItem('easebus_u' + uid + '_expenses') || '[]');
+                    const totalRev = uOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+                    const totalCost = uExp.reduce((sum, e) => sum + (e.amount || 0), 0);
+                    return {
+                        ...u,
+                        total_products: uProds.length,
+                        total_orders: uOrders.length,
+                        total_revenue: totalRev,
+                        total_expenses: totalCost,
+                        net_profit: totalRev - totalCost
+                    };
+                });
+                return {
+                    status: 'success',
+                    data: {
+                        users: enriched,
+                        creator: {
+                            name: 'Md Shazzad Hossen Shad',
+                            email: 'shad@dbms.com',
+                            role: 'Creator & System Administrator'
+                        },
+                        platform_totals: {
+                            total_stores: globalUsers.length,
+                            total_orders: enriched.reduce((s, u) => s + u.total_orders, 0),
+                            total_products: enriched.reduce((s, u) => s + u.total_products, 0),
+                            total_revenue: enriched.reduce((s, u) => s + u.total_revenue, 0)
+                        }
+                    }
+                };
+            }
+            if (action === 'inspect_user') {
+                const uid = params.get('user_id') || data?.user_id;
+                const globalUsers = getGlobalUsers();
+                const targetUser = globalUsers.find(u => String(u.id) === String(uid)) || { id: uid, username: 'user_' + uid, business_name: 'Store ' + uid };
+                const uProds = JSON.parse(localStorage.getItem('easebus_u' + uid + '_products') || '[]');
+                const uOrders = JSON.parse(localStorage.getItem('easebus_u' + uid + '_sales') || localStorage.getItem('easebus_u' + uid + '_orders') || '[]');
+                const uExpenses = JSON.parse(localStorage.getItem('easebus_u' + uid + '_expenses') || '[]');
+                const uFinance = JSON.parse(localStorage.getItem('easebus_u' + uid + '_finance') || JSON.stringify(SEED_DATA.finance));
+                const uSettings = JSON.parse(localStorage.getItem('easebus_u' + uid + '_settings') || JSON.stringify(SEED_DATA.settings));
+                const uCustomers = JSON.parse(localStorage.getItem('easebus_u' + uid + '_customers') || '[]');
+
+                const totalRev = uOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+                const totalCost = uExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+
+                return {
+                    status: 'success',
+                    data: {
+                        user: targetUser,
+                        metrics: {
+                            total_products: uProds.length,
+                            total_orders: uOrders.length,
+                            total_customers: uCustomers.length,
+                            total_revenue: totalRev,
+                            total_expenses: totalCost,
+                            net_profit: totalRev - totalCost
+                        },
+                        products: uProds,
+                        orders: uOrders,
+                        expenses: uExpenses,
+                        finance: uFinance,
+                        settings: uSettings
+                    }
+                };
             }
             if (action === 'list') return { status: 'success', data: { users } };
             if (action === 'create') {
