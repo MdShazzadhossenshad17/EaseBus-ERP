@@ -24,43 +24,68 @@ if (!empty($_SESSION['user_id'])) {
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0F172A; }
+        body { font-family: 'Inter', sans-serif; }
         h1, h2, h3 { font-family: 'Geist', sans-serif; }
         .input-field {
-            width: 100%; padding: 0.75rem 1rem; border: 1px solid #E2E8F0; border-radius: 0.375rem; outline: none; transition: all 0.2s;
+            width: 100%; padding: 0.75rem 1rem; 
+            background-color: #0f172a; 
+            border: 1px solid #334155; 
+            color: #f8fafc;
+            border-radius: 0.5rem; outline: none; 
+            transition: all 0.2s ease-in-out;
         }
-        .input-field:focus { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .input-field::placeholder { color: #64748b; }
+        .input-field:focus { 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25); 
+            background-color: #1e293b;
+        }
         .btn-primary {
-            background-color: #0F172A; color: white; padding: 0.75rem 1.5rem; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.2s; width: 100%;
+            background-color: #2563eb; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s ease-in-out; width: 100%;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2), 0 2px 4px -2px rgba(37, 99, 235, 0.2);
         }
-        .btn-primary:hover { background-color: #1E293B; }
-        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+        .btn-primary:hover { 
+            background-color: #3b82f6; 
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3), 0 4px 6px -4px rgba(37, 99, 235, 0.3);
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-    <div class="max-w-md w-full bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden">
-        <div class="p-8">
+<body class="min-h-screen flex items-center justify-center p-4 bg-slate-950 font-inter text-slate-100 relative overflow-hidden">
+    <!-- Ambient light effects -->
+    <div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/20 blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-900/20 blur-[120px] pointer-events-none"></div>
+    
+    <div class="max-w-md w-full bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-800 overflow-hidden relative z-10">
+        <div class="p-8 sm:p-10">
             <div class="text-center mb-8 flex flex-col items-center">
                 <a href="../index.php" class="flex flex-col items-center group cursor-pointer">
-                    <img src="../assets/img/logo.png" alt="EaseBus Logo" class="w-16 h-16 rounded-2xl shadow-md mb-3 object-cover border border-slate-200 group-hover:scale-105 transition-transform duration-200">
-                    <h1 class="text-3xl font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors"><?php echo APP_NAME; ?></h1>
+                    <div class="relative mb-4">
+                        <div class="absolute inset-0 bg-blue-600/30 rounded-2xl blur-md group-hover:bg-blue-600/50 transition-all duration-300"></div>
+                        <img src="../assets/img/logo.png" alt="EaseBus Logo" class="relative w-16 h-16 rounded-2xl shadow-lg object-cover ring-1 ring-white/20 group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <h1 class="text-3xl font-bold tracking-tight text-white group-hover:text-blue-400 transition-colors"><?php echo APP_NAME; ?></h1>
                 </a>
-                <p class="text-sm text-slate-500 mt-1">Smart Business Management Suite</p>
+                <p class="text-sm text-slate-400 mt-2">Smart Business Management Suite</p>
             </div>
 
-            <div id="error-message" class="hidden mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm"></div>
+            <div id="error-message" class="hidden mb-6 p-4 bg-red-950/50 border border-red-800 text-red-200 rounded-xl text-sm backdrop-blur-sm"></div>
 
             <form id="login-form" class="space-y-5">
                 <div>
-                    <label for="username" class="block text-sm font-medium text-slate-700 mb-1">Username</label>
-                    <input type="text" id="username" name="username" class="input-field" required autofocus>
+                    <label for="username" class="block text-sm font-medium text-slate-300 mb-1.5">Username</label>
+                    <input type="text" id="username" name="username" class="input-field" placeholder="Enter username" required autofocus>
                 </div>
 
                 <div>
-                    <div class="flex justify-between items-center mb-1">
-                        <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label for="password" class="block text-sm font-medium text-slate-300">Password</label>
                     </div>
-                    <input type="password" id="password" name="password" class="input-field" required>
+                    <input type="password" id="password" name="password" class="input-field" placeholder="••••••••" required>
                 </div>
 
                 <button type="submit" id="submit-btn" class="btn-primary mt-6">
@@ -68,8 +93,8 @@ if (!empty($_SESSION['user_id'])) {
                 </button>
             </form>
 
-            <div class="mt-6 text-center text-xs text-slate-500 border-t border-slate-100 pt-4">
-                <p>Don't have an account? <a href="register.php" class="text-blue-600 font-semibold hover:underline">Create a Business Account (Sign Up)</a></p>
+            <div class="mt-8 text-center text-xs text-slate-500 border-t border-slate-800/80 pt-6">
+                <p>Don't have an account? <a href="register.php" class="text-blue-400 font-semibold hover:text-blue-300 hover:underline transition-colors">Create a Business Account (Sign Up)</a></p>
             </div>
         </div>
     </div>

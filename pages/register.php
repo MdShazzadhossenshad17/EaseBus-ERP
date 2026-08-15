@@ -26,55 +26,84 @@ if (!empty($_SESSION['user_id'])) {
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0F172A; }
+        body { font-family: 'Inter', sans-serif; }
         h1, h2, h3 { font-family: 'Geist', sans-serif; }
-        .input-field { width: 100%; padding: 0.75rem 1rem; border: 1px solid #E2E8F0; border-radius: 0.375rem; outline: none; transition: all 0.2s; }
-        .input-field:focus { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-        .btn-primary { background-color: #0F172A; color: white; padding: 0.75rem 1.5rem; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.2s; width: 100%; }
-        .btn-primary:hover { background-color: #1E293B; }
-        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+        .input-field {
+            width: 100%; padding: 0.75rem 1rem; 
+            background-color: #0f172a; 
+            border: 1px solid #334155; 
+            color: #f8fafc;
+            border-radius: 0.5rem; outline: none; 
+            transition: all 0.2s ease-in-out;
+        }
+        .input-field::placeholder { color: #64748b; }
+        .input-field:focus { 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25); 
+            background-color: #1e293b;
+        }
+        .btn-primary {
+            background-color: #2563eb; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s ease-in-out; width: 100%;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2), 0 2px 4px -2px rgba(37, 99, 235, 0.2);
+        }
+        .btn-primary:hover { 
+            background-color: #3b82f6; 
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3), 0 4px 6px -4px rgba(37, 99, 235, 0.3);
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-    <div class="max-w-lg w-full bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden">
-        <div class="p-8">
+<body class="min-h-screen flex items-center justify-center p-4 bg-slate-950 font-inter text-slate-100 relative overflow-hidden">
+    <!-- Ambient light effects -->
+    <div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/20 blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-900/20 blur-[120px] pointer-events-none"></div>
+    
+    <div class="max-w-lg w-full bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-800 overflow-hidden relative z-10">
+        <div class="p-8 sm:p-10">
             <div class="text-center mb-8 flex flex-col items-center">
-                <img src="../assets/img/logo.png" alt="EaseBus Logo" class="w-16 h-16 rounded-2xl shadow-md mb-3 object-cover border border-slate-200">
-                <h1 class="text-3xl font-bold tracking-tight text-slate-900">Setup <?php echo APP_NAME; ?></h1>
-                <p class="text-sm text-slate-500 mt-1">Create initial administrator account</p>
+                <div class="relative mb-4">
+                    <div class="absolute inset-0 bg-blue-600/30 rounded-2xl blur-md"></div>
+                    <img src="../assets/img/logo.png" alt="EaseBus Logo" class="relative w-16 h-16 rounded-2xl shadow-lg object-cover ring-1 ring-white/20">
+                </div>
+                <h1 class="text-3xl font-bold tracking-tight text-white font-geist">Setup <?php echo APP_NAME; ?></h1>
+                <p class="text-sm text-slate-400 mt-2">Create initial administrator account</p>
             </div>
 
-            <div id="error-message" class="hidden mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm"></div>
-            <div id="success-message" class="hidden mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-md text-sm">
-                Account created successfully. <a href="login.php" class="font-bold underline">Click here to log in.</a>
+            <div id="error-message" class="hidden mb-6 p-4 bg-red-950/50 border border-red-800 text-red-200 rounded-xl text-sm backdrop-blur-sm"></div>
+            <div id="success-message" class="hidden mb-6 p-4 bg-green-950/50 border border-green-800 text-green-200 rounded-xl text-sm backdrop-blur-sm">
+                Account created successfully. <a href="login.php" class="font-bold text-blue-400 hover:text-blue-300 underline transition-colors">Click here to log in.</a>
             </div>
 
             <form id="register-form" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="username" class="block text-sm font-medium text-slate-700 mb-1">Username</label>
-                        <input type="text" id="username" name="username" class="input-field" required>
+                        <label for="username" class="block text-sm font-medium text-slate-300 mb-1.5">Username</label>
+                        <input type="text" id="username" name="username" class="input-field" placeholder="Username" required>
                     </div>
                     <div>
-                        <label for="full_name" class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-                        <input type="text" id="full_name" name="full_name" class="input-field" required>
+                        <label for="full_name" class="block text-sm font-medium text-slate-300 mb-1.5">Full Name</label>
+                        <input type="text" id="full_name" name="full_name" class="input-field" placeholder="Full name" required>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                        <input type="email" id="email" name="email" class="input-field" required>
+                        <label for="email" class="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
+                        <input type="email" id="email" name="email" class="input-field" placeholder="name@company.com" required>
                     </div>
                     <div>
-                        <label for="phone" class="block text-sm font-medium text-slate-700 mb-1">Phone</label>
-                        <input type="text" id="phone" name="phone" class="input-field" required>
+                        <label for="phone" class="block text-sm font-medium text-slate-300 mb-1.5">Phone</label>
+                        <input type="text" id="phone" name="phone" class="input-field" placeholder="+1 (555) 000-0000" required>
                     </div>
                 </div>
 
                 <div>
-                    <label for="password" class="block text-sm font-medium text-slate-700 mb-1">Password (min 8 chars)</label>
-                    <input type="password" id="password" name="password" class="input-field" minlength="8" required>
+                    <label for="password" class="block text-sm font-medium text-slate-300 mb-1.5">Password (min 8 chars)</label>
+                    <input type="password" id="password" name="password" class="input-field" minlength="8" placeholder="••••••••" required>
                 </div>
 
                 <button type="submit" id="submit-btn" class="btn-primary mt-6">
@@ -82,8 +111,8 @@ if (!empty($_SESSION['user_id'])) {
                 </button>
             </form>
             
-            <div class="mt-6 text-center text-sm text-slate-500">
-                <p>Already set up? <a href="login.php" class="text-blue-600 hover:underline font-medium">Log in here</a></p>
+            <div class="mt-8 text-center text-sm text-slate-500 border-t border-slate-800/80 pt-6">
+                <p>Already set up? <a href="login.php" class="text-blue-400 hover:text-blue-300 font-semibold hover:underline transition-colors">Log in here</a></p>
             </div>
         </div>
     </div>

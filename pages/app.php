@@ -58,10 +58,13 @@ $csrfToken = generateCsrfToken();
         } catch(e) {}
     </script>
 </head>
-<body class="bg-slate-50 text-slate-900 font-inter antialiased flex h-screen overflow-hidden">
+<body class="bg-slate-950 text-slate-100 font-inter antialiased flex h-screen overflow-hidden relative">
+    <!-- Ambient light effects -->
+    <div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/10 blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-900/10 blur-[120px] pointer-events-none"></div>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="bg-slate-900 text-white w-64 flex-shrink-0 flex flex-col h-full transition-transform duration-300 transform -translate-x-full md:translate-x-0 absolute md:relative z-20">
+    <aside id="sidebar" class="bg-slate-900 text-white w-64 flex-shrink-0 flex flex-col h-full transition-transform duration-300 transform -translate-x-full md:translate-x-0 absolute md:relative z-20 border-r border-slate-800">
         <div class="h-16 flex items-center px-5 border-b border-slate-800">
             <a href="#dashboard" class="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
                 <img src="../assets/img/logo.png" alt="EaseBus Logo" class="w-8 h-8 rounded-lg object-cover shadow-sm ring-1 ring-white/10">
@@ -154,28 +157,28 @@ $csrfToken = generateCsrfToken();
     <div id="mobile-overlay" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-10 hidden md:hidden"></div>
 
     <!-- Main content -->
-    <div class="flex-1 flex flex-col h-full overflow-hidden">
+    <div class="flex-1 flex flex-col h-full overflow-hidden relative z-10">
         
         <!-- Top header -->
-        <header class="bg-white border-b border-slate-200 h-16 flex items-center px-4 sm:px-6 z-10">
-            <button id="open-sidebar" class="md:hidden mr-4 text-slate-500 hover:text-slate-700">
+        <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 h-16 flex items-center px-4 sm:px-6 z-10 text-white">
+            <button id="open-sidebar" class="md:hidden mr-4 text-slate-400 hover:text-white">
                 <span class="material-symbols-outlined">menu</span>
             </button>
             
-            <h2 id="page-title" class="font-geist text-xl font-semibold text-slate-800">Dashboard</h2>
+            <h2 id="page-title" class="font-geist text-xl font-semibold text-slate-100">Dashboard</h2>
             
             <div class="ml-auto flex items-center space-x-4">
-                <button class="text-slate-400 hover:text-slate-600 relative">
+                <button class="text-slate-400 hover:text-white relative">
                     <span class="material-symbols-outlined">notifications</span>
-                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white hidden" id="notif-badge"></span>
+                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-slate-900 hidden" id="notif-badge"></span>
                 </button>
             </div>
         </header>
 
         <!-- Main workspace -->
-        <main id="workspace" class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50 relative">
+        <main id="workspace" class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-950 relative text-slate-100">
             <!-- Loading overlay -->
-            <div id="loading-overlay" class="absolute inset-0 bg-slate-50 bg-opacity-75 z-50 flex items-center justify-center hidden">
+            <div id="loading-overlay" class="absolute inset-0 bg-slate-950 bg-opacity-75 z-50 flex items-center justify-center hidden">
                 <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
             

@@ -6,48 +6,153 @@
 
 /* Utility classes for data display */
 .data-table { width: 100%; text-align: left; border-collapse: separate; border-spacing: 0; }
-.data-table th { background-color: #F8FAFC; padding: 0.75rem 1rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; border-bottom: 1px solid #E2E8F0; }
-.data-table td { padding: 0.875rem 1rem; font-size: 0.875rem; border-bottom: 1px solid #E2E8F0; color: #334155; }
+.data-table th { background-color: #0f172a; padding: 0.75rem 1rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; border-bottom: 1px solid #1e293b; }
+.data-table td { padding: 0.875rem 1rem; font-size: 0.875rem; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
 .data-table tr:last-child td { border-bottom: none; }
-.data-table tbody tr:hover { background-color: #F8FAFC; }
+.data-table tbody tr:hover { background-color: rgba(30, 41, 59, 0.4); }
 
 .data-number { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
-.data-number.positive { color: #059669; }
-.data-number.negative { color: #DC2626; }
+.data-number.positive { color: #34d399; }
+.data-number.negative { color: #f87171; }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }
 
 /* Form inputs */
 .form-input { 
-    display: block; width: 100%; border-radius: 0.375rem; border: 1px solid #CBD5E1; 
+    display: block; width: 100%; border-radius: 0.375rem; border: 1px solid #334155; 
     padding: 0.5rem 0.75rem; font-size: 0.875rem; line-height: 1.25rem; 
+    background-color: #0f172a; color: #f8fafc;
     transition: all 0.15s ease-in-out; 
 }
-.form-input:focus { outline: none; border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-.form-label { display: block; font-size: 0.875rem; font-weight: 500; color: #334155; margin-bottom: 0.25rem; }
+.form-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+.form-label { display: block; font-size: 0.875rem; font-weight: 500; color: #cbd5e1; margin-bottom: 0.25rem; }
 
 /* Buttons */
 .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; border-radius: 0.375rem; transition: all 0.15s ease-in-out; cursor: pointer; }
-.btn-primary { background-color: #0F172A; color: white; border: 1px solid transparent; }
-.btn-primary:hover { background-color: #1E293B; }
-.btn-secondary { background-color: white; color: #334155; border: 1px solid #CBD5E1; }
-.btn-secondary:hover { background-color: #F8FAFC; border-color: #94A3B8; }
-.btn-danger { background-color: #EF4444; color: white; border: 1px solid transparent; }
-.btn-danger:hover { background-color: #DC2626; }
+.btn-primary { background-color: #2563eb; color: white; border: 1px solid transparent; }
+.btn-primary:hover { background-color: #3b82f6; }
+.btn-secondary { background-color: #1e293b; color: #cbd5e1; border: 1px solid #334155; }
+.btn-secondary:hover { background-color: #334155; border-color: #475569; }
+.btn-danger { background-color: #ef4444; color: white; border: 1px solid transparent; }
+.btn-danger:hover { background-color: #dc2626; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* Card */
-.card { background-color: white; border-radius: 0.5rem; border: 1px solid #E2E8F0; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); overflow: hidden; }
-.card-header { padding: 1rem 1.25rem; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; }
-.card-title { font-family: 'Geist', sans-serif; font-size: 1rem; font-weight: 600; color: #0F172A; }
+.card { background-color: #0f172af0; backdrop-filter: blur(12px); border-radius: 0.5rem; border: 1px solid #1e293b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); overflow: hidden; }
+.card-header { padding: 1rem 1.25rem; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; }
+.card-title { font-family: 'Geist', sans-serif; font-size: 1rem; font-weight: 600; color: #f8fafc; }
 .card-body { padding: 1.25rem; }
 
 /* Modal */
-.modal-overlay { background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(2px); }
+.modal-overlay { background-color: rgba(2, 6, 23, 0.75); backdrop-filter: blur(4px); }
+
+/* Global Workspace Styling & Tailwind Overrides */
+#workspace {
+    background-color: #020617 !important;
+}
+
+#workspace h1,
+#workspace h2,
+#workspace h3,
+#workspace h4,
+#workspace h5,
+#workspace h6 {
+    color: #f8fafc !important;
+}
+
+#workspace .bg-white,
+#workspace .card {
+    background-color: #0f172af0 !important;
+    border-color: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+#workspace .text-slate-900,
+#workspace .text-slate-800,
+#workspace .text-slate-700 {
+    color: #f8fafc !important;
+}
+
+#workspace .text-slate-600,
+#workspace .text-slate-500 {
+    color: #94a3b8 !important;
+}
+
+#workspace .text-slate-400 {
+    color: #64748b !important;
+}
+
+#workspace .border-slate-200,
+#workspace .border-slate-100 {
+    border-color: #1e293b !important;
+}
+
+#workspace .bg-slate-50,
+#workspace .bg-slate-50\/70,
+#workspace .bg-slate-100 {
+    background-color: #0f172a !important;
+}
+
+#workspace .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+#workspace .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #1e293b !important;
+}
+
+#workspace .hover\:bg-slate-50:hover,
+#workspace .hover\:bg-slate-50\/80:hover {
+    background-color: #1e293b !important;
+}
+
+/* Modals inside workspace */
+#workspace .modal-overlay > div {
+    background-color: #0f172a !important;
+    border: 1px solid #1e293b !important;
+    color: #f8fafc !important;
+}
+
+#workspace .modal-overlay > div > div.p-4.bg-slate-50 {
+    background-color: #090d16 !important;
+    border-top: 1px solid #1e293b !important;
+}
+
+/* Data Tables dynamic overrides */
+#workspace table thead th {
+    background-color: #090d16 !important;
+    border-bottom: 1px solid #1e293b !important;
+    color: #94a3b8 !important;
+}
+
+#workspace table tbody tr:hover {
+    background-color: rgba(30, 41, 59, 0.4) !important;
+}
+
+#workspace table tbody td {
+    border-bottom: 1px solid #1e293b !important;
+    color: #cbd5e1 !important;
+}
+
+/* Input elements dynamic override */
+#workspace input[type="text"],
+#workspace input[type="number"],
+#workspace input[type="email"],
+#workspace input[type="password"],
+#workspace select,
+#workspace textarea {
+    background-color: #0f172a !important;
+    border: 1px solid #334155 !important;
+    color: #f8fafc !important;
+}
+
+#workspace input:focus,
+#workspace select:focus,
+#workspace textarea:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+}
 
 /* ============================================================
    PRINT STYLESHEET — Full Page Invoice & Clean Report Printing
