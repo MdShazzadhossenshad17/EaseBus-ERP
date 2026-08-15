@@ -48,12 +48,12 @@ if ($method === 'POST' && $action === 'login') {
     }
 
     $user = Database::fetchOne(
-        "SELECT u.id, u.username, u.password_hash, u.full_name, u.status, u.must_change_password, u.login_attempts, r.name as role_name
+        "SELECT u.id, u.username, u.email, u.password_hash, u.full_name, u.status, u.must_change_password, u.login_attempts, r.name as role_name
          FROM users u
          LEFT JOIN user_roles ur ON ur.user_id = u.id
          LEFT JOIN roles r ON r.id = ur.role_id
-         WHERE u.username = ?",
-        [$username]
+         WHERE (u.username = ? OR u.email = ?)",
+        [$username, $username]
     );
 
     if (!$user) {
