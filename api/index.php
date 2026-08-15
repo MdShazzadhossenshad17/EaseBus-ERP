@@ -12,7 +12,7 @@ require_once __DIR__ . '/../includes/auth_middleware.php';
 setCorsHeaders();
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$cleanPath = preg_replace('#^/(EaseBus|businessM)/api#i', '', $uri);
+$cleanPath = preg_replace('#^/(EaseBus|businessM)?/api#i', '', $uri);
 $pathParts = explode('/', trim($cleanPath, '/'));
 
 $module = $pathParts[0] ?? '';
