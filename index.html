@@ -5,18 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- SEO Meta Tags -->
-    <title>EaseBus ERP — Modern Business Operations Suite</title>
-    <meta name="description" content="EaseBus ERP is a live Enterprise Business Management Suite featuring real-time Sales Orders, Courier Logistics, Inventory Movements, Financial Treasury Accounts, and Customer Returns.">
-    <meta name="keywords" content="EaseBus, EaseBus ERP, Business Management, Inventory Control, Courier Logistics, Financial Treasury, Customer Returns, POS Sales">
-    <meta name="author" content="EaseBus Team">
-    <meta name="robots" content="index, follow">
-
-    <!-- Open Graph / Social Sharing -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://easebus.web.app/">
-    <meta property="og:title" content="EaseBus ERP — Modern Business Operations Suite">
-    <meta property="og:description" content="Manage your entire business operations, sales orders, deliveries, inventory, and accounts with EaseBus.">
-    <meta property="og:image" content="https://easebus.web.app/assets/img/logo.png">
+    <title>EaseBus — Smart Business Management Suite</title>
+    <meta name="description" content="EaseBus ERP is an Enterprise Business Operations Suite featuring Sales Orders, Courier Logistics, Inventory Movements, Treasury Accounts, and Customer Returns.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +27,7 @@
             currency: "BDT",
             currencySymbol: "৳",
             userRole: "admin",
-            username: "Admin User",
+            username: "Admin",
             csrfToken: "easebus_live_token"
         };
         try { sessionStorage.setItem('csrf_token', window.APP_CONFIG.csrfToken); } catch(e) {}
@@ -45,7 +35,42 @@
 </head>
 <body class="bg-slate-50 text-slate-900 font-inter antialiased flex h-screen overflow-hidden">
 
-    <!-- Sidebar Navigation -->
+    <!-- 1. LOGIN SCREEN CONTAINER -->
+    <div id="login-container" class="fixed inset-0 bg-slate-50 flex items-center justify-center p-4 z-50 transition-opacity duration-300">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 mb-4 shadow-sm ring-1 ring-blue-100">
+                    <img src="assets/img/logo.png" alt="EaseBus Logo" class="w-10 h-10 rounded-xl object-cover">
+                </div>
+                <h1 class="font-geist text-2xl font-bold text-slate-900 tracking-tight">EaseBus</h1>
+                <p class="text-xs text-slate-500 mt-1">Smart Business Management Suite</p>
+            </div>
+
+            <form id="login-form" class="space-y-4" onsubmit="handleLiveLogin(event)">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Username</label>
+                    <input type="text" id="login-username" value="admin" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600" placeholder="Username" required>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
+                    <input type="password" id="login-password" value="password123" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" id="login-btn" class="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-lg shadow-md transition-all flex items-center justify-center gap-2">
+                    Sign In <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </button>
+            </form>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 text-center">
+                <button type="button" onclick="quickDemoLogin()" class="text-xs text-blue-600 font-semibold hover:text-blue-800">
+                    Quick Launch Demo Admin Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MAIN APPLICATION WORKSPACE -->
     <aside id="sidebar" class="bg-slate-900 text-white w-64 flex-shrink-0 flex flex-col h-full transition-transform duration-300 transform -translate-x-full md:translate-x-0 absolute md:relative z-20">
         <div class="h-16 flex items-center px-5 border-b border-slate-800">
             <a href="#dashboard" class="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
@@ -123,12 +148,12 @@
                     A
                 </div>
                 <div class="ml-3">
-                    <p class="text-sm font-medium text-white">Admin User</p>
-                    <p class="text-xs text-emerald-400 font-semibold">Live Administrator</p>
+                    <p class="text-sm font-medium text-white" id="user-display-name">Admin User</p>
+                    <p class="text-xs text-emerald-400 font-semibold">Active Administrator</p>
                 </div>
-                <a href="https://github.com/MdShazzadhossenshad17/EaseBus-ERP" target="_blank" class="ml-auto text-slate-400 hover:text-white p-1 rounded-md hover:bg-slate-800" title="GitHub Repo">
-                    <span class="material-symbols-outlined text-lg">code</span>
-                </a>
+                <button onclick="handleLiveLogout()" class="ml-auto text-slate-400 hover:text-white p-1 rounded-md hover:bg-slate-800" title="Log out">
+                    <span class="material-symbols-outlined text-lg">logout</span>
+                </button>
             </div>
         </div>
     </aside>
@@ -149,7 +174,7 @@
 
             <div class="ml-auto flex items-center space-x-3">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Live Cloud Active
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> EaseBus Live App
                 </span>
             </div>
         </header>
@@ -168,6 +193,36 @@
 
     <!-- Toast container -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <!-- Auth logic script -->
+    <script>
+        function handleLiveLogin(e) {
+            if (e) e.preventDefault();
+            const u = document.getElementById('login-username').value || 'admin';
+            window.APP_CONFIG.username = u;
+            localStorage.setItem('easebus_auth', 'true');
+            localStorage.setItem('easebus_user', u);
+            document.getElementById('login-container').classList.add('hidden');
+            if (window.App && window.App.init) {
+                window.App.init();
+            }
+        }
+
+        function quickDemoLogin() {
+            handleLiveLogin(null);
+        }
+
+        function handleLiveLogout() {
+            localStorage.removeItem('easebus_auth');
+            document.getElementById('login-container').classList.remove('hidden');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('easebus_auth') === 'true') {
+                document.getElementById('login-container').classList.add('hidden');
+            }
+        });
+    </script>
 
     <!-- Live Core Scripts -->
     <script src="assets/js/api.js"></script>
