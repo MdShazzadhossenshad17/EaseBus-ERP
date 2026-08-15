@@ -4,16 +4,17 @@
  */
 
 // Database
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'businessm');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_CHARSET', 'utf8mb4');
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_PORT', getenv('DB_PORT') ?: '3306');
+define('DB_NAME', getenv('DB_NAME') ?: 'businessm');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
+define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
 
 // App
 define('APP_NAME', 'EaseBus');
 define('APP_VERSION', '1.0.0');
-define('APP_URL', 'http://localhost/EaseBus');
+define('APP_URL', getenv('APP_URL') ?: 'http://localhost/EaseBus');
 define('APP_ROOT', __DIR__);
 
 // Session
