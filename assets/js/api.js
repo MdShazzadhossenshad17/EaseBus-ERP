@@ -42,15 +42,29 @@ const SEED_DATA = {
     }
 };
 
+// One-time Fresh Purge Migration (Wipe all test accounts & test data)
+(function autoPurgeLegacyTestData() {
+    try {
+        if (!localStorage.getItem('easebus_fresh_v4')) {
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('easebus_')) {
+                    localStorage.removeItem(key);
+                }
+            });
+            localStorage.setItem('easebus_fresh_v4', 'true');
+        }
+    } catch(e) {}
+})();
+
 function getCurrentUserId() {
     try {
         const u = localStorage.getItem('easebus_active_user');
         if (u) {
             const parsed = JSON.parse(u);
-            return parsed.id || 'demo';
+            return parsed.id || null;
         }
     } catch(e) {}
-    return 'demo';
+    return null;
 }
 
 function getGlobalUsers() {
