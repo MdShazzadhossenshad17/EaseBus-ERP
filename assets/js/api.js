@@ -13,54 +13,24 @@ window.APP_CONFIG = window.APP_CONFIG || {
 
 // Seed dataset for live web execution
 const SEED_DATA = {
-    products: [
-        { id: 1, sku: 'TSH-BLK-M', name: 'Premium Cotton T-Shirt', category_name: 'Apparel & Clothing', brand: 'EaseFit', purchase_price: 350, selling_price: 750, current_stock: 45, min_stock_level: 10, total_stock: 45, variants: [{ id: 1, sku: 'TSH-BLK-M', color: 'Black', size: 'M', current_stock: 45, selling_price: 750 }] },
-        { id: 2, sku: 'JNS-BLU-32', name: 'Slim Fit Denim Jeans', category_name: 'Apparel & Clothing', brand: 'EaseFit', purchase_price: 850, selling_price: 1650, current_stock: 28, min_stock_level: 8, total_stock: 28, variants: [{ id: 2, sku: 'JNS-BLU-32', color: 'Blue', size: '32', current_stock: 28, selling_price: 1650 }] },
-        { id: 3, sku: 'WTC-GLD-01', name: 'Luxury Chronograph Watch', category_name: 'Electronics & Gadgets', brand: 'Aura', purchase_price: 2200, selling_price: 4500, current_stock: 12, min_stock_level: 5, total_stock: 12, variants: [{ id: 3, sku: 'WTC-GLD-01', color: 'Gold', size: 'Standard', current_stock: 12, selling_price: 4500 }] },
-        { id: 4, sku: 'BAG-LHR-01', name: 'Genuine Leather Backpack', category_name: 'Bags & Accessories', brand: 'Crafted', purchase_price: 1400, selling_price: 2900, current_stock: 4, min_stock_level: 5, total_stock: 4, variants: [{ id: 4, sku: 'BAG-LHR-01', color: 'Brown', size: 'L', current_stock: 4, selling_price: 2900 }] }
-    ],
+    products: [],
     categories: ['Apparel & Clothing', 'Electronics & Gadgets', 'Footwear & Shoes', 'Bags & Accessories', 'Home & Living', 'General Sales'],
-    orders: [
-        { id: 101, order_no: 'ORD-2026-101', customer_id: 1, customer_name: 'Tanvir Ahmed', total_amount: 2400, payment_status: 'paid', order_status: 'delivered', created_at: '2026-08-14 10:30:00', items_count: 2 },
-        { id: 102, order_no: 'ORD-2026-102', customer_id: 2, customer_name: 'Rahim Chowdhury', total_amount: 1650, payment_status: 'paid', order_status: 'in_transit', created_at: '2026-08-15 09:15:00', items_count: 1 },
-        { id: 103, order_no: 'ORD-2026-103', customer_id: 3, customer_name: 'Nusrat Jahan', total_amount: 4500, payment_status: 'unpaid', order_status: 'pending', created_at: '2026-08-15 14:00:00', items_count: 1 }
-    ],
-    deliveries: [
-        { id: 1, order_id: 101, order_no: 'ORD-2026-101', customer_name: 'Tanvir Ahmed', courier_partner: 'Pathao', tracking_number: 'PTH-99201', status: 'delivered', shipping_fee: 100, recipient_address: 'Gulshan 2, Dhaka' },
-        { id: 2, order_id: 102, order_no: 'ORD-2026-102', customer_name: 'Rahim Chowdhury', courier_partner: 'CarryBee', tracking_number: 'CBY-88302', status: 'in_transit', shipping_fee: 120, recipient_address: 'Dhanmondi 32, Dhaka' }
-    ],
-    returns: [
-        { id: 1, return_no: 'RET-2026-001', order_id: 100, order_no: 'ORD-2026-100', customer_name: 'Kamal Hossain', reason: 'Defective Item', status: 'approved', refund_amount: 750, created_at: '2026-08-13 16:20:00' }
-    ],
+    orders: [],
+    deliveries: [],
+    returns: [],
     finance: {
         accounts: [
-            { id: 1, name: 'Main Cash Register', type: 'cash', account_number: 'CASH-01', current_balance: 45000, status: 'active' },
-            { id: 2, name: 'Dutch Bangla Bank', type: 'bank', account_number: '102.110.4589', current_balance: 185000, status: 'active' },
-            { id: 3, name: 'bKash Merchant', type: 'mobile_banking', account_number: '01711223344', current_balance: 62400, status: 'active' }
+            { id: 1, name: 'Main Cash Register', type: 'cash', account_number: 'CASH-01', current_balance: 0, status: 'active' },
+            { id: 2, name: 'Main Bank Account', type: 'bank', account_number: 'BANK-01', current_balance: 0, status: 'active' }
         ],
-        transactions: [
-            { id: 1, txn_no: 'TXN-9901', account_name: 'Main Cash Register', type: 'deposit', amount: 2400, reference: 'Sales ORD-101', created_at: '2026-08-14 10:30:00' },
-            { id: 2, txn_no: 'TXN-9902', account_name: 'bKash Merchant', type: 'outflow', amount: 1500, reference: 'Utility Bill', created_at: '2026-08-15 11:00:00' }
-        ]
+        transactions: []
     },
-    expenses: [
-        { id: 1, voucher_no: 'EXP-8801', category_name: 'Rent & Utilities', amount: 1500, payment_method: 'bKash', description: 'Monthly Electricity Bill', expense_date: '2026-08-15' },
-        { id: 2, voucher_no: 'EXP-8802', category_name: 'Office Supplies', amount: 450, payment_method: 'Cash', description: 'Packaging Material', expense_date: '2026-08-14' }
-    ],
-    suppliers: [
-        { id: 1, name: 'Tanvir Ahmed', company: 'Apex Textiles Ltd', phone: '01711002233', email: 'sales@apex.com', address: 'Gazipur, Dhaka', total_products: 2, total_purchases: 5, status: 'active' },
-        { id: 2, name: 'Monir Hossain', company: 'TechImport BD', phone: '01822334455', email: 'info@techimport.bd', address: 'IDB Bhaban, Agargaon, Dhaka', total_products: 2, total_purchases: 3, status: 'active' }
-    ],
-    customers: [
-        { id: 1, name: 'Tanvir Ahmed', phone: '01700112233', email: 'tanvir@domain.com', address: 'Gulshan 2, Dhaka', total_orders: 4, total_spent: 8500, status: 'active' },
-        { id: 2, name: 'Rahim Chowdhury', phone: '01811223344', email: 'rahim@domain.com', address: 'Dhanmondi 32, Dhaka', total_orders: 2, total_spent: 3200, status: 'active' }
-    ],
-    investors: [
-        { id: 1, name: 'Sharif Uddin', investment_amount: 500000, equity_percentage: 20, return_paid: 25000, status: 'active' }
-    ],
+    expenses: [],
+    suppliers: [],
+    customers: [],
+    investors: [],
     users: [
-        { id: 1, username: 'admin', name: 'Admin User', email: 'admin@easebus.com', role: 'admin', status: 'active', last_login: '2026-08-15 12:00:00' },
-        { id: 2, username: 'manager', name: 'Manager User', email: 'manager@easebus.com', role: 'manager', status: 'active', last_login: '2026-08-14 15:30:00' }
+        { id: 1, username: 'admin', name: 'Admin User', email: 'admin@easebus.com', role: 'admin', status: 'active', last_login: '2026-08-15 12:00:00' }
     ],
     settings: {
         name: 'EaseBus',
