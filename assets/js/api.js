@@ -63,12 +63,7 @@ const API = {
         if (window.location.protocol === 'file:' || window.location.hostname.includes('web.app') || window.location.hostname.includes('firebaseapp.com')) {
             return false;
         }
-        try {
-            const res = await fetch(`${this.baseUrl}/dashboard?action=summary`, { method: 'GET' });
-            return res.ok;
-        } catch(e) {
-            return false;
-        }
+        return true;
     },
 
     async request(endpoint, method = 'GET', data = null) {
@@ -127,8 +122,7 @@ const API = {
                             monthly_net_profit: totalSales - expenses.reduce((sum, e) => sum + (e.amount || 0), 0),
                             recent_orders: sales.slice(0, 5),
                             alerts: [
-                                { type: 'info', icon: 'local_shipping', text: `${deliveries.length} consignments dispatched via courier.`, color: 'text-blue-500' },
-                                { type: 'success', icon: 'verified', text: "EaseBus Live System active.", color: 'text-emerald-500' }
+                                { type: 'success', icon: 'verified', text: "EaseBus ERP running live.", color: 'text-emerald-500' }
                             ]
                         }
                     }
@@ -138,11 +132,7 @@ const API = {
                 return {
                     status: 'success',
                     data: {
-                        chart: Array.from({length: 15}, (_, i) => ({
-                            date: `2026-08-${(i+1).toString().padStart(2, '0')}`,
-                            revenue: Math.floor(Math.random() * 8000) + 2000,
-                            profit: Math.floor(Math.random() * 4000) + 1000
-                        }))
+                        chart: []
                     }
                 };
             }
@@ -269,9 +259,9 @@ const API = {
                     data: {
                         summary: {
                             total_liquidity: totalCash,
-                            monthly_inflow: 45000,
-                            monthly_outflow: 12000,
-                            net_cash_flow: 33000
+                            monthly_inflow: 0,
+                            monthly_outflow: 0,
+                            net_cash_flow: 0
                         }
                     }
                 };
@@ -290,8 +280,8 @@ const API = {
                         summary: {
                             monthly_expenses: totalExp,
                             total_expenses: totalExp,
-                            top_category: 'Rent & Utilities',
-                            avg_voucher: totalExp / (expenses.length || 1)
+                            top_category: 'None',
+                            avg_voucher: 0
                         }
                     }
                 };
@@ -314,9 +304,9 @@ const API = {
                     data: {
                         summary: {
                             active_suppliers: suppliers.length,
-                            total_products: 4,
-                            total_purchases: 8,
-                            procurement_value: 35000
+                            total_products: 0,
+                            total_purchases: 0,
+                            procurement_value: 0
                         }
                     }
                 };
@@ -334,7 +324,7 @@ const API = {
                         summary: {
                             total_customers: customers.length,
                             active_customers: customers.length,
-                            total_spent: 11700
+                            total_spent: 0
                         }
                     }
                 };
@@ -381,12 +371,7 @@ const API = {
                 return {
                     status: 'success',
                     data: {
-                        valuation: [
-                            { product_name: 'Premium Cotton T-Shirt', category_name: 'Apparel & Clothing', total_qty: 45, total_value: 33750 },
-                            { product_name: 'Slim Fit Denim Jeans', category_name: 'Apparel & Clothing', total_qty: 28, total_value: 46200 },
-                            { product_name: 'Luxury Chronograph Watch', category_name: 'Electronics & Gadgets', total_qty: 12, total_value: 54000 },
-                            { product_name: 'Genuine Leather Backpack', category_name: 'Bags & Accessories', total_qty: 4, total_value: 11600 }
-                        ]
+                        valuation: []
                     }
                 };
             }
@@ -397,23 +382,17 @@ const API = {
                     data: {
                         report: {
                             period: { start: '2026-07-16', end: '2026-08-15', start_date: '2026-07-16', end_date: '2026-08-15' },
-                            revenue: totalSales || 8550,
-                            order_count: sales.length || 3,
-                            avg_order_value: totalSales ? Math.round(totalSales / sales.length) : 2850,
-                            cogs: 4200,
-                            gross_profit: (totalSales || 8550) - 4200,
-                            gross_margin_percent: 50.88,
-                            operating_expenses: totalExp || 1950,
-                            net_profit: (totalSales || 8550) - 4200 - (totalExp || 1950),
-                            net_margin_percent: 28.07,
-                            expense_breakdown: [
-                                { category: 'Rent & Utilities', amount: 1500, total: 1500, percentage: 76.9 },
-                                { category: 'Office Supplies', amount: 450, total: 450, percentage: 23.1 }
-                            ],
-                            top_products: [
-                                { product_name: 'Premium Cotton T-Shirt', category_name: 'Apparel & Clothing', total_units: 2, total_sales: 1500 },
-                                { product_name: 'Slim Fit Denim Jeans', category_name: 'Apparel & Clothing', total_units: 1, total_sales: 1650 }
-                            ]
+                            revenue: totalSales,
+                            order_count: sales.length,
+                            avg_order_value: sales.length > 0 ? Math.round(totalSales / sales.length) : 0,
+                            cogs: 0,
+                            gross_profit: totalSales,
+                            gross_margin_percent: 0,
+                            operating_expenses: totalExp,
+                            net_profit: totalSales - totalExp,
+                            net_margin_percent: 0,
+                            expense_breakdown: [],
+                            top_products: []
                         }
                     }
                 };

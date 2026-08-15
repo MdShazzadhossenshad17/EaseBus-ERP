@@ -141,11 +141,11 @@ if ($method === 'POST' && $action === 'register') {
     }
 }
 
-if ($method === 'POST' && $action === 'logout') {
-    requireAuth();
-    $userId = $_SESSION['user_id'];
-    auditLog('logout', 'user', $userId);
-    
+if ($method === 'POST' && ($action === 'logout' || pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME) === 'logout')) {
+    $userId = $_SESSION['user_id'] ?? null;
+    if ($userId) {
+        try { auditLog('logout', 'user', $userId); } catch (Exception $e) {}
+    }
     $_SESSION = [];
     if (ini_get("session.use_cookies")) {
         $params = session_get_cookie_params();
@@ -154,7 +154,7 @@ if ($method === 'POST' && $action === 'logout') {
             $params["secure"], $params["httponly"]
         );
     }
-    session_destroy();
+    @session_destroy();
     jsonSuccess('Logged out successfully');
 }
 

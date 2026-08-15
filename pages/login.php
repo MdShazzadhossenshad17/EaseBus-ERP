@@ -68,8 +68,8 @@ if (!empty($_SESSION['user_id'])) {
                 </button>
             </form>
 
-            <div id="setup-notice" class="hidden mt-6 text-center text-sm text-slate-500">
-                <p>First time here? <a href="register.php" class="text-blue-600 hover:underline font-medium">Set up the admin account</a></p>
+            <div class="mt-6 text-center text-xs text-slate-500 border-t border-slate-100 pt-4">
+                <p>Don't have an account? <a href="register.php" class="text-blue-600 font-semibold hover:underline">Create a Business Account (Sign Up)</a></p>
             </div>
         </div>
     </div>
