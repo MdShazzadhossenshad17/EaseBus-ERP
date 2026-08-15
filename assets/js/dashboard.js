@@ -258,8 +258,8 @@ window.Dashboard = {
             const maxRev = Math.max(...data.map(d => d.revenue), 1);
 
             container.innerHTML = data.map((d, i) => {
-                const revHeight = (d.revenue / maxRev) * 100;
-                const profHeight = (d.profit / maxRev) * 100;
+                const revHeight = Math.min(Math.max((d.revenue / maxRev) * 100, 15), 100);
+                const profHeight = Math.min(Math.max((d.profit / maxRev) * 100, 10), 100);
 
                 const showLabel = i % 5 === 0 || i === data.length - 1;
                 const dateObj = new Date(d.date);
@@ -275,9 +275,9 @@ window.Dashboard = {
                         </div>
 
                         <!-- Bars -->
-                        <div class="w-full max-w-[14px] flex flex-col justify-end items-center h-full gap-px">
-                            <div class="w-full bg-blue-600 rounded-t-sm transition-all" style="height: ${Math.max(revHeight - profHeight, 0)}%"></div>
-                            <div class="w-full bg-emerald-500 ${revHeight - profHeight <= 0 ? 'rounded-t-sm' : ''} transition-all" style="height: ${Math.max(profHeight, 0)}%"></div>
+                        <div class="w-full max-w-[16px] flex flex-col justify-end items-center h-48 gap-0.5">
+                            <div class="w-full bg-blue-600 rounded-t-sm transition-all" style="height: ${revHeight}%"></div>
+                            <div class="w-full bg-emerald-500 rounded-t-sm transition-all" style="height: ${profHeight}%"></div>
                         </div>
 
                         <!-- Axis Label -->
