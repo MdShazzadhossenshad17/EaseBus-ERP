@@ -24,8 +24,8 @@ if ($method === 'GET' && ($action === 'list' || $action === 'summary' || empty($
 
     $customers = Database::fetchAll(
         "SELECT c.*,
-            (SELECT COUNT(*) FROM sales_orders WHERE customer_id = c.id OR (customer_phone = c.phone AND customer_phone IS NOT NULL AND customer_phone != '')) as total_orders,
-            (SELECT COALESCE(SUM(total_amount), 0) FROM sales_orders WHERE (customer_id = c.id OR (customer_phone = c.phone AND customer_phone IS NOT NULL AND customer_phone != '')) AND order_status != 'cancelled') as total_purchased
+            (SELECT COUNT(*) FROM orders WHERE customer_id = c.id) as total_orders,
+            (SELECT COALESCE(SUM(total_amount), 0) FROM orders WHERE customer_id = c.id AND order_status != 'cancelled') as total_purchased
          FROM customers c
          {$where}
          ORDER BY c.name ASC",
