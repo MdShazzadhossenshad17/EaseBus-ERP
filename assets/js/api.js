@@ -231,6 +231,7 @@ const API = {
                     role: 'admin',
                     email: email
                 };
+                registerGlobalUser(user);
                 API.setCurrentUser(user);
                 return {
                     status: 'success',

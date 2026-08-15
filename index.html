@@ -11,6 +11,14 @@
     <title>EaseBus — Smart Business Management Suite</title>
     <meta name="description" content="EaseBus ERP is an Enterprise Business Operations Suite featuring Sales Orders, Courier Logistics, Inventory Movements, Treasury Accounts, and Customer Returns.">
 
+    <!-- PWA Web App Manifest & iOS Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="EaseBus">
+    <link rel="apple-touch-icon" href="assets/img/logo.png">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -144,6 +152,9 @@
             <h2 id="page-title" class="font-geist text-xl font-bold text-slate-900">Dashboard</h2>
 
             <div class="ml-auto flex items-center space-x-3">
+                <button id="pwa-install-btn" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-300 text-xs font-bold transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-sm">install_mobile</span> Install App
+                </button>
                 <span id="active-store-tag" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold">
                     <span class="material-symbols-outlined text-sm">storefront</span> <span id="store-name-display">EaseBus</span>
                 </span>
@@ -208,7 +219,7 @@
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Business / Store Name</label>
                         <input type="text" id="reg-business" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500" placeholder="e.g. Acme Superstore" required>
                     </div>
-                    <div class="grid grid-cols-2 gap-2.5">
+                    <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Username</label>
                             <input type="text" id="reg-username" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500" placeholder="johndoe" required>
@@ -238,5 +249,35 @@
     <script src="assets/js/components.js?v=3.0"></script>
     <script src="assets/js/creator.js?v=3.0"></script>
     <script src="assets/js/app.js?v=3.0"></script>
+
+    <!-- PWA Service Worker & Install Prompt Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => console.log('ServiceWorker registration failed:', err));
+            });
+        }
+        let deferredPrompt;
+        const pwaInstallBtn = document.getElementById('pwa-install-btn');
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (pwaInstallBtn) pwaInstallBtn.classList.remove('hidden');
+        });
+        if (pwaInstallBtn) {
+            pwaInstallBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        pwaInstallBtn.classList.add('hidden');
+                    }
+                    deferredPrompt = null;
+                } else {
+                    alert('To Install EaseBus App on Mobile or Desktop:\n\n- Android / Chrome: Tap menu (⋮) -> "Install app" or "Add to Home screen"\n- iPhone / Safari: Tap Share (⎘) -> "Add to Home Screen"\n- Desktop Chrome/Edge: Click Install icon in address bar');
+                }
+            });
+        }
+    </script>
 </body>
 </html>
