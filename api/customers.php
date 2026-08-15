@@ -9,25 +9,47 @@ $method = getRequestMethod();
 $action = $action ?? $_GET['action'] ?? $_POST['action'] ?? '';
 
 
-if ($method === 'GET' && $action === 'list') {
+if ($method === 'GET' && ($action === 'list' || $action === 'summary' || empty($action))) {
     requirePermission('customers', 'read');
-    
+
     $search = getSearchQuery();
     $params = [];
     $where = "";
-    
+
     if ($search) {
-        $where = "WHERE name LIKE ? OR phone LIKE ? OR email LIKE ?";
+        $where = "WHERE c.name LIKE ? OR c.phone LIKE ? OR c.email LIKE ? OR c.address LIKE ?";
         $searchTerm = "%{$search}%";
-        $params = [$searchTerm, $searchTerm, $searchTerm];
+        $params = [$searchTerm, $searchTerm, $searchTerm, $searchTerm];
     }
-    
+
     $customers = Database::fetchAll(
-        "SELECT * FROM customers {$where} ORDER BY name ASC",
+        "SELECT c.*,
+            (SELECT COUNT(*) FROM sales_orders WHERE customer_id = c.id OR (customer_phone = c.phone AND customer_phone IS NOT NULL AND customer_phone != '')) as total_orders,
+            (SELECT COALESCE(SUM(total_amount), 0) FROM sales_orders WHERE (customer_id = c.id OR (customer_phone = c.phone AND customer_phone IS NOT NULL AND customer_phone != '')) AND order_status != 'cancelled') as total_purchased
+         FROM customers c
+         {$where}
+         ORDER BY c.name ASC",
         $params
     );
-    
-    jsonSuccess('Customers loaded', ['customers' => $customers]);
+
+    $totalSpent = 0;
+    $totalOrders = 0;
+
+    foreach ($customers as &$cust) {
+        $cust['total_orders'] = (int) ($cust['total_orders'] ?? 0);
+        $cust['total_purchased'] = (float) ($cust['total_purchased'] ?? 0);
+        $totalSpent += $cust['total_purchased'];
+        $totalOrders += $cust['total_orders'];
+    }
+
+    $summary = [
+        'total_customers' => count($customers),
+        'total_spent' => $totalSpent,
+        'total_orders' => $totalOrders,
+        'avg_spent' => count($customers) > 0 ? ($totalSpent / count($customers)) : 0
+    ];
+
+    jsonSuccess('Customers loaded', ['customers' => $customers, 'summary' => $summary]);
 }
 
 if ($method === 'POST' && $action === 'create') {
