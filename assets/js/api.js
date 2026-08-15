@@ -375,8 +375,10 @@ const API = {
         // 10. Settings
         if (module === 'settings') {
             let settings = getStorage('settings', SEED_DATA.settings);
-            if (action === 'get') return { status: 'success', data: { settings } };
-            if (action === 'update') {
+            if (action === 'get' || action === 'business' || path.endsWith('business')) {
+                return { status: 'success', data: { business: settings, settings } };
+            }
+            if (action === 'update' || method === 'PUT') {
                 settings = { ...settings, ...data };
                 setStorage('settings', settings);
                 return { status: 'success', message: 'Settings saved successfully' };
@@ -386,6 +388,9 @@ const API = {
         // 11. Users & Staff
         if (module === 'users') {
             let users = getStorage('users', SEED_DATA.users);
+            if (action === 'roles') {
+                return { status: 'success', data: { roles: [{ id: 1, name: 'admin' }, { id: 2, name: 'manager' }] } };
+            }
             if (action === 'list') return { status: 'success', data: { users } };
             if (action === 'create') {
                 const newUser = { id: Date.now(), ...data, status: 'active', last_login: 'Never' };
@@ -402,21 +407,42 @@ const API = {
             const totalSales = sales.reduce((sum, o) => sum + (o.total_amount || 0), 0);
             const totalExp = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
 
-            if (action === 'financial' || action === 'summary') {
+            if (action === 'inventory_valuation' || path.endsWith('inventory_valuation')) {
+                return {
+                    status: 'success',
+                    data: {
+                        valuation: [
+                            { product_name: 'Premium Cotton T-Shirt', category_name: 'Apparel & Clothing', total_qty: 45, total_value: 33750 },
+                            { product_name: 'Slim Fit Denim Jeans', category_name: 'Apparel & Clothing', total_qty: 28, total_value: 46200 },
+                            { product_name: 'Luxury Chronograph Watch', category_name: 'Electronics & Gadgets', total_qty: 12, total_value: 54000 },
+                            { product_name: 'Genuine Leather Backpack', category_name: 'Bags & Accessories', total_qty: 4, total_value: 11600 }
+                        ]
+                    }
+                };
+            }
+
+            if (action === 'profit_loss' || action === 'financial' || action === 'summary' || path.endsWith('profit_loss')) {
                 return {
                     status: 'success',
                     data: {
                         report: {
-                            period: { start_date: '2026-07-16', end_date: '2026-08-15' },
+                            period: { start: '2026-07-16', end: '2026-08-15', start_date: '2026-07-16', end_date: '2026-08-15' },
                             revenue: totalSales || 8550,
+                            order_count: sales.length || 3,
+                            avg_order_value: totalSales ? Math.round(totalSales / sales.length) : 2850,
                             cogs: 4200,
                             gross_profit: (totalSales || 8550) - 4200,
-                            expenses: totalExp || 1950,
+                            gross_margin_percent: 50.88,
+                            operating_expenses: totalExp || 1950,
                             net_profit: (totalSales || 8550) - 4200 - (totalExp || 1950),
-                            profit_margin: 28.07,
+                            net_margin_percent: 28.07,
                             expense_breakdown: [
-                                { category: 'Rent & Utilities', total: 1500 },
-                                { category: 'Office Supplies', total: 450 }
+                                { category: 'Rent & Utilities', amount: 1500, total: 1500, percentage: 76.9 },
+                                { category: 'Office Supplies', amount: 450, total: 450, percentage: 23.1 }
+                            ],
+                            top_products: [
+                                { product_name: 'Premium Cotton T-Shirt', category_name: 'Apparel & Clothing', total_units: 2, total_sales: 1500 },
+                                { product_name: 'Slim Fit Denim Jeans', category_name: 'Apparel & Clothing', total_units: 1, total_sales: 1650 }
                             ]
                         }
                     }
