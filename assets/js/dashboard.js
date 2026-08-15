@@ -144,9 +144,15 @@ window.Dashboard = {
     },
 
     async refreshLive() {
-        UI.toast('Refreshing command center metrics...');
-        await Promise.all([this.loadSummary(), this.loadChart()]);
-        UI.toast('Dashboard data updated live');
+        try {
+            UI.setLoading(true);
+            await Promise.all([this.loadSummary(), this.loadChart()]);
+            UI.toast('Dashboard refreshed');
+        } catch (e) {
+            UI.toast('Failed to refresh dashboard', 'error');
+        } finally {
+            UI.setLoading(false);
+        }
     },
 
     async loadSummary() {
