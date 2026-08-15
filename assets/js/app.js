@@ -46,15 +46,13 @@ window.App = {
     },
 
     setupLogout() {
-        document.getElementById('logout-btn')?.addEventListener('click', async () => {
-            if (confirm('Are you sure you want to log out?')) {
-                try {
-                    await API.post('auth/logout');
-                    window.location.href = 'login.php';
-                } catch (e) {
-                    UI.toast('Logout failed', 'error');
-                }
-            }
+        document.getElementById('logout-btn')?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                UI.toast('Logging out...');
+                await API.post('auth/logout');
+            } catch (err) {}
+            window.location.href = 'login.php';
         });
     },
 
