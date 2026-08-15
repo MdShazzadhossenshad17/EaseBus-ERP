@@ -26,6 +26,9 @@ $csrfToken = generateCsrfToken();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Dashboard - <?php echo esc($biz['name']); ?></title>
     
     <!-- Fonts -->
@@ -185,8 +188,8 @@ $csrfToken = generateCsrfToken();
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
 
     <!-- Scripts -->
-    <script src="../assets/js/api.js"></script>
-    <script src="../assets/js/components.js"></script>
-    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/api.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/components.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/app.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>
