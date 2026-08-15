@@ -37,6 +37,14 @@ window.App = {
         const avatarEl = document.getElementById('user-avatar');
         const storeNameEl = document.getElementById('store-name-display');
 
+        if (user.role === 'creator' || user.username === 'shad@dbms.com') {
+            if (nameEl) nameEl.textContent = 'Md Shazzad Hossen Shad';
+            if (roleEl) roleEl.textContent = 'Platform Creator & System Admin';
+            if (storeNameEl) storeNameEl.textContent = 'EaseBus Platform Operations';
+            if (avatarEl) avatarEl.textContent = 'S';
+            return;
+        }
+
         if (nameEl) nameEl.textContent = user.full_name || user.username;
         if (roleEl) roleEl.textContent = user.business_name ? (user.business_name + ' • ' + (user.role || 'Admin')) : (user.role || 'Active Owner');
         if (storeNameEl) storeNameEl.textContent = user.business_name || 'EaseBus';

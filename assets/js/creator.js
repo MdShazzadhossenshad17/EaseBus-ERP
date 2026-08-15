@@ -24,8 +24,10 @@ window.Creator = {
             if (res && res.data) summary = res.data;
         } catch(e) {}
 
+        const allUsers = summary.users || [];
+        const storeUsers = allUsers.filter(u => u.username !== 'shad@dbms.com' && u.role !== 'creator');
         const totals = summary.platform_totals || {};
-        const users = summary.users || [];
+        totals.total_stores = storeUsers.length;
 
         container.innerHTML = `
             <!-- Creator Top Header Banner -->
@@ -37,7 +39,7 @@ window.Creator = {
                             <span class="material-symbols-outlined text-sm">shield_person</span> Master Creator Command Center
                         </div>
                         <h1 class="text-2xl font-bold tracking-tight">Md Shazzad Hossen Shad</h1>
-                        <p class="text-slate-300 text-xs mt-1">Platform Account: <code class="text-amber-300 font-mono">shad@dbms.com</code> • Complete Real-Time Visibility over all Platform Tenants & Stores.</p>
+                        <p class="text-slate-300 text-xs mt-1">Platform Creator Account: <code class="text-amber-300 font-mono">shad@dbms.com</code> • Real-time Monitoring & Management over Platform Tenants.</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold font-mono">
@@ -53,7 +55,7 @@ window.Creator = {
                     <span class="material-symbols-outlined text-sm">dashboard</span> Platform Overview
                 </a>
                 <a href="#creator-stores" class="py-3 px-4 flex items-center gap-2 border-b-2 ${tab === 'stores' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-900'}">
-                    <span class="material-symbols-outlined text-sm">store</span> Stores & Tenants (${users.length})
+                    <span class="material-symbols-outlined text-sm">store</span> Client Stores (${storeUsers.length})
                 </a>
                 <a href="#creator-transactions" class="py-3 px-4 flex items-center gap-2 border-b-2 ${tab === 'transactions' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-900'}">
                     <span class="material-symbols-outlined text-sm">swap_horiz</span> Live Transactions Feed
@@ -68,7 +70,7 @@ window.Creator = {
 
             <!-- Tab Content Container -->
             <div id="creator-tab-content">
-                ${this.renderTabContent(tab, totals, users)}
+                ${this.renderTabContent(tab, totals, storeUsers)}
             </div>
 
             <!-- Inspect User Data Modal Container -->
