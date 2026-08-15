@@ -84,8 +84,12 @@ window.App = {
                     const user = res.data?.user || { id: Date.now(), username, full_name: username, role: 'admin' };
                     API.setCurrentUser(user);
                     this.checkAuth();
-                    const hash = window.location.hash.substring(1) || 'dashboard';
-                    this.navigate(hash);
+                    if (user.role === 'creator' || user.username === 'shad@dbms.com') {
+                        this.navigate('creator-overview');
+                    } else {
+                        const hash = window.location.hash.substring(1) || 'dashboard';
+                        this.navigate(hash);
+                    }
                 } else {
                     if (authError) {
                         authError.textContent = res.message || 'Invalid username or password';
@@ -151,25 +155,53 @@ window.App = {
     },
 
     setupSidebar() {
+        const user = API.getCurrentUser();
+        const mainNav = document.getElementById('main-nav');
+
+        if (user && (user.role === 'creator' || user.username === 'shad@dbms.com') && (!window.Creator || !window.Creator.isReadOnlyMode)) {
+            if (mainNav) {
+                mainNav.innerHTML = `
+                    <div class="px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5 border-b border-slate-800/80 mb-2">
+                        <span class="material-symbols-outlined text-base text-amber-400">shield</span> Creator Master Suite
+                    </div>
+                    <a href="#creator-overview" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                        <span class="material-symbols-outlined mr-3 text-lg text-amber-400">dashboard</span> Platform Overview
+                    </a>
+                    <a href="#creator-stores" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                        <span class="material-symbols-outlined mr-3 text-lg text-blue-400">store</span> Stores & Tenants
+                    </a>
+                    <a href="#creator-transactions" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                        <span class="material-symbols-outlined mr-3 text-lg text-emerald-400">swap_horiz</span> Live Transactions
+                    </a>
+                    <a href="#creator-inventory" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                        <span class="material-symbols-outlined mr-3 text-lg text-purple-400">inventory_2</span> Global Inventory
+                    </a>
+                    <a href="#creator-health" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                        <span class="material-symbols-outlined mr-3 text-lg text-cyan-400">dns</span> Server & DB Health
+                    </a>
+                `;
+            }
+        }
+
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('mobile-overlay');
         const openBtn = document.getElementById('open-sidebar');
         const closeBtn = document.getElementById('close-sidebar');
 
         const toggleSidebar = () => {
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
+            if (sidebar) sidebar.classList.toggle('-translate-x-full');
+            if (overlay) overlay.classList.toggle('hidden');
         };
 
-        if (openBtn) openBtn.addEventListener('click', toggleSidebar);
-        if (closeBtn) closeBtn.addEventListener('click', toggleSidebar);
-        if (overlay) overlay.addEventListener('click', toggleSidebar);
+        if (openBtn) openBtn.onclick = toggleSidebar;
+        if (closeBtn) closeBtn.onclick = toggleSidebar;
+        if (overlay) overlay.onclick = toggleSidebar;
 
         // Active state handling
         document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', () => {
+            item.onclick = () => {
                 if (window.innerWidth < 768) toggleSidebar();
-            });
+            };
         });
     },
 
@@ -212,6 +244,29 @@ window.App = {
 
         const container = document.getElementById('screen-container');
         UI.setLoading(true);
+
+        // Creator Route Handler
+        if (route.startsWith('creator-')) {
+            const user = API.getCurrentUser();
+            if (!user || (user.username !== 'shad@dbms.com' && user.role !== 'creator')) {
+                this.navigate('dashboard');
+                return;
+            }
+            if (titleEl) titleEl.textContent = 'Platform Creator Command Center';
+            try {
+                if (window.Creator && typeof window.Creator.render === 'function') {
+                    await window.Creator.render(container, route);
+                } else {
+                    container.innerHTML = UI.emptyState('error', 'Creator Module Error', 'Creator module script not loaded.');
+                }
+            } catch(e) {
+                console.error(e);
+                container.innerHTML = UI.emptyState('error', 'Creator Error', 'Failed to render Creator Command Portal.');
+            } finally {
+                UI.setLoading(false);
+            }
+            return;
+        }
 
         const routeMap = {
             'dashboard': { file: 'dashboard.js', object: 'Dashboard', title: 'Dashboard' },
