@@ -205,6 +205,9 @@ window.Creator = {
                                     <td class="py-3 text-right font-mono text-xs font-bold text-emerald-600">৳ ${UI.formatMoney(u.total_revenue || 0)}</td>
                                     <td class="py-3 text-right">
                                         <div class="flex items-center justify-end gap-2">
+                                            <button class="btn btn-secondary text-xs py-1.5 px-3 flex items-center gap-1 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200" onclick="Creator.downloadUserData(${u.id})">
+                                                <span class="material-symbols-outlined text-sm">download</span> Download Data
+                                            </button>
                                             <button class="btn btn-secondary text-xs py-1.5 px-3 flex items-center gap-1" onclick="Creator.inspectUserModal(${u.id})">
                                                 <span class="material-symbols-outlined text-sm">visibility</span> Quick Inspect
                                             </button>
@@ -415,9 +418,14 @@ window.Creator = {
                             <p class="text-xs text-slate-500">Owner: <span class="font-semibold text-slate-800">${u.full_name || u.username}</span> (${u.email || u.username})</p>
                         </div>
                     </div>
-                    <button class="btn btn-primary text-xs px-4 py-2 flex items-center gap-1.5 shadow-sm" onclick="Creator.openUserWorkspaceReadOnly(${u.id}, '${(u.business_name || u.full_name || 'User Store').replace(/'/g, "\\'")}', '${(u.full_name || u.username || 'Owner').replace(/'/g, "\\'")}')">
-                        <span class="material-symbols-outlined text-sm">open_in_new</span> Open Portal (Read-Only)
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button class="btn btn-secondary text-xs px-3.5 py-2 flex items-center gap-1.5 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200" onclick="Creator.downloadUserData(${u.id})">
+                            <span class="material-symbols-outlined text-sm">download</span> Download All Data
+                        </button>
+                        <button class="btn btn-primary text-xs px-4 py-2 flex items-center gap-1.5 shadow-sm" onclick="Creator.openUserWorkspaceReadOnly(${u.id}, '${(u.business_name || u.full_name || 'User Store').replace(/'/g, "\\'")}', '${(u.full_name || u.username || 'Owner').replace(/'/g, "\\'")}')">
+                            <span class="material-symbols-outlined text-sm">open_in_new</span> Open Portal (Read-Only)
+                        </button>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -652,6 +660,71 @@ window.Creator = {
         if (window.App) {
             window.App.checkAuth();
             window.App.navigate('creator-overview');
+        }
+    },
+
+    async downloadUserData(userId) {
+        try {
+            UI.toast('Preparing user store data archive...', 'info');
+            const res = await API.request(`users/inspect_user?user_id=${userId}`);
+            
+            let exportData = {};
+            if (res && res.data && res.data.user) {
+                exportData = {
+                    export_metadata: {
+                        exported_at: new Date().toISOString(),
+                        exported_by: 'Md Shazzad Hossen Shad (Creator)',
+                        system: 'EaseBus Business ERP Suite'
+                    },
+                    store_owner: res.data.user || {},
+                    metrics_summary: res.data.metrics || {},
+                    products_catalog: res.data.products || [],
+                    sales_orders: res.data.orders || [],
+                    expenses_records: res.data.expenses || []
+                };
+            } else {
+                // Client storage lookup fallback
+                const globalUsers = typeof getGlobalUsers === 'function' ? getGlobalUsers() : [];
+                const user = globalUsers.find(u => u.id === userId || u.id == userId) || { id: userId, username: 'user_' + userId };
+                const products = JSON.parse(localStorage.getItem('easebus_u' + userId + '_products') || '[]');
+                const orders = JSON.parse(localStorage.getItem('easebus_u' + userId + '_orders') || localStorage.getItem('easebus_u' + userId + '_sales') || '[]');
+                const expenses = JSON.parse(localStorage.getItem('easebus_u' + userId + '_expenses') || '[]');
+                const customers = JSON.parse(localStorage.getItem('easebus_u' + userId + '_customers') || '[]');
+                const suppliers = JSON.parse(localStorage.getItem('easebus_u' + userId + '_suppliers') || '[]');
+                
+                exportData = {
+                    export_metadata: {
+                        exported_at: new Date().toISOString(),
+                        exported_by: 'Md Shazzad Hossen Shad (Creator)',
+                        system: 'EaseBus Business ERP Suite'
+                    },
+                    store_owner: user,
+                    products_catalog: products,
+                    sales_orders: orders,
+                    expenses_records: expenses,
+                    customers_list: customers,
+                    suppliers_list: suppliers
+                };
+            }
+
+            const jsonStr = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const storeName = ((exportData.store_owner?.business_name || exportData.store_owner?.full_name || 'Store') + '').replace(/[^a-z0-9]/gi, '_');
+            const dateStr = new Date().toISOString().split('T')[0];
+            
+            a.href = url;
+            a.download = `EaseBus_${storeName}_User${userId}_DataBackup_${dateStr}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            UI.toast(`Downloaded full data archive for ${exportData.store_owner?.business_name || ('User #' + userId)}!`, 'success');
+        } catch(e) {
+            console.error('Download user data error:', e);
+            UI.toast('Failed to download user data.', 'error');
         }
     }
 };
