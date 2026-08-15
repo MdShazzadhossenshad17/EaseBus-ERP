@@ -9,19 +9,19 @@ $method = getRequestMethod();
 $action = $action ?? $_GET['action'] ?? $_POST['action'] ?? '';
 
 
-if ($method === 'GET' && $action === 'list') {
+if ($method === 'GET' && ($action === 'list' || $action === 'summary' || empty($action))) {
     requirePermission('investors', 'read');
-    
+
     $search = getSearchQuery();
     $params = [];
     $where = "";
-    
+
     if ($search) {
         $where = "WHERE name LIKE ? OR phone LIKE ? OR email LIKE ?";
         $searchTerm = "%{$search}%";
         $params = [$searchTerm, $searchTerm, $searchTerm];
     }
-    
+
     $investors = Database::fetchAll(
         "SELECT i.*, 
             (SELECT SUM(amount) FROM investor_transactions WHERE investor_id = i.id AND type IN ('investment', 'additional_investment')) as total_invested,
@@ -32,8 +32,25 @@ if ($method === 'GET' && $action === 'list') {
          ORDER BY i.name ASC",
         $params
     );
-    
-    jsonSuccess('Investors loaded', ['investors' => $investors]);
+
+    $totalCapital = 0;
+    $totalDistributed = 0;
+    $totalOwnership = 0;
+
+    foreach ($investors as $inv) {
+        $totalCapital += (float) ($inv['total_invested'] ?? 0);
+        $totalDistributed += (float) ($inv['total_profit'] ?? 0);
+        $totalOwnership += (float) ($inv['ownership_percentage'] ?? 0);
+    }
+
+    $summary = [
+        'total_investors' => count($investors),
+        'total_capital' => $totalCapital,
+        'total_returns_paid' => $totalDistributed,
+        'total_ownership' => $totalOwnership
+    ];
+
+    jsonSuccess('Investors loaded', ['investors' => $investors, 'summary' => $summary]);
 }
 
 if ($method === 'POST' && $action === 'create') {
