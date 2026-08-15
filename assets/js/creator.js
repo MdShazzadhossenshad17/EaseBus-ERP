@@ -141,7 +141,7 @@ window.Creator = {
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Gross Sales Volume</p>
-                            <h3 class="text-2xl font-mono-data font-bold text-amber-600 mt-1">৳ ${UI.formatMoney(totals.total_revenue || 0)}</h3>
+                            <h3 class="text-2xl font-mono-data font-bold text-amber-600 mt-1">${UI.formatMoney(totals.total_revenue || 0)}</h3>
                             <p class="text-xs text-slate-500 mt-1">Total transaction volume</p>
                         </div>
                         <div class="p-2.5 bg-amber-50 text-amber-600 rounded-lg">
@@ -202,7 +202,7 @@ window.Creator = {
                                     </td>
                                     <td class="py-3 text-center font-mono text-xs font-bold text-slate-700">${u.total_products || 0}</td>
                                     <td class="py-3 text-center font-mono text-xs font-bold text-slate-700">${u.total_orders || 0}</td>
-                                    <td class="py-3 text-right font-mono text-xs font-bold text-emerald-600">৳ ${UI.formatMoney(u.total_revenue || 0)}</td>
+                                    <td class="py-3 text-right font-mono text-xs font-bold text-emerald-600">${UI.formatMoney(u.total_revenue || 0)}</td>
                                     <td class="py-3 text-right">
                                         <div class="flex items-center justify-end gap-2">
                                             <button class="btn btn-secondary text-xs py-1.5 px-3 flex items-center gap-1 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200" onclick="Creator.downloadUserData(${u.id})">
@@ -265,7 +265,7 @@ window.Creator = {
                                     <td class="text-xs text-slate-700">${o.customer_name || 'Walk-in Customer'}</td>
                                     <td class="text-xs text-slate-600 font-mono">${o.payment_method || 'Cash'}</td>
                                     <td class="text-xs text-slate-500 font-mono">${UI.formatDate(o.created_at || new Date())}</td>
-                                    <td class="text-right font-mono text-xs font-bold text-emerald-600">৳ ${UI.formatMoney(o.total_amount || 0)}</td>
+                                    <td class="text-right font-mono text-xs font-bold text-emerald-600">${UI.formatMoney(o.total_amount || 0)}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -314,7 +314,7 @@ window.Creator = {
                                     <td class="text-xs text-indigo-600 font-semibold">${p.store_name}</td>
                                     <td class="font-mono text-xs text-slate-600">${p.sku || '-'}</td>
                                     <td class="text-xs text-slate-600">${p.category || 'General'}</td>
-                                    <td class="text-right font-mono text-xs font-bold text-slate-800">৳ ${UI.formatMoney(p.selling_price || 0)}</td>
+                                    <td class="text-right font-mono text-xs font-bold text-slate-800">${UI.formatMoney(p.selling_price || 0)}</td>
                                     <td class="text-center font-mono text-xs font-bold ${p.current_stock <= (p.min_stock_level || 5) ? 'text-red-600' : 'text-emerald-600'}">${p.current_stock || 0}</td>
                                 </tr>
                             `).join('')}
