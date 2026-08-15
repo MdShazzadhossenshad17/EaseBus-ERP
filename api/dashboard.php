@@ -113,6 +113,5 @@ if ($method === 'GET' && $action === 'revenue_chart') {
     
     jsonSuccess('Chart data loaded', ['chart' => $formattedData]);
 }
-}
 
 jsonError('Endpoint not found', 404);
