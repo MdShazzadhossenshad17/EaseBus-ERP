@@ -6,13 +6,164 @@ window.App = {
     currentRoute: 'dashboard',
     
     init() {
+        this.setupAuth();
+        const loggedIn = this.checkAuth();
         this.setupSidebar();
         this.setupRouter();
-        this.setupLogout();
         
-        // Initial route
-        const hash = window.location.hash.substring(1) || 'dashboard';
-        this.navigate(hash);
+        if (loggedIn) {
+            const hash = window.location.hash.substring(1) || 'dashboard';
+            this.navigate(hash);
+        }
+    },
+
+    checkAuth() {
+        const user = API.getCurrentUser();
+        const authModal = document.getElementById('auth-modal');
+        if (!user) {
+            if (authModal) authModal.classList.remove('hidden');
+            return false;
+        } else {
+            if (authModal) authModal.classList.add('hidden');
+            this.updateUserProfile(user);
+            return true;
+        }
+    },
+
+    updateUserProfile(user) {
+        if (!user) return;
+        const nameEl = document.getElementById('user-display-name');
+        const roleEl = document.getElementById('user-role-display');
+        const avatarEl = document.getElementById('user-avatar');
+        const storeNameEl = document.getElementById('store-name-display');
+
+        if (nameEl) nameEl.textContent = user.full_name || user.username;
+        if (roleEl) roleEl.textContent = user.business_name ? (user.business_name + ' • ' + (user.role || 'Admin')) : (user.role || 'Active Owner');
+        if (storeNameEl) storeNameEl.textContent = user.business_name || 'EaseBus';
+        if (avatarEl) {
+            const initial = (user.full_name || user.username || 'A').charAt(0).toUpperCase();
+            avatarEl.textContent = initial;
+        }
+    },
+
+    setupAuth() {
+        const tabLogin = document.getElementById('tab-login');
+        const tabRegister = document.getElementById('tab-register');
+        const formLogin = document.getElementById('form-login');
+        const formRegister = document.getElementById('form-register');
+        const authError = document.getElementById('auth-error');
+        const demoBtn = document.getElementById('btn-demo-login');
+
+        if (tabLogin && tabRegister) {
+            tabLogin.addEventListener('click', () => {
+                tabLogin.className = "flex-1 py-2.5 text-center text-blue-400 border-b-2 border-blue-500 font-semibold transition-colors";
+                tabRegister.className = "flex-1 py-2.5 text-center text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors";
+                formLogin.classList.remove('hidden');
+                formRegister.classList.add('hidden');
+                if (authError) authError.classList.add('hidden');
+            });
+            tabRegister.addEventListener('click', () => {
+                tabRegister.className = "flex-1 py-2.5 text-center text-blue-400 border-b-2 border-blue-500 font-semibold transition-colors";
+                tabLogin.className = "flex-1 py-2.5 text-center text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors";
+                formRegister.classList.remove('hidden');
+                formLogin.classList.add('hidden');
+                if (authError) authError.classList.add('hidden');
+            });
+        }
+
+        // Login Submit
+        formLogin?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            if (authError) authError.classList.add('hidden');
+            
+            try {
+                const res = await API.request('auth/login', 'POST', { username, password });
+                if (res && res.success !== false) {
+                    const user = res.data?.user || { id: Date.now(), username, full_name: username, role: 'admin' };
+                    API.setCurrentUser(user);
+                    this.checkAuth();
+                    const hash = window.location.hash.substring(1) || 'dashboard';
+                    this.navigate(hash);
+                } else {
+                    if (authError) {
+                        authError.textContent = res.message || 'Invalid username or password';
+                        authError.classList.remove('hidden');
+                    }
+                }
+            } catch(err) {
+                if (authError) {
+                    authError.textContent = 'Invalid credentials or connection error.';
+                    authError.classList.remove('hidden');
+                }
+            }
+        });
+
+        // Register Submit
+        formRegister?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fullname = document.getElementById('reg-fullname').value.trim();
+            const business_name = document.getElementById('reg-business').value.trim();
+            const username = document.getElementById('reg-username').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value.trim();
+            if (authError) authError.classList.add('hidden');
+
+            try {
+                const res = await API.request('auth/register', 'POST', {
+                    full_name: fullname,
+                    business_name,
+                    username,
+                    email,
+                    password
+                });
+                if (res && res.success !== false) {
+                    const user = res.data?.user || { id: Date.now(), username, full_name: fullname, business_name, role: 'admin' };
+                    API.setCurrentUser(user);
+                    this.checkAuth();
+                    const hash = window.location.hash.substring(1) || 'dashboard';
+                    this.navigate(hash);
+                } else {
+                    if (authError) {
+                        authError.textContent = res.message || 'Registration failed.';
+                        authError.classList.remove('hidden');
+                    }
+                }
+            } catch(err) {
+                if (authError) {
+                    authError.textContent = 'Registration failed. Please check your inputs.';
+                    authError.classList.remove('hidden');
+                }
+            }
+        });
+
+        // Demo Quick Login
+        demoBtn?.addEventListener('click', () => {
+            const demoUser = {
+                id: 1,
+                username: 'admin',
+                full_name: 'Demo Business Owner',
+                business_name: 'EaseBus Demo Store',
+                role: 'admin',
+                email: 'demo@easebus.com'
+            };
+            API.setCurrentUser(demoUser);
+            this.checkAuth();
+            const hash = window.location.hash.substring(1) || 'dashboard';
+            this.navigate(hash);
+        });
+
+        // Logout handlers
+        const handleLogout = (e) => {
+            if (e) e.preventDefault();
+            API.setCurrentUser(null);
+            API.request('auth/logout', 'POST').catch(() => {});
+            this.checkAuth();
+        };
+
+        document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+        document.getElementById('header-logout-btn')?.addEventListener('click', handleLogout);
     },
 
     setupSidebar() {
@@ -26,9 +177,9 @@ window.App = {
             overlay.classList.toggle('hidden');
         };
 
-        openBtn.addEventListener('click', toggleSidebar);
-        closeBtn.addEventListener('click', toggleSidebar);
-        overlay.addEventListener('click', toggleSidebar);
+        if (openBtn) openBtn.addEventListener('click', toggleSidebar);
+        if (closeBtn) closeBtn.addEventListener('click', toggleSidebar);
+        if (overlay) overlay.addEventListener('click', toggleSidebar);
 
         // Active state handling
         document.querySelectorAll('.nav-item').forEach(item => {
@@ -40,25 +191,17 @@ window.App = {
 
     setupRouter() {
         window.addEventListener('hashchange', () => {
-            const hash = window.location.hash.substring(1) || 'dashboard';
-            this.navigate(hash);
-        });
-    },
-
-    setupLogout() {
-        document.getElementById('logout-btn')?.addEventListener('click', async (e) => {
-            e.preventDefault();
-            try {
-                UI.toast('Logging out...');
-                await API.post('auth/logout');
-            } catch (err) {}
-            window.location.href = 'login.php';
+            if (this.checkAuth()) {
+                const hash = window.location.hash.substring(1) || 'dashboard';
+                this.navigate(hash);
+            }
         });
     },
 
     pendingAction: null,
 
     async navigate(route, action = null) {
+        if (!this.checkAuth()) return;
         if (action) this.pendingAction = action;
         
         if (window.location.hash !== `#${route}`) {
@@ -112,7 +255,7 @@ window.App = {
             container.innerHTML = '';
             if (config) {
                 if (!window[config.object]) {
-                    await this.loadScript(`../assets/js/${config.file}`);
+                    await this.loadScript(`assets/js/${config.file}`);
                 }
                 if (window[config.object] && typeof window[config.object].render === 'function') {
                     await window[config.object].render(container);

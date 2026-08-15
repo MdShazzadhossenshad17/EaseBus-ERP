@@ -81,22 +81,15 @@ if ($method === 'POST' && $action === 'login') {
 }
 
 if ($method === 'POST' && $action === 'register') {
-    // Check if this is the very first user
-    $userCount = Database::fetchOne("SELECT COUNT(*) as count FROM users")['count'];
-    
-    // Only allow registration if no users exist, or if current user is admin
-    if ($userCount > 0) {
-        requireRole('admin');
-        verifyCsrf();
-    }
-
     $input = getJsonInput();
     $v = new Validator($input);
     $v->required('username')->minLength('username', 3)->unique('username', 'users', 'username')
-      ->required('password')->minLength('password', 8)
-      ->required('full_name')
-      ->email('email')->unique('email', 'users', 'email')
-      ->required('phone');
+      ->required('password')->minLength('password', 6)
+      ->required('full_name');
+
+    if (isset($input['email']) && !empty($input['email'])) {
+        $v->email('email')->unique('email', 'users', 'email');
+    }
 
     if ($v->fails()) {
         jsonError('Validation failed', 400, ['errors' => $v->errors()]);
@@ -107,33 +100,48 @@ if ($method === 'POST' && $action === 'register') {
         
         $userId = Database::insert(
             "INSERT INTO users (username, password_hash, full_name, email, phone, must_change_password, status)
-             VALUES (?, ?, ?, ?, ?, ?, 'active')",
+             VALUES (?, ?, ?, ?, ?, 0, 'active')",
             [
                 $v->value('username'),
                 password_hash($v->value('password'), PASSWORD_BCRYPT),
                 $v->value('full_name'),
-                $v->value('email'),
-                $v->value('phone'),
-                $userCount === 0 ? 0 : 1 // First user doesn't need to change password
+                $v->value('email') ?? ($v->value('username') . '@easebus.com'),
+                $v->value('phone') ?? '01700000000'
             ]
         );
 
-        // Assign role: First user is admin, others need admin to assign later (or we can default to staff)
-        $roleName = $userCount === 0 ? 'admin' : 'staff';
-        $role = Database::fetchOne("SELECT id FROM roles WHERE name = ?", [$roleName]);
-        
-        if ($role) {
-            Database::insert("INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)", [$userId, $role['id']]);
+        // Assign role: Admin for their own business workspace
+        $role = Database::fetchOne("SELECT id FROM roles WHERE name = 'admin'");
+        if (!$role) {
+            $roleId = Database::insert("INSERT INTO roles (name, description) VALUES ('admin', 'Full store owner access')");
+        } else {
+            $roleId = $role['id'];
         }
+        
+        Database::insert("INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)", [$userId, $roleId]);
+
+        // Create default business for user
+        $businessName = !empty($input['business_name']) ? trim($input['business_name']) : ($v->value('full_name') . "'s Store");
+        Database::insert("INSERT INTO businesses (name, currency, currency_symbol) VALUES (?, 'BDT', '৳')", [$businessName]);
 
         Database::commit();
-        auditLog('user_registered', 'user', $userId, null, ['username' => $v->value('username'), 'role' => $roleName]);
 
-        if ($userCount === 0) {
-            jsonSuccess('First admin user created successfully. You can now log in.');
-        } else {
-            jsonSuccess('User created successfully.');
-        }
+        // Auto-login session
+        session_regenerate_id(true);
+        $_SESSION['user_id'] = (int) $userId;
+        $_SESSION['username'] = $v->value('username');
+        $_SESSION['user_role'] = 'admin';
+
+        jsonSuccess('Account created successfully! Welcome to EaseBus.', [
+            'user' => [
+                'id' => $userId,
+                'username' => $v->value('username'),
+                'full_name' => $v->value('full_name'),
+                'role' => 'admin',
+                'must_change_password' => false
+            ],
+            'csrf_token' => generateCsrfToken()
+        ]);
 
     } catch (Exception $e) {
         Database::rollback();

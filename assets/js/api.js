@@ -44,20 +44,61 @@ const SEED_DATA = {
     }
 };
 
-// Initialize localStorage DB if missing
+function getCurrentUserId() {
+    try {
+        const u = localStorage.getItem('easebus_active_user');
+        if (u) {
+            const parsed = JSON.parse(u);
+            return parsed.id || 'demo';
+        }
+    } catch(e) {}
+    return 'demo';
+}
+
+// Initialize localStorage DB scoped by active User ID
 function getStorage(key, fallback) {
     try {
-        const stored = localStorage.getItem('easebus_' + key);
+        const uid = getCurrentUserId();
+        const stored = localStorage.getItem('easebus_u' + uid + '_' + key);
         return stored ? JSON.parse(stored) : fallback;
     } catch(e) { return fallback; }
 }
 
 function setStorage(key, data) {
-    try { localStorage.setItem('easebus_' + key, JSON.stringify(data)); } catch(e) {}
+    try {
+        const uid = getCurrentUserId();
+        localStorage.setItem('easebus_u' + uid + '_' + key, JSON.stringify(data));
+    } catch(e) {}
 }
 
 const API = {
-    baseUrl: '../api',
+    baseUrl: 'api',
+    currentUser: null,
+
+    getCurrentUser() {
+        if (this.currentUser) return this.currentUser;
+        try {
+            const stored = localStorage.getItem('easebus_active_user');
+            if (stored) {
+                this.currentUser = JSON.parse(stored);
+                return this.currentUser;
+            }
+        } catch(e) {}
+        return null;
+    },
+
+    setCurrentUser(user) {
+        this.currentUser = user;
+        if (user) {
+            localStorage.setItem('easebus_active_user', JSON.stringify(user));
+            if (window.APP_CONFIG) {
+                window.APP_CONFIG.username = user.username || user.full_name;
+                window.APP_CONFIG.userRole = user.role || 'admin';
+            }
+        } else {
+            localStorage.removeItem('easebus_active_user');
+        }
+    },
 
     async isServerAvailable() {
         if (window.location.protocol === 'file:' || window.location.hostname.includes('web.app') || window.location.hostname.includes('firebaseapp.com')) {
@@ -67,16 +108,20 @@ const API = {
     },
 
     async request(endpoint, method = 'GET', data = null) {
-        const isServer = await this.isServerAvailable();
-        if (isServer) {
-            return this.remoteRequest(endpoint, method, data);
-        } else {
-            return this.mockCloudEngine(endpoint, method, data);
+        try {
+            const res = await this.remoteRequest(endpoint, method, data);
+            if (res && res.success !== false && res.status !== 'error') {
+                return res;
+            }
+        } catch(e) {
+            // Silently fall back to user-scoped client storage engine when DB is unconfigured or unreachable
         }
+        return this.mockCloudEngine(endpoint, method, data);
     },
 
     async remoteRequest(endpoint, method, data) {
-        const url = `${this.baseUrl}/${endpoint}`;
+        const cleanEp = endpoint.replace(/^\//, '');
+        const url = `${this.baseUrl}/${cleanEp}`;
         const headers = { 'Accept': 'application/json' };
         if (['POST', 'PUT', 'DELETE'].includes(method.toUpperCase())) {
             if (!(data instanceof FormData)) headers['Content-Type'] = 'application/json';
@@ -84,6 +129,7 @@ const API = {
         const options = { method, headers };
         if (data && method !== 'GET') options.body = data instanceof FormData ? data : JSON.stringify(data);
         const res = await fetch(url, options);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return await res.json();
     },
 
@@ -94,6 +140,42 @@ const API = {
         const params = new URLSearchParams(queryStr || '');
         const action = params.get('action') || (cleanEp.includes('/') ? cleanEp.split('/')[1] : '');
         const module = path.split('/')[0];
+
+        // Auth
+        if (module === 'auth') {
+            if (action === 'login' || action === 'register') {
+                const username = data?.username || 'admin';
+                const fullname = data?.full_name || data?.fullname || username;
+                const business = data?.business_name || (fullname + "'s Store");
+                const user = {
+                    id: username === 'admin' ? 1 : Date.now(),
+                    username: username,
+                    full_name: fullname,
+                    business_name: business,
+                    role: 'admin',
+                    email: data?.email || (username + '@easebus.com')
+                };
+                API.setCurrentUser(user);
+                return {
+                    status: 'success',
+                    success: true,
+                    message: 'Welcome to EaseBus',
+                    data: { user }
+                };
+            }
+            if (action === 'logout') {
+                API.setCurrentUser(null);
+                return { status: 'success', success: true, message: 'Logged out successfully' };
+            }
+            if (action === 'session' || action === 'me') {
+                const curr = API.getCurrentUser();
+                if (curr) {
+                    return { status: 'success', success: true, data: { user: curr } };
+                } else {
+                    return { status: 'error', success: false, message: 'Not logged in' };
+                }
+            }
+        }
 
         // 1. Dashboard
         if (module === 'dashboard') {

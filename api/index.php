@@ -16,7 +16,7 @@ $cleanPath = preg_replace('#^/(EaseBus|businessM)?/api#i', '', $uri);
 $pathParts = explode('/', trim($cleanPath, '/'));
 
 $module = $pathParts[0] ?? '';
-$action = $pathParts[1] ?? '';
+$action = !empty($pathParts[1]) ? $pathParts[1] : ($_GET['action'] ?? $_POST['action'] ?? '');
 
 if (empty($module)) {
     jsonError('API endpoint not specified.', 404);
