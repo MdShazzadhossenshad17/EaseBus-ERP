@@ -2,13 +2,27 @@
  * EaseBus — Progressive Web App (PWA) Service Worker
  */
 
-const CACHE_NAME = 'easebus-cache-v3.0';
+const CACHE_NAME = 'easebus-cache-v4.0';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/assets/img/logo.png',
   '/assets/js/api.js?v=3.0',
   '/assets/js/components.js?v=3.0',
+  '/assets/js/dashboard.js?v=3.0',
+  '/assets/js/products.js?v=3.0',
+  '/assets/js/orders.js?v=3.0',
+  '/assets/js/customers.js?v=3.0',
+  '/assets/js/suppliers.js?v=3.0',
+  '/assets/js/deliveries.js?v=3.0',
+  '/assets/js/returns.js?v=3.0',
+  '/assets/js/finance.js?v=3.0',
+  '/assets/js/expenses.js?v=3.0',
+  '/assets/js/inventory.js?v=3.0',
+  '/assets/js/investors.js?v=3.0',
+  '/assets/js/reports.js?v=3.0',
+  '/assets/js/settings.js?v=3.0',
+  '/assets/js/users.js?v=3.0',
   '/assets/js/creator.js?v=3.0',
   '/assets/js/app.js?v=3.0',
   '/manifest.json'
