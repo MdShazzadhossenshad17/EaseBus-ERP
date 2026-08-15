@@ -154,17 +154,23 @@ window.Reports = {
         const start = new Date();
         start.setDate(start.getDate() - 30);
         
-        document.getElementById('pl-start').value = start.toISOString().split('T')[0];
-        document.getElementById('pl-end').value = end.toISOString().split('T')[0];
+        const startInput = document.getElementById('pl-start');
+        const endInput = document.getElementById('pl-end');
+
+        if (startInput) startInput.value = start.toISOString().split('T')[0];
+        if (endInput) endInput.value = end.toISOString().split('T')[0];
         
-        document.getElementById('pl-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.generatePL();
-        });
+        const form = document.getElementById('pl-form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                Reports.generatePL(true);
+            });
+        }
         
         await Promise.all([
-            this.generatePL(),
-            this.loadValuation()
+            Reports.generatePL(),
+            Reports.loadValuation()
         ]);
     },
     
@@ -173,8 +179,11 @@ window.Reports = {
         const start = new Date();
         start.setDate(start.getDate() - days);
         
-        document.getElementById('pl-start').value = start.toISOString().split('T')[0];
-        document.getElementById('pl-end').value = end.toISOString().split('T')[0];
+        const startInput = document.getElementById('pl-start');
+        const endInput = document.getElementById('pl-end');
+
+        if (startInput) startInput.value = start.toISOString().split('T')[0];
+        if (endInput) endInput.value = end.toISOString().split('T')[0];
 
         // Update pill active highlight state
         document.querySelectorAll('.preset-btn').forEach(btn => {
@@ -187,29 +196,38 @@ window.Reports = {
             btnEl.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
         }
 
-        this.generatePL();
+        Reports.generatePL(true);
     },
 
     resetRange() {
         const defaultBtn = document.getElementById('btn-preset-default');
         this.setPreset(30, defaultBtn);
-        UI.toast('Date filter reset to 30 days');
     },
     
-    async generatePL() {
-        const start = document.getElementById('pl-start').value;
-        const end = document.getElementById('pl-end').value;
+    async generatePL(showToast = false) {
+        const startInput = document.getElementById('pl-start');
+        const endInput = document.getElementById('pl-end');
+        const start = startInput ? startInput.value : '';
+        const end = endInput ? endInput.value : '';
         const resultDiv = document.getElementById('pl-result');
         const periodSpan = document.getElementById('statement-period');
         
         try {
             UI.setLoading(true);
             const res = await API.get(`reports/profit_loss?start_date=${start}&end_date=${end}`);
-            const r = res.data.report;
+            const r = (res && res.data && res.data.report) ? res.data.report : {
+                period: { start: start, end: end },
+                revenue: 0, cogs: 0, gross_profit: 0, operating_expenses: 0, net_profit: 0, order_count: 0, avg_order_value: 0, gross_margin_percent: 0, net_margin_percent: 0, current_inventory_value: 0, expense_breakdown: [], top_products: []
+            };
+
             this.currentReportData = r;
 
-            if (periodSpan) {
-                periodSpan.textContent = `${UI.formatDate(r.period.start)} - ${UI.formatDate(r.period.end)}`;
+            if (periodSpan && r.period) {
+                periodSpan.textContent = `${UI.formatDate(r.period.start || start)} - ${UI.formatDate(r.period.end || end)}`;
+            }
+
+            if (showToast) {
+                UI.toast(`Report filtered: ${start} to ${end}`);
             }
 
             // Render KPI cards
