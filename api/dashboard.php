@@ -13,9 +13,8 @@ if ($method === 'GET' && $action === 'summary') {
     requirePermission('dashboard', 'read');
     
     $startOfMonth = date('Y-m-01 00:00:00');
-    
-    // Sales Today
-    $salesToday = Database::fetchOne("SELECT SUM(total_revenue) as total, COUNT(*) as cnt FROM sales WHERE DATE(sale_date) = CURDATE()");
+       // Sales Today
+    $salesToday = Database::fetchOne("SELECT COALESCE(SUM(total_amount), 0) as total, COUNT(*) as cnt FROM orders WHERE DATE(created_at) = CURDATE() AND order_status != 'cancelled'");
     // Deliveries In Transit / Active
     $activeDeliveries = Database::fetchOne("SELECT COUNT(*) as count FROM deliveries WHERE status IN ('order_placed', 'processing', 'pending', 'picked_up', 'in_transit', 'out_for_delivery')");
     // Pending Orders
@@ -23,11 +22,11 @@ if ($method === 'GET' && $action === 'summary') {
     // Low Stock
     $lowStock = Database::fetchOne("SELECT COUNT(*) as count FROM product_variants WHERE current_stock <= 5");
     // Total Liquidity Cash
-    $totalCash = Database::fetchOne("SELECT SUM(current_balance) as total FROM financial_accounts WHERE status = 'active'");
+    $totalCash = Database::fetchOne("SELECT COALESCE(SUM(current_balance), 0) as total FROM financial_accounts WHERE status = 'active'");
     
     // Monthly MTD Metrics
-    $monthlyRev = Database::fetchOne("SELECT SUM(total_revenue) as sum, SUM(gross_profit) as profit FROM sales WHERE sale_date >= ?", [$startOfMonth]);
-    $monthlyExp = Database::fetchOne("SELECT SUM(amount) as sum FROM expenses WHERE expense_date >= ?", [date('Y-m-01')]);
+    $monthlyRev = Database::fetchOne("SELECT COALESCE(SUM(total_amount), 0) as sum, COALESCE(SUM(profit), 0) as profit FROM orders WHERE created_at >= ? AND order_status != 'cancelled'", [$startOfMonth]);
+    $monthlyExp = Database::fetchOne("SELECT COALESCE(SUM(amount), 0) as sum FROM expenses WHERE expense_date >= ?", [date('Y-m-01')]);
     
     $revVal = (float) ($monthlyRev['sum'] ?? 0);
     $profVal = (float) ($monthlyRev['profit'] ?? 0);
@@ -80,11 +79,11 @@ if ($method === 'GET' && $action === 'revenue_chart') {
     $days = isset($_GET['days']) ? (int) $_GET['days'] : 30;
     
     $chartData = Database::fetchAll(
-        "SELECT DATE(sale_date) as date, SUM(total_revenue) as revenue, SUM(gross_profit) as profit 
-         FROM sales 
-         WHERE sale_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
-         GROUP BY DATE(sale_date)
-         ORDER BY DATE(sale_date) ASC",
+        "SELECT DATE(created_at) as date, SUM(total_amount) as revenue, SUM(profit) as profit 
+         FROM orders 
+         WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND order_status != 'cancelled'
+         GROUP BY DATE(created_at)
+         ORDER BY DATE(created_at) ASC",
         [$days]
     );
     
@@ -99,8 +98,8 @@ if ($method === 'GET' && $action === 'revenue_chart') {
             $row = reset($found);
             $formattedData[] = [
                 'date' => $dateStr,
-                'revenue' => (float) $row['revenue'],
-                'profit' => (float) $row['profit']
+                'revenue' => (float) ($row['revenue'] ?? 0),
+                'profit' => (float) ($row['profit'] ?? 0)
             ];
         } else {
             $formattedData[] = [
@@ -113,6 +112,7 @@ if ($method === 'GET' && $action === 'revenue_chart') {
     }
     
     jsonSuccess('Chart data loaded', ['chart' => $formattedData]);
+}
 }
 
 jsonError('Endpoint not found', 404);

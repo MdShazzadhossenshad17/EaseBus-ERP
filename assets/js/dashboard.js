@@ -72,12 +72,19 @@ window.Dashboard = {
                         <span class="text-xs text-slate-500 font-medium">Daily Inflow Trend</span>
                     </div>
                     <div class="p-6">
-                        <div class="h-64 flex items-end justify-between gap-1.5 border-b border-slate-200 pb-2 relative" id="dash-chart">
-                            <div class="absolute inset-0 flex items-center justify-center text-slate-400 text-xs">Loading analytics chart data...</div>
+                        <div class="overflow-x-auto pb-6 scrollbar-thin select-none">
+                            <div class="h-64 flex items-end justify-start gap-2 border-b border-slate-200 pb-4 relative min-w-full" id="dash-chart">
+                                <div class="absolute inset-0 flex items-center justify-center text-slate-400 text-xs">Loading analytics chart data...</div>
+                            </div>
                         </div>
-                        <div class="flex justify-center gap-6 mt-4 text-xs font-semibold text-slate-600">
-                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-blue-600"></div> Total Revenue</div>
-                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-emerald-500"></div> Gross Profit</div>
+                        <div class="flex flex-col sm:flex-row justify-between items-center mt-3 text-xs font-semibold text-slate-600 border-t border-slate-100 pt-3 gap-2">
+                            <div class="flex gap-6">
+                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-blue-600"></div> Total Revenue</div>
+                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-emerald-500"></div> Gross Profit</div>
+                            </div>
+                            <div class="text-[11px] text-slate-400 font-medium italic flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs text-blue-500">swap_horiz</span> Scroll left & right to view all dates
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -255,18 +262,19 @@ window.Dashboard = {
             const container = document.getElementById('dash-chart');
             if (!container) return;
 
-            const maxRev = Math.max(...data.map(d => d.revenue), 1);
+            const maxRev = Math.max(...data.map(d => d.revenue), 100);
+            const minWidth = Math.max(900, data.length * 34);
+            container.style.minWidth = `${minWidth}px`;
 
-            container.innerHTML = data.map((d, i) => {
-                const revHeight = Math.min(Math.max((d.revenue / maxRev) * 100, 15), 100);
-                const profHeight = Math.min(Math.max((d.profit / maxRev) * 100, 10), 100);
+            container.innerHTML = data.map((d) => {
+                const revHeight = d.revenue > 0 ? Math.min(Math.max((d.revenue / maxRev) * 100, 15), 100) : 4;
+                const profHeight = d.profit > 0 ? Math.min(Math.max((d.profit / maxRev) * 100, 10), 100) : 2;
 
-                const showLabel = i % 5 === 0 || i === data.length - 1;
                 const dateObj = new Date(d.date);
-                const label = showLabel ? `${dateObj.getDate()}/${dateObj.getMonth()+1}` : '';
+                const label = `${dateObj.getDate()}/${dateObj.getMonth()+1}`;
 
                 return `
-                    <div class="flex flex-col justify-end items-center h-full w-full group relative">
+                    <div class="flex flex-col justify-end items-center h-full flex-1 group relative min-w-[28px]">
                         <!-- Tooltip -->
                         <div class="absolute bottom-full mb-2 bg-slate-900 text-white text-[10px] py-1.5 px-2.5 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-20 transition-opacity">
                             <div class="font-bold text-slate-300 mb-0.5">${d.date}</div>
@@ -275,13 +283,13 @@ window.Dashboard = {
                         </div>
 
                         <!-- Bars -->
-                        <div class="w-full max-w-[16px] flex flex-col justify-end items-center h-48 gap-0.5">
-                            <div class="w-full bg-blue-600 rounded-t-sm transition-all" style="height: ${revHeight}%"></div>
-                            <div class="w-full bg-emerald-500 rounded-t-sm transition-all" style="height: ${profHeight}%"></div>
+                        <div class="w-full max-w-[18px] flex flex-col justify-end items-center h-48 gap-0.5">
+                            <div class="w-full ${d.revenue > 0 ? 'bg-blue-600' : 'bg-slate-200/80'} rounded-t-sm transition-all" style="height: ${revHeight}%"></div>
+                            <div class="w-full ${d.profit > 0 ? 'bg-emerald-500' : 'bg-slate-200/60'} rounded-t-sm transition-all" style="height: ${profHeight}%"></div>
                         </div>
 
-                        <!-- Axis Label -->
-                        <span class="absolute -bottom-6 text-[9px] text-slate-400 font-mono font-medium">${label}</span>
+                        <!-- Axis Label (Every single day date) -->
+                        <span class="absolute -bottom-6 text-[10px] text-slate-500 font-mono font-medium tracking-tighter whitespace-nowrap">${label}</span>
                     </div>
                 `;
             }).join('');
