@@ -36,14 +36,21 @@ window.App = {
         const roleEl = document.getElementById('user-role-display');
         const avatarEl = document.getElementById('user-avatar');
         const storeNameEl = document.getElementById('store-name-display');
+        const brandLink = document.getElementById('brand-logo-link');
+        const brandName = document.getElementById('brand-name-display');
 
         if (user.role === 'creator' || user.username === 'shad@dbms.com') {
             if (nameEl) nameEl.textContent = 'Md Shazzad Hossen Shad';
             if (roleEl) roleEl.textContent = 'Platform Creator & System Admin';
             if (storeNameEl) storeNameEl.textContent = 'EaseBus Platform Operations';
             if (avatarEl) avatarEl.textContent = 'S';
+            if (brandLink) brandLink.setAttribute('href', '#creator-overview');
+            if (brandName) brandName.textContent = 'EaseBus Creator';
             return;
         }
+
+        if (brandLink) brandLink.setAttribute('href', '#dashboard');
+        if (brandName) brandName.textContent = 'EaseBus';
 
         if (nameEl) nameEl.textContent = user.full_name || user.username;
         if (roleEl) roleEl.textContent = user.business_name ? (user.business_name + ' • ' + (user.role || 'Admin')) : (user.role || 'Active Owner');
@@ -227,6 +234,14 @@ window.App = {
     async navigate(route, action = null) {
         if (!this.checkAuth()) return;
         if (action) this.pendingAction = action;
+
+        const currentUser = API.getCurrentUser();
+        const isCreator = currentUser && (currentUser.role === 'creator' || currentUser.username === 'shad@dbms.com');
+        const isReadOnly = window.Creator && window.Creator.isReadOnlyMode;
+
+        if (isCreator && !isReadOnly && route === 'dashboard') {
+            route = 'creator-overview';
+        }
         
         if (window.location.hash !== `#${route}`) {
             window.location.hash = route;
