@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- SEO Meta Tags -->
-    <title>EaseBus ERP — Modern Business Operations & Treasury Suite</title>
-    <meta name="description" content="EaseBus ERP is an all-in-one Enterprise Business Management Suite featuring real-time Sales Orders, Courier Logistics, Inventory Movements, Financial Treasury Accounts, and Customer Returns.">
+    <title>EaseBus ERP — Modern Business Operations Suite</title>
+    <meta name="description" content="EaseBus ERP is a live Enterprise Business Management Suite featuring real-time Sales Orders, Courier Logistics, Inventory Movements, Financial Treasury Accounts, and Customer Returns.">
     <meta name="keywords" content="EaseBus, EaseBus ERP, Business Management, Inventory Control, Courier Logistics, Financial Treasury, Customer Returns, POS Sales">
     <meta name="author" content="EaseBus Team">
     <meta name="robots" content="index, follow">
@@ -14,115 +14,164 @@
     <!-- Open Graph / Social Sharing -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://easebus.web.app/">
-    <meta property="og:title" content="EaseBus ERP — Modern Business Operations & Treasury Suite">
+    <meta property="og:title" content="EaseBus ERP — Modern Business Operations Suite">
     <meta property="og:description" content="Manage your entire business operations, sales orders, deliveries, inventory, and accounts with EaseBus.">
     <meta property="og:image" content="https://easebus.web.app/assets/img/logo.png">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
 
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .font-geist { font-family: 'Geist', sans-serif; }
-    </style>
+    <!-- CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/app.css">
+
+    <!-- Application State -->
+    <script>
+        window.APP_CONFIG = {
+            name: "EaseBus",
+            currency: "BDT",
+            currencySymbol: "৳",
+            userRole: "admin",
+            username: "Admin User",
+            csrfToken: "easebus_live_token"
+        };
+        try { sessionStorage.setItem('csrf_token', window.APP_CONFIG.csrfToken); } catch(e) {}
+    </script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-50 text-slate-900 font-inter antialiased flex h-screen overflow-hidden">
 
-    <!-- Top Navigation Header -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <img src="assets/img/logo.png" alt="EaseBus Logo" class="w-10 h-10 rounded-xl shadow-lg ring-1 ring-white/20 object-cover">
-                <div>
-                    <h1 class="font-geist text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                        EaseBus <span class="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-semibold border border-blue-500/30">ERP v1.0</span>
-                    </h1>
-                    <p class="text-xs text-slate-400">Enterprise Business Operations & Treasury Suite</p>
-                </div>
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="bg-slate-900 text-white w-64 flex-shrink-0 flex flex-col h-full transition-transform duration-300 transform -translate-x-full md:translate-x-0 absolute md:relative z-20">
+        <div class="h-16 flex items-center px-5 border-b border-slate-800">
+            <a href="#dashboard" class="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
+                <img src="assets/img/logo.png" alt="EaseBus Logo" class="w-8 h-8 rounded-lg object-cover shadow-sm ring-1 ring-white/10">
+                <h1 class="font-geist text-xl font-bold tracking-tight text-white">EaseBus</h1>
+            </a>
+            <button id="close-sidebar" class="ml-auto md:hidden text-slate-400 hover:text-white">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1" id="main-nav">
+            <a href="#dashboard" class="nav-item active group flex items-center px-3 py-2 text-sm font-medium rounded-md bg-blue-600 text-white">
+                <span class="material-symbols-outlined mr-3 text-lg">dashboard</span> Dashboard
+            </a>
+
+            <div class="pt-4 pb-1">
+                <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Business Operations</p>
             </div>
-            <div class="flex items-center gap-3">
-                <a href="https://github.com/MdShazzadhossenshad17/EaseBus-ERP" target="_blank" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition border border-slate-700 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">code</span> GitHub Repo
-                </a>
-                <a href="http://localhost/businessM/pages/login.php" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white transition shadow-lg shadow-blue-600/30 flex items-center gap-1.5">
-                    Launch Application <span class="material-symbols-outlined text-sm">arrow_forward</span>
+
+            <a href="#products" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">inventory_2</span> Products & Stock
+            </a>
+            <a href="#inventory" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">warehouse</span> Inventory Management
+            </a>
+            <a href="#suppliers" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">local_shipping</span> Suppliers
+            </a>
+            <a href="#orders" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">shopping_cart</span> Orders & Sales
+            </a>
+            <a href="#deliveries" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">moped</span> Deliveries & Logistics
+            </a>
+            <a href="#returns" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">assignment_return</span> Customer Returns
+            </a>
+            <a href="#customers" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">people</span> Customers
+            </a>
+
+            <div class="pt-4 pb-1">
+                <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Finance & Equity</p>
+            </div>
+
+            <a href="#finance" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">account_balance_wallet</span> Accounts & Cash
+            </a>
+            <a href="#expenses" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">receipt_long</span> Expenses
+            </a>
+            <a href="#investors" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">handshake</span> Investors & Equity
+            </a>
+
+            <div class="pt-4 pb-1">
+                <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Management</p>
+            </div>
+
+            <a href="#reports" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">bar_chart</span> Analytics & Reports
+            </a>
+            <a href="#users" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">manage_accounts</span> Users & Staff
+            </a>
+            <a href="#settings" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">settings</span> Settings
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-slate-800">
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold font-mono">
+                    A
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-white">Admin User</p>
+                    <p class="text-xs text-emerald-400 font-semibold">Live Administrator</p>
+                </div>
+                <a href="https://github.com/MdShazzadhossenshad17/EaseBus-ERP" target="_blank" class="ml-auto text-slate-400 hover:text-white p-1 rounded-md hover:bg-slate-800" title="GitHub Repo">
+                    <span class="material-symbols-outlined text-lg">code</span>
                 </a>
             </div>
         </div>
-    </header>
+    </aside>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex-1 flex flex-col justify-center">
-        <!-- Hero Section -->
-        <div class="text-center max-w-3xl mx-auto mb-16">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold mb-6">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> https://easebus.web.app Live
-            </div>
-            <h2 class="font-geist text-4xl sm:text-5xl font-extrabold tracking-tight text-white mb-6 leading-tight">
-                Streamline Your Entire Business Operations with <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400">EaseBus</span>
-            </h2>
-            <p class="text-base sm:text-lg text-slate-400 leading-relaxed mb-8">
-                An all-in-one Enterprise Resource Planning system featuring real-time Sales Orders, Courier Logistics, Inventory Movements, Financial Treasury Accounts, Operational Expenses, and Customer Returns.
-            </p>
-            <div class="flex flex-wrap items-center justify-center gap-4">
-                <a href="http://localhost/businessM/pages/login.php" class="px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-bold text-white shadow-xl shadow-blue-600/25 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
-                    <span class="material-symbols-outlined">rocket_launch</span> Access Local EaseBus Portal
-                </a>
-                <a href="https://github.com/MdShazzadhossenshad17/EaseBus-ERP" target="_blank" class="px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm font-semibold text-slate-200 border border-slate-700 transition flex items-center gap-2">
-                    <span class="material-symbols-outlined">terminal</span> Source Code on GitHub
-                </a>
-            </div>
-        </div>
+    <!-- Mobile overlay -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-10 hidden md:hidden"></div>
 
-        <!-- System Core Modules Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            <div class="p-6 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-blue-500/50 transition-all group">
-                <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <span class="material-symbols-outlined text-2xl">dashboard</span>
-                </div>
-                <h3 class="font-geist text-lg font-bold text-white mb-2">Command Center</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">Real-time revenue metrics, 30-day profit charts, system health alerts, and instant quick actions.</p>
+    <!-- Main Workspace Container -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+
+        <!-- Top Header -->
+        <header class="bg-white border-b border-slate-200 h-16 flex items-center px-4 sm:px-6 z-10">
+            <button id="open-sidebar" class="md:hidden mr-4 text-slate-500 hover:text-slate-700">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+
+            <h2 id="page-title" class="font-geist text-xl font-bold text-slate-900">Dashboard</h2>
+
+            <div class="ml-auto flex items-center space-x-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Live Cloud Active
+                </span>
+            </div>
+        </header>
+
+        <!-- Main workspace -->
+        <main id="workspace" class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50 relative">
+            <!-- Loading overlay -->
+            <div id="loading-overlay" class="absolute inset-0 bg-slate-50 bg-opacity-75 z-50 flex items-center justify-center hidden">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
 
-            <div class="p-6 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-indigo-500/50 transition-all group">
-                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <span class="material-symbols-outlined text-2xl">shopping_cart</span>
-                </div>
-                <h3 class="font-geist text-lg font-bold text-white mb-2">Orders & Sales</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">POS sales, multi-variant item picker, discounts, payment status tracking, and automated stock deductions.</p>
-            </div>
+            <!-- Screens render here -->
+            <div id="screen-container"></div>
+        </main>
+    </div>
 
-            <div class="p-6 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-emerald-500/50 transition-all group">
-                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <span class="material-symbols-outlined text-2xl">moped</span>
-                </div>
-                <h3 class="font-geist text-lg font-bold text-white mb-2">Logistics & Returns</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">CarryBee & Uber integrations, real-time tracking numbers, and automated inventory restock on customer returns.</p>
-            </div>
+    <!-- Toast container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
 
-            <div class="p-6 rounded-2xl bg-slate-800/60 border border-slate-700/60 hover:border-amber-500/50 transition-all group">
-                <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
-                </div>
-                <h3 class="font-geist text-lg font-bold text-white mb-2">Treasury & Expenses</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">Cash registers, bank accounts, mobile banking reserves, category write-in system, and audit logs.</p>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="border-t border-slate-800 py-6 bg-slate-950/60 text-center text-xs text-slate-500">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>© 2026 EaseBus ERP System. All rights reserved.</p>
-            <p>Pushed to GitHub by <a href="https://github.com/MdShazzadhossenshad17" target="_blank" class="text-blue-400 hover:underline">MdShazzadhossenshad17</a></p>
-        </div>
-    </footer>
-
+    <!-- Live Core Scripts -->
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/components.js"></script>
+    <script src="assets/js/app.js"></script>
 </body>
 </html>
