@@ -1,5 +1,5 @@
 /**
- * EaseBus — API Client & Live Cloud Engine Driver
+ * EaseBus — API Client & Complete Live Cloud Engine Driver
  */
 
 window.APP_CONFIG = window.APP_CONFIG || {
@@ -7,7 +7,7 @@ window.APP_CONFIG = window.APP_CONFIG || {
     currency: "BDT",
     currencySymbol: "৳",
     userRole: "admin",
-    username: "Admin User",
+    username: "Admin",
     csrfToken: "easebus_live_token"
 };
 
@@ -57,7 +57,21 @@ const SEED_DATA = {
     ],
     investors: [
         { id: 1, name: 'Sharif Uddin', investment_amount: 500000, equity_percentage: 20, return_paid: 25000, status: 'active' }
-    ]
+    ],
+    users: [
+        { id: 1, username: 'admin', name: 'Admin User', email: 'admin@easebus.com', role: 'admin', status: 'active', last_login: '2026-08-15 12:00:00' },
+        { id: 2, username: 'manager', name: 'Manager User', email: 'manager@easebus.com', role: 'manager', status: 'active', last_login: '2026-08-14 15:30:00' }
+    ],
+    settings: {
+        name: 'EaseBus',
+        currency: 'BDT',
+        currency_symbol: '৳',
+        phone: '01700000000',
+        email: 'info@easebus.com',
+        address: 'Dhaka, Bangladesh',
+        tax_enabled: 0,
+        tax_rate: 0
+    }
 };
 
 // Initialize localStorage DB if missing
@@ -144,7 +158,7 @@ const API = {
                             recent_orders: sales.slice(0, 5),
                             alerts: [
                                 { type: 'info', icon: 'local_shipping', text: `${deliveries.length} consignments dispatched via courier.`, color: 'text-blue-500' },
-                                { type: 'success', icon: 'verified', text: "EaseBus Cloud Engine running live in browser.", color: 'text-emerald-500' }
+                                { type: 'success', icon: 'verified', text: "EaseBus Live System active.", color: 'text-emerald-500' }
                             ]
                         }
                     }
@@ -246,7 +260,6 @@ const API = {
                 deliveries = deliveries.map(d => d.id == data.id ? { ...d, ...data } : d);
                 setStorage('deliveries', deliveries);
 
-                // Auto-return sync if status == returned
                 if (data.status === 'returned') {
                     let returns = getStorage('returns', SEED_DATA.returns);
                     returns.unshift({ id: Date.now(), return_no: 'RET-2026-' + Math.floor(100 + Math.random() * 900), order_no: 'ORD-101', customer_name: 'Customer', reason: 'Returned Delivery', status: 'approved', refund_amount: 1200, created_at: new Date().toISOString() });
@@ -339,6 +352,122 @@ const API = {
                 };
             }
             if (action === 'list') return { status: 'success', data: { suppliers } };
+        }
+
+        // 9. Customers
+        if (module === 'customers') {
+            let customers = getStorage('customers', SEED_DATA.customers);
+            if (action === 'summary') {
+                return {
+                    status: 'success',
+                    data: {
+                        summary: {
+                            total_customers: customers.length,
+                            active_customers: customers.length,
+                            total_spent: 11700
+                        }
+                    }
+                };
+            }
+            if (action === 'list') return { status: 'success', data: { customers } };
+        }
+
+        // 10. Settings
+        if (module === 'settings') {
+            let settings = getStorage('settings', SEED_DATA.settings);
+            if (action === 'get') return { status: 'success', data: { settings } };
+            if (action === 'update') {
+                settings = { ...settings, ...data };
+                setStorage('settings', settings);
+                return { status: 'success', message: 'Settings saved successfully' };
+            }
+        }
+
+        // 11. Users & Staff
+        if (module === 'users') {
+            let users = getStorage('users', SEED_DATA.users);
+            if (action === 'list') return { status: 'success', data: { users } };
+            if (action === 'create') {
+                const newUser = { id: Date.now(), ...data, status: 'active', last_login: 'Never' };
+                users.unshift(newUser);
+                setStorage('users', users);
+                return { status: 'success', message: 'User created successfully' };
+            }
+        }
+
+        // 12. Reports
+        if (module === 'reports') {
+            const sales = getStorage('sales', SEED_DATA.orders);
+            const expenses = getStorage('expenses', SEED_DATA.expenses);
+            const totalSales = sales.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+            const totalExp = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+
+            if (action === 'financial' || action === 'summary') {
+                return {
+                    status: 'success',
+                    data: {
+                        report: {
+                            period: { start_date: '2026-07-16', end_date: '2026-08-15' },
+                            revenue: totalSales || 8550,
+                            cogs: 4200,
+                            gross_profit: (totalSales || 8550) - 4200,
+                            expenses: totalExp || 1950,
+                            net_profit: (totalSales || 8550) - 4200 - (totalExp || 1950),
+                            profit_margin: 28.07,
+                            expense_breakdown: [
+                                { category: 'Rent & Utilities', total: 1500 },
+                                { category: 'Office Supplies', total: 450 }
+                            ]
+                        }
+                    }
+                };
+            }
+        }
+
+        // 13. Inventory
+        if (module === 'inventory') {
+            let products = getStorage('products', SEED_DATA.products);
+            if (action === 'summary') {
+                return {
+                    status: 'success',
+                    data: {
+                        summary: {
+                            total_items: products.length,
+                            total_stock_value: 125000,
+                            low_stock_count: products.filter(p => p.current_stock <= p.min_stock_level).length
+                        }
+                    }
+                };
+            }
+            if (action === 'movements' || action === 'list') {
+                return {
+                    status: 'success',
+                    data: {
+                        movements: [
+                            { id: 1, type: 'purchase', quantity: 20, reference: 'PO-991', created_at: '2026-08-14 11:00:00', product_name: 'Premium Cotton T-Shirt' },
+                            { id: 2, type: 'sale', quantity: -2, reference: 'ORD-101', created_at: '2026-08-15 10:30:00', product_name: 'Premium Cotton T-Shirt' }
+                        ]
+                    }
+                };
+            }
+        }
+
+        // 14. Investors
+        if (module === 'investors') {
+            let investors = getStorage('investors', SEED_DATA.investors);
+            if (action === 'summary') {
+                return {
+                    status: 'success',
+                    data: {
+                        summary: {
+                            total_investors: investors.length,
+                            total_capital: 500000,
+                            total_returns_paid: 25000
+                        }
+                    }
+                };
+            }
+            if (action === 'list') return { status: 'success', data: { investors } };
         }
 
         // Fallback generic response
