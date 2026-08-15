@@ -592,7 +592,7 @@ window.Creator = {
         if (!banner) {
             banner = document.createElement('div');
             banner.id = 'creator-readonly-banner';
-            banner.className = 'bg-amber-500 text-slate-950 font-bold px-4 py-2.5 flex items-center justify-between text-xs shadow-lg z-50 sticky top-0 border-b border-amber-600';
+            banner.className = 'fixed top-0 left-0 right-0 z-[9999] bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 font-bold px-6 py-2.5 flex items-center justify-between text-xs shadow-xl border-b border-amber-600';
             document.body.prepend(banner);
         }
 
@@ -601,7 +601,7 @@ window.Creator = {
                 <span class="material-symbols-outlined text-base">visibility</span>
                 <span>CREATOR READ-ONLY INSPECTION MODE: Currently viewing <strong class="underline">${storeName}</strong> (Owner: ${ownerName}). All user data is protected against modification.</span>
             </div>
-            <button class="bg-slate-950 text-amber-300 hover:bg-slate-900 px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors" onclick="Creator.exitReadOnlyWorkspace()">
+            <button class="bg-slate-950 text-amber-300 hover:bg-slate-900 px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shrink-0 ml-4" onclick="Creator.exitReadOnlyWorkspace()">
                 <span class="material-symbols-outlined text-sm">exit_to_app</span> Exit to Creator Portal
             </button>
         `;
@@ -612,6 +612,9 @@ window.Creator = {
             style = document.createElement('style');
             style.id = 'readonly-style';
             style.textContent = `
+                body.creator-readonly {
+                    padding-top: 38px !important;
+                }
                 body.creator-readonly button.btn-primary:not(#creator-readonly-banner button),
                 body.creator-readonly button[type="submit"],
                 body.creator-readonly .btn-danger {
