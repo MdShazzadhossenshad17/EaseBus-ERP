@@ -138,22 +138,6 @@ window.App = {
             }
         });
 
-        // Demo Quick Login
-        demoBtn?.addEventListener('click', () => {
-            const demoUser = {
-                id: 1,
-                username: 'admin',
-                full_name: 'Demo Business Owner',
-                business_name: 'EaseBus Demo Store',
-                role: 'admin',
-                email: 'demo@easebus.com'
-            };
-            API.setCurrentUser(demoUser);
-            this.checkAuth();
-            const hash = window.location.hash.substring(1) || 'dashboard';
-            this.navigate(hash);
-        });
-
         // Logout handlers
         const handleLogout = (e) => {
             if (e) e.preventDefault();

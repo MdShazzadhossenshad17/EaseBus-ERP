@@ -175,12 +175,16 @@ const API = {
 
         // Auth
         if (module === 'auth') {
-            if (action === 'login' || action === 'register') {
-                const username = data?.username?.trim() || 'admin';
+            if (action === 'login') {
+                const username = (data?.username || '').trim();
                 const password = data?.password || '';
 
+                if (!username || !password) {
+                    return { status: 'error', success: false, message: 'Username and password required.' };
+                }
+
                 // Creator Portal Login Check
-                if (username === 'shad@dbms.com' || username === 'shad') {
+                if (username.toLowerCase() === 'shad@dbms.com' || username.toLowerCase() === 'shad') {
                     if (password !== '01521582448') {
                         return { status: 'error', success: false, message: 'Invalid password for Creator account.' };
                     }
@@ -201,21 +205,46 @@ const API = {
                     };
                 }
 
+                // Check registered users
+                const globalUsers = getGlobalUsers();
+                const found = globalUsers.find(u => u.username?.toLowerCase() === username.toLowerCase() || u.email?.toLowerCase() === username.toLowerCase());
+                
+                if (found) {
+                    API.setCurrentUser(found);
+                    return {
+                        status: 'success',
+                        success: true,
+                        message: 'Login successful',
+                        data: { user: found }
+                    };
+                } else {
+                    return { status: 'error', success: false, message: 'User account not found. Please click "Create Account (Sign Up)" to register.' };
+                }
+            }
+
+            if (action === 'register') {
+                const username = (data?.username || '').trim();
                 const fullname = data?.full_name || data?.fullname || username;
                 const business = data?.business_name || (fullname + "'s Store");
+                const email = data?.email || (username + '@easebus.com');
+
+                if (!username || !fullname) {
+                    return { status: 'error', success: false, message: 'Full Name and Username are required.' };
+                }
+
                 const user = {
-                    id: username === 'admin' ? 1 : Date.now(),
+                    id: Date.now(),
                     username: username,
                     full_name: fullname,
                     business_name: business,
                     role: 'admin',
-                    email: data?.email || (username + '@easebus.com')
+                    email: email
                 };
                 API.setCurrentUser(user);
                 return {
                     status: 'success',
                     success: true,
-                    message: 'Welcome to EaseBus',
+                    message: 'Account created successfully! Welcome to EaseBus.',
                     data: { user }
                 };
             }
