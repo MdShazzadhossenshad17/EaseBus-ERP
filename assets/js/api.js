@@ -57,18 +57,9 @@ function getGlobalUsers() {
     try {
         const stored = localStorage.getItem('easebus_global_users');
         let users = stored ? JSON.parse(stored) : [];
-        if (!users.some(u => u.username === 'shad@dbms.com')) {
-            users.unshift({
-                id: 99999,
-                username: 'shad@dbms.com',
-                full_name: 'Md Shazzad Hossen Shad (Creator)',
-                business_name: 'EaseBus Creator Operations',
-                role: 'creator',
-                email: 'shad@dbms.com',
-                created_at: new Date().toISOString()
-            });
-            localStorage.setItem('easebus_global_users', JSON.stringify(users));
-        }
+        // Exclude Creator account from store users registry
+        users = users.filter(u => u.username !== 'shad@dbms.com' && u.email !== 'shad@dbms.com' && u.role !== 'creator');
+        localStorage.setItem('easebus_global_users', JSON.stringify(users));
         return users;
     } catch(e) { return []; }
 }

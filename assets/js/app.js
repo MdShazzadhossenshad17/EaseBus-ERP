@@ -212,6 +212,20 @@ window.App = {
         if (closeBtn) closeBtn.onclick = toggleSidebar;
         if (overlay) overlay.onclick = toggleSidebar;
 
+        // Brand logo click navigation handler
+        const brandLink = document.getElementById('brand-logo-link');
+        if (brandLink) {
+            brandLink.onclick = (e) => {
+                e.preventDefault();
+                const u = API.getCurrentUser();
+                if (u && (u.role === 'creator' || u.username === 'shad@dbms.com') && (!window.Creator || !window.Creator.isReadOnlyMode)) {
+                    this.navigate('creator-overview');
+                } else {
+                    this.navigate('dashboard');
+                }
+            };
+        }
+
         // Active state handling
         document.querySelectorAll('.nav-item').forEach(item => {
             item.onclick = () => {
