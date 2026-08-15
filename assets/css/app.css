@@ -1,0 +1,119 @@
+/* EaseBus — Core CSS */
+
+.font-inter { font-family: 'Inter', sans-serif; }
+.font-geist { font-family: 'Geist', sans-serif; }
+.font-mono-data { font-family: 'JetBrains Mono', monospace; }
+
+/* Utility classes for data display */
+.data-table { width: 100%; text-align: left; border-collapse: separate; border-spacing: 0; }
+.data-table th { background-color: #F8FAFC; padding: 0.75rem 1rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; border-bottom: 1px solid #E2E8F0; }
+.data-table td { padding: 0.875rem 1rem; font-size: 0.875rem; border-bottom: 1px solid #E2E8F0; color: #334155; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover { background-color: #F8FAFC; }
+
+.data-number { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+.data-number.positive { color: #059669; }
+.data-number.negative { color: #DC2626; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+/* Form inputs */
+.form-input { 
+    display: block; width: 100%; border-radius: 0.375rem; border: 1px solid #CBD5E1; 
+    padding: 0.5rem 0.75rem; font-size: 0.875rem; line-height: 1.25rem; 
+    transition: all 0.15s ease-in-out; 
+}
+.form-input:focus { outline: none; border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+.form-label { display: block; font-size: 0.875rem; font-weight: 500; color: #334155; margin-bottom: 0.25rem; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; border-radius: 0.375rem; transition: all 0.15s ease-in-out; cursor: pointer; }
+.btn-primary { background-color: #0F172A; color: white; border: 1px solid transparent; }
+.btn-primary:hover { background-color: #1E293B; }
+.btn-secondary { background-color: white; color: #334155; border: 1px solid #CBD5E1; }
+.btn-secondary:hover { background-color: #F8FAFC; border-color: #94A3B8; }
+.btn-danger { background-color: #EF4444; color: white; border: 1px solid transparent; }
+.btn-danger:hover { background-color: #DC2626; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Card */
+.card { background-color: white; border-radius: 0.5rem; border: 1px solid #E2E8F0; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); overflow: hidden; }
+.card-header { padding: 1rem 1.25rem; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; }
+.card-title { font-family: 'Geist', sans-serif; font-size: 1rem; font-weight: 600; color: #0F172A; }
+.card-body { padding: 1.25rem; }
+
+/* Modal */
+.modal-overlay { background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(2px); }
+
+/* ============================================================
+   PRINT STYLESHEET — Full Page Invoice & Clean Report Printing
+   ============================================================ */
+@media print {
+    body {
+        background: white !important;
+        color: #0F172A !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    /* Hide background elements, navigation sidebars, headers, and buttons */
+    aside, #sidebar, header, nav, #open-sidebar, #close-sidebar,
+    .btn, button, #orders-main-view, #orders-create-view, #pl-form, #preset-btn-group,
+    #kpi-cards-container, #ord-kpi-container, #inv-kpi-container,
+    .modal-overlay > div > div.p-4.bg-slate-50.border-t {
+        display: none !important;
+    }
+
+    /* Format Modal Overlay for Print */
+    .modal-overlay {
+        position: static !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: block !important;
+    }
+
+    /* Format Printable Invoice */
+    #invoice-printable {
+        position: static !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        display: block !important;
+        visibility: visible !important;
+    }
+
+    /* Hide invoice footer action buttons during print */
+    #invoice-printable .p-4.bg-slate-50.border-t {
+        display: none !important;
+    }
+
+    /* Retain Header & Table styling for print preview */
+    #invoice-printable .bg-slate-900 {
+        background-color: #0F172A !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    #invoice-printable table th {
+        background-color: #F1F5F9 !important;
+        color: #0F172A !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    @page {
+        margin: 1cm;
+        size: auto;
+    }
+}

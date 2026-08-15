@@ -1,0 +1,158 @@
+<?php
+/* WealthOffice - Local File-based Database & SSE Router (api.php) */
+
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
+}
+
+$db_dir = __DIR__ . '/data';
+$db_file = $db_dir . '/db.json';
+
+// Initialize default seed data if DB file doesn't exist
+$default_data = [
+    "users" => [],
+    "investors" => [],
+    "funds" => [],
+    "investments" => [],
+    "transactions" => [],
+    "capital_calls" => [],
+    "distributions" => [],
+    "activities" => [],
+    "audit_logs" => []
+];
+
+// Create data directory if it doesn't exist
+if (!is_dir($db_dir)) {
+    mkdir($db_dir, 0777, true);
+}
+
+// Create db.json if it doesn't exist
+if (!file_exists($db_file)) {
+    file_put_contents($db_file, json_encode($default_data, JSON_PRETTY_PRINT));
+}
+
+// Process action route
+$action = isset($_GET['action']) ? $_GET['action'] : 'get';
+
+if ($action === 'get') {
+    header('Content-Type: application/json');
+    $fp = fopen($db_file, 'r');
+    if ($fp && flock($fp, LOCK_SH)) {
+        $data = fread($fp, filesize($db_file) ?: 1);
+        flock($fp, LOCK_UN);
+        fclose($fp);
+        echo $data;
+    } else {
+        echo file_get_contents($db_file);
+    }
+    exit;
+}
+
+if ($action === 'save') {
+    header('Content-Type: application/json');
+    $json_input = file_get_contents('php://input');
+    $decoded = json_decode($json_input, true);
+    
+    if ($decoded !== null) {
+        // Atomic save with file locking
+        $temp_file = $db_file . '.' . uniqid('', true) . '.tmp';
+        if (file_put_contents($temp_file, json_encode($decoded, JSON_PRETTY_PRINT)) !== false) {
+            $fp = fopen($db_file, 'c+');
+            if ($fp && flock($fp, LOCK_EX)) {
+                ftruncate($fp, 0);
+                rewind($fp);
+                fwrite($fp, json_encode($decoded, JSON_PRETTY_PRINT));
+                fflush($fp);
+                flock($fp, LOCK_UN);
+                fclose($fp);
+                unlink($temp_file);
+                echo json_encode(["status" => "success", "message" => "Database successfully updated."]);
+            } else {
+                rename($temp_file, $db_file);
+                echo json_encode(["status" => "success", "message" => "Database updated via fallback rename."]);
+            }
+        } else {
+            http_response_code(500);
+            echo json_encode(["status" => "error", "message" => "Failed to write temp database file."]);
+        }
+    } else {
+        http_response_code(400);
+        echo json_encode(["status" => "error", "message" => "Invalid JSON payload."]);
+    }
+    exit;
+}
+
+if ($action === 'stream') {
+    header('Content-Type: text/event-stream');
+    header('Cache-Control: no-cache');
+    header('Connection: keep-alive');
+    header('X-Accel-Buffering: no');
+    
+    set_time_limit(0);
+    
+    // Disable output buffering
+    while (ob_get_level()) {
+        ob_end_flush();
+    }
+    flush();
+    
+    $last_mtime = 0;
+    $heartbeat_counter = 0;
+    
+    while (true) {
+        if (connection_aborted()) {
+            break;
+        }
+        
+        clearstatcache();
+        if (file_exists($db_file)) {
+            $mtime = filemtime($db_file);
+            if ($mtime > $last_mtime) {
+                $last_mtime = $mtime;
+                
+                // Read and check version/last action from db.json without sending full state
+                $fp = fopen($db_file, 'r');
+                $activities = [];
+                if ($fp && flock($fp, LOCK_SH)) {
+                    $raw = fread($fp, filesize($db_file) ?: 1);
+                    flock($fp, LOCK_UN);
+                    fclose($fp);
+                    $decoded = json_decode($raw, true);
+                    $activities = isset($decoded['activities']) ? $decoded['activities'] : [];
+                }
+                
+                $latest_activity = count($activities) > 0 ? $activities[0] : null;
+                
+                $event_payload = [
+                    "type" => "DATA_CHANGED",
+                    "timestamp" => $mtime,
+                    "latest" => $latest_activity
+                ];
+                
+                echo "event: update\n";
+                echo "data: " . json_encode($event_payload) . "\n\n";
+                flush();
+            }
+        }
+        
+        // Send heartbeat comment every 3 seconds (10 * 300ms)
+        $heartbeat_counter++;
+        if ($heartbeat_counter >= 10) {
+            echo ": heartbeat\n\n";
+            flush();
+            $heartbeat_counter = 0;
+        }
+        
+        usleep(300000); // Sleep for 300ms
+    }
+    exit;
+}
+
+http_response_code(404);
+header('Content-Type: application/json');
+echo json_encode(["status" => "error", "message" => "API Route not found."]);
+exit;

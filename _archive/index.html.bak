@@ -1,0 +1,2182 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>WealthOffice - Institutional Access</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface-variant": "#45464d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#e5eeff",
+                        "tertiary-container": "#002113",
+                        "primary-fixed-dim": "#bec6e0",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#00174b",
+                        "background": "#f8f9ff",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#eff4ff",
+                        "on-primary-fixed": "#131b2e",
+                        "secondary-fixed": "#dbe1ff",
+                        "on-surface": "#0b1c30",
+                        "on-background": "#0b1c30",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "tertiary-fixed": "#6ffbbe",
+                        "primary-fixed": "#dae2fd",
+                        "surface-variant": "#d3e4fe",
+                        "secondary-container": "#316bf3",
+                        "primary-container": "#131b2e",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#000000",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-secondary-container": "#fefcff",
+                        "on-secondary-fixed-variant": "#003ea8",
+                        "on-tertiary-fixed": "#002113",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "surface-bright": "#f8f9ff",
+                        "on-tertiary-container": "#009668",
+                        "secondary": "#0051d5",
+                        "surface": "#f8f9ff",
+                        "surface-tint": "#565e74",
+                        "outline-variant": "#c6c6cd",
+                        "inverse-primary": "#bec6e0",
+                        "inverse-on-surface": "#eaf1ff",
+                        "primary": "#000000",
+                        "surface-dim": "#cbdbf5",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-primary-container": "#7c839b",
+                        "outline": "#76777d",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#213145"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "grid-margin": "32px",
+                        "grid-gutter": "20px",
+                        "xs": "8px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "2xl": "48px",
+                        "sm": "12px",
+                        "3xl": "64px",
+                        "base": "4px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Geist"],
+                        "data-mono": ["JetBrains Mono"],
+                        "headline-md": ["Geist"],
+                        "body-sm": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-lg": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Geist"],
+                        "headline-sm": ["Geist"]
+                    }
+                }
+            }
+        };
+    </script>
+    <!-- Google Fonts & Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <!-- Consolidated Stylesheet -->
+    <link href="design.css" rel="stylesheet">
+</head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen">
+
+<!-- Screen: login -->
+<div id="screen-login" class="spa-screen hidden">
+<!-- Split Screen Layout -->
+<div class="flex w-full min-h-screen">
+<!-- Left Column: Branding / Image -->
+<div class="hidden lg:flex lg:w-1/2 relative bg-surface-container-highest overflow-hidden">
+<!-- Background Image -->
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A striking architectural photograph of a modern glass and steel skyscraper reaching towards a clear blue sky, viewed from a low angle. The building reflects sunlight, creating a high-key, pristine aesthetic. The composition emphasizes geometric precision and structural integrity, conveying a sense of corporate authority, stability, and institutional trust. The color palette features cool slate grays, bright whites, and deep navy accents, perfectly aligning with a premium financial brand. The mood is calm, professional, and forward-looking." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAbBsGpEg5dkIzL-qb7cUrqeeNwTREUsv9uE4r6GY2BhHvM-gYBGZDAyH2XhmHVvQwJIagm2mXS0ZyiHHF0fXMu1QZACJOEzHVpK7RlGdiR1e_ucLgceb0eeO-vV0Ru1wwdBgyJXiaQa528ICvmhZwdamnK0wJTkBzT62v4bjoJf-g-fZHz7QcUbX4AgCLm95UdVaL5iX9VJ_wZlwAHVNDFHDFv1IeNG2z2eO_1uaPkxPtEn07F6CmMNA')">
+<!-- Overlay for readability if text is added over it, though design specifies clean split -->
+<div class="absolute inset-0 bg-primary/10"></div>
+</div>
+<!-- Brand Overlay on Image -->
+<div class="relative z-10 flex flex-col justify-between p-grid-margin h-full">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary text-3xl font-variation-settings: 'FILL' 1;">account_balance</span>
+<h1 class="text-headline-md font-headline-md text-primary tracking-tight font-semibold">WealthOffice</h1>
+</div>
+<div class="max-w-md">
+<h2 class="text-headline-lg font-headline-lg text-primary mb-md">Institutional Precision.</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Navigate complex financial landscapes with clarity, security, and unyielding control.</p>
+</div>
+</div>
+</div>
+<!-- Right Column: Login Form -->
+<div class="w-full lg:w-1/2 flex items-center justify-center p-md sm:p-grid-margin bg-surface-container-lowest relative">
+<!-- Mobile Brand Header (Visible only on mobile) -->
+<div class="absolute top-grid-margin left-grid-margin lg:hidden flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary text-2xl font-variation-settings: 'FILL' 1;">account_balance</span>
+<h1 class="text-headline-sm font-headline-sm text-primary font-semibold">WealthOffice</h1>
+</div>
+<div class="w-full max-w-md">
+<div class="mb-lg">
+<h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-on-background mb-xs">Sign In</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Access your institutional portal.</p>
+</div>
+<form class="space-y-md" id="login-form" onsubmit="event.preventDefault(); signIn(document.getElementById('email').value, document.getElementById('password').value);">
+<!-- Email Field -->
+<div>
+<label class="block text-body-sm font-body-sm font-semibold text-on-background mb-xs" for="email">Corporate Email / Username</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-sm pointer-events-none">
+<span class="material-symbols-outlined text-outline text-opacity-70 text-[20px]">mail</span>
+</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant text-on-background text-body-md font-body-md rounded-DEFAULT pl-xl pr-sm py-sm outline-none transition-all duration-200 input-focused-state" id="email" name="email" placeholder="Enter your email" required="" type="text" value="">
+</div>
+</div>
+<!-- Password Field -->
+<div>
+<div class="flex justify-between items-baseline mb-xs">
+<label class="block text-body-sm font-body-sm font-semibold text-on-background" for="password">Password</label>
+<a class="text-label-caps font-label-caps text-secondary hover:text-on-secondary-fixed-variant transition-colors duration-200" href="#">Forgot Password?</a>
+</div>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-sm pointer-events-none">
+<span class="material-symbols-outlined text-outline text-opacity-70 text-[20px]">lock</span>
+</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant text-on-background text-body-md font-body-md rounded-DEFAULT pl-xl pr-sm py-sm outline-none transition-all duration-200 input-focused-state" id="password" name="password" placeholder="••••••••" required="" type="password" value="">
+</div>
+</div>
+<!-- Options -->
+<div class="flex items-center justify-between pt-xs">
+<label class="flex items-center gap-xs cursor-pointer group">
+<input class="form-checkbox h-4 w-4 text-primary border-outline-variant rounded-sm focus:ring-secondary focus:ring-offset-0 bg-surface-container-lowest" type="checkbox">
+<span class="text-body-sm font-body-sm text-on-surface-variant group-hover:text-on-background transition-colors duration-200">Remember this device</span>
+</label>
+</div>
+<!-- Error message container -->
+<div id="login-error" class="hidden text-[#ba1a1a] bg-[#ffdad6] p-sm rounded border border-[#ffdad6] text-body-sm font-semibold flex items-center gap-xs">
+    <span class="material-symbols-outlined text-[18px]">error</span>
+    <span id="login-error-text">Invalid email or password.</span>
+</div>
+<!-- Submit Button -->
+<button class="w-full bg-[#0F172A] hover:bg-[#1E293B] text-on-primary text-body-md font-body-md font-medium rounded-DEFAULT py-sm mt-lg transition-colors duration-200 flex justify-center items-center gap-xs shadow-sm" type="submit">
+<span>Sign In</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<!-- Security Note -->
+<div class="mt-lg pt-md border-t border-surface-variant flex items-center justify-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-on-tertiary-container">verified_user</span>
+<span class="text-label-caps font-label-caps">End-to-end encrypted connection</span>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Screen: register -->
+<div id="screen-register" class="spa-screen hidden">
+<div class="min-h-full flex relative">
+<!-- Decorative Background Element -->
+<div class="absolute inset-0 z-0 pointer-events-none opacity-20 bg-pattern"></div>
+<!-- Form Section -->
+<div class="flex-1 flex flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24 z-10 bg-surface-container-lowest">
+<div class="mx-auto w-full max-w-sm lg:w-96">
+<div class="mb-lg">
+<h2 class="text-primary font-headline-lg text-headline-lg hidden md:block tracking-tight">WealthOffice</h2>
+<h2 class="text-primary font-headline-lg-mobile text-headline-lg-mobile md:hidden tracking-tight">WealthOffice</h2>
+<p class="mt-2 text-on-surface-variant font-body-sm text-body-sm">Institutional Access Portal</p>
+</div>
+<div class="mt-8">
+<div class="mt-6">
+<form class="space-y-md" id="register-form" onsubmit="handleRegisterSubmit(event);" method="POST">
+<div>
+<label class="block font-body-sm text-body-sm font-semibold text-on-surface" for="name">Full Name</label>
+<div class="mt-1">
+<input autocomplete="name" class="appearance-none block w-full px-3 py-2 border border-outline-variant rounded bg-surface-container-lowest placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary focus:ring-opacity-10 transition-colors sm:text-sm font-body-md text-body-md" id="name" name="name" required="" type="text">
+</div>
+</div>
+<div>
+<label class="block font-body-sm text-body-sm font-semibold text-on-surface" for="email">Work Email</label>
+<div class="mt-1">
+<input autocomplete="email" class="appearance-none block w-full px-3 py-2 border border-outline-variant rounded bg-surface-container-lowest placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary focus:ring-opacity-10 transition-colors sm:text-sm font-body-md text-body-md" id="email" name="email" required="" type="email">
+</div>
+</div>
+<div>
+<label class="block font-body-sm text-body-sm font-semibold text-on-surface" for="firm">Firm Name</label>
+<div class="mt-1">
+<input autocomplete="organization" class="appearance-none block w-full px-3 py-2 border border-outline-variant rounded bg-surface-container-lowest placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary focus:ring-opacity-10 transition-colors sm:text-sm font-body-md text-body-md" id="firm" name="firm" required="" type="text">
+</div>
+</div>
+<div>
+<label class="block font-body-sm text-body-sm font-semibold text-on-surface" for="password">Password</label>
+<div class="mt-1 relative">
+<input autocomplete="new-password" class="appearance-none block w-full px-3 py-2 border border-outline-variant rounded bg-surface-container-lowest placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary focus:ring-opacity-10 transition-colors sm:text-sm font-body-md text-body-md" id="password" name="password" required="" type="password">
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-on-surface-variant hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+</div>
+<p class="mt-2 font-label-caps text-label-caps text-on-surface-variant">Must be at least 12 characters with symbol.</p>
+</div>
+<div class="pt-sm">
+<button class="w-full flex justify-center py-3 px-4 border border-transparent rounded shadow-sm text-on-primary bg-primary hover:bg-primary-container focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary font-body-md text-body-md transition-colors" type="submit">
+                                    Create Account
+                                </button>
+</div>
+</form>
+</div>
+</div>
+<div class="mt-lg border-t border-outline-variant pt-md text-center">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Already have institutional access? 
+                        <a class="font-semibold text-secondary hover:text-secondary-container transition-colors" href="javascript:void(0)" onclick="navigateTo('login')">Sign in here.</a>
+</p>
+</div>
+</div>
+</div>
+<!-- Image/Branding Section -->
+<div class="hidden lg:flex lg:flex-1 relative bg-surface-container-low border-l border-outline-variant items-center justify-center p-2xl">
+<div class="absolute inset-0" data-alt="A highly detailed, modern architectural abstract composition representing financial structure and security. The scene features soaring glass and steel geometric forms reflecting a clear, bright morning sky. A light-mode corporate aesthetic dominates, with stark whites, cool slate grays, and subtle accents of deep navy blue. The lighting is crisp and natural, casting sharp, intentional shadows that emphasize the rigid, precise structural framework. The overall mood is authoritative, secure, and technologically advanced, fitting for an institutional financial portal." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAIintBEdQQguQSYs5aPJscdvq24PouNqATH4GBHle3-ZnoQw9n8AXaRv7bfeoriDLhQ4dyLBWqovEMMee-Ax7Ep3O_KbtTpf2jjEdVncbPZ9FsV__A4waJTzLExWLx5nYhxcaMMSfSdkEtZ996zR7ZRdPRd5rne7Ln6XOFWXDtTcA9Nx1YhvQbnvTsk8eXZZbXi9_v-waciUBTli-8jbY2aLRxic-6UWuzMWp24439HL3lUYSH223Pbw')"></div>
+<!-- Overlay Content -->
+<div class="relative z-10 max-w-md bg-surface-container-lowest/90 backdrop-blur-md p-lg rounded-lg border border-outline-variant shadow-[0_10px_15px_-3px_rgba(15,23,42,0.08)]">
+<div class="flex items-center gap-xs mb-sm">
+<span class="material-symbols-outlined text-secondary" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Enterprise-Grade Security</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                    WealthOffice employs zero-trust architecture and AES-256 encryption across all data layers, ensuring your institutional data remains strictly confidential and audit-ready.
+                </p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Screen: advisor-dashboard -->
+<div id="screen-advisor-dashboard" class="spa-screen hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-screen py-lg px-md w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline transition-all duration-200 ease-in-out z-20">
+<div class="mb-xl flex items-center gap-sm portal-brand-header">
+<img class="w-10 h-10 rounded object-cover" data-alt="WealthOffice Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcOD4IpPA9tIYNjHSIwArlikfgF2cKj9w8Vg1k67WHIz2eR7EnxfA0e0Gcl0vTzWjeMN_uKy8nAfQPlRmhB0HGmxY1M3p70V1wcT8Dzd7upQROtRlHhQ6o0Ek_7da4T2iTua4NjrIDoWdj36711MZHJYNUNEpRR3LzIUUnTa_Up4Il3wlZX6MDOKjVJqlJ7KdM58D91z_z0veiVPBI4MLIE58KRCNugezo26VgMUP_55Fn737AYsCv_Q">
+<div class="portal-brand-copy">
+<h1 class="portal-brand font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface">WealthOffice</h1>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant admin-only">Institutional Access</p>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant investor-only">Institutional Portal</p>
+</div>
+</div>
+<div class="flex-grow flex flex-col gap-sm">
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="investors" onclick="navigateTo('investors')">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span>Investors</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="portfolio" onclick="navigateTo('portfolio')">
+<span class="material-symbols-outlined" data-icon="pie_chart">pie_chart</span>
+<span>Portfolio</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Reports</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Documents</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="analysis" onclick="navigateTo('analysis')">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analysis</span>
+</a>
+</div>
+<div class="mt-auto flex flex-col gap-sm border-t border-outline-variant pt-sm">
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="profile" onclick="navigateTo('profile')">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Profile</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="settings" onclick="navigateTo('settings')">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="openSupportModal()">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="signOut()">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-64 w-full h-full overflow-hidden">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-grid-margin w-full bg-surface border-b border-outline-variant w-full h-16 z-10 flex-shrink-0">
+<div class="flex items-center gap-md">
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface md:hidden">WealthOffice</h1>
+<!-- Search (Left) -->
+<div class="hidden md:flex items-center bg-[#F1F5F9] rounded px-sm py-xs border border-[#E2E8F0]">
+<span class="material-symbols-outlined text-outline text-sm mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm font-body-sm p-0 w-64 text-on-surface outline-none" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md text-primary font-body-md text-body-md">
+<button class="cursor-pointer active:opacity-80 hover:bg-surface-container-low transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="admin-hide cursor-pointer active:opacity-80 hover:bg-surface-container-low transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<img alt="User profile" class="admin-hide w-8 h-8 rounded-full object-cover border border-outline-variant ml-sm cursor-pointer" data-alt="A professional corporate headshot of a financial executive in a modern office setting. Sharp focus, bright neutral lighting, exuding trust and competence. Minimalist background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj2lEWpsij7VJBRJnxYY9KLPF9YULKCshUoEiXs02Bkd_kMaOyFjM2OuVeUtCuctzTJmDhOst7q-c2X9a4PuBCegH2_Ajk304E2Czu7JDiyU_BRx5PEOcXMYzds3lZ43r_JlWMy3gJ5kogZHaMJSjyWPvUqB4AhPhNchqRDx-5wrYgtVf1Pb7EXMMbCRqdaCWvyAhIJiIEpra65Y0zzxtybcqFoHaEB31J8nDrIBXlVSe1leW0PIscUw"/>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto p-grid-margin pb-2xl">
+<div class="max-w-[1440px] mx-auto space-y-lg">
+<div class="flex justify-between items-end mb-xl">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Key metrics and recent activity for your firm.</p>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-grid-gutter">
+<!-- Metrics Row (Spans full width, internal grid) -->
+<div class="col-span-1 md:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-grid-gutter">
+<!-- AUM -->
+<div class="bg-level-1 rounded-lg p-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Total AUM</span>
+<div class="mt-sm flex items-end justify-between">
+<span id="advisor-aum" class="font-data-mono text-display-lg font-semibold text-primary">$0.00</span>
+<span id="advisor-aum-badge" class="font-body-sm text-body-sm text-on-surface-variant flex items-center bg-surface-container px-2 py-1 rounded">N/A</span>
+</div>
+</div>
+<!-- Total Investors -->
+<div class="bg-level-1 rounded-lg p-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Total Investors</span>
+<div class="mt-sm flex items-end justify-between">
+<span id="advisor-total-investors" class="font-data-mono text-display-lg font-semibold text-primary">0</span>
+<span id="advisor-investors-badge" class="font-body-sm text-body-sm text-on-surface-variant flex items-center bg-surface-container px-2 py-1 rounded">N/A</span>
+</div>
+</div>
+<!-- Quarterly Growth -->
+<div class="bg-level-1 rounded-lg p-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Q3 Growth</span>
+<div class="mt-sm flex items-end justify-between">
+<span id="advisor-growth" class="font-data-mono text-display-lg font-semibold text-primary">$0.00</span>
+<span id="advisor-growth-badge" class="font-body-sm text-body-sm text-on-surface-variant flex items-center bg-surface-container px-2 py-1 rounded">N/A</span>
+</div>
+</div>
+</div>
+<!-- Investor Distribution & Quick Actions -->
+<div class="col-span-1 md:col-span-8 flex flex-col gap-grid-gutter">
+<div class="bg-level-1 rounded-lg p-md h-[400px] flex flex-col">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-md border-b border-[#F1F5F9] pb-xs">Investor Distribution</h3>
+<div class="flex-1 flex items-center justify-center gap-lg">
+<canvas id="investor-distribution-chart" width="180" height="180"></canvas>
+<div id="investor-distribution-legend" class="flex flex-col gap-sm min-w-[120px]"></div>
+</div>
+</div>
+</div>
+<!-- Quick Actions Sidebar -->
+<div class="col-span-1 md:col-span-4 flex flex-col gap-grid-gutter">
+<div class="bg-level-1 rounded-lg p-md flex flex-col gap-md">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase border-b border-[#F1F5F9] pb-xs">Quick Actions</h3>
+<button onclick="showAddInvestorModal()" class="bg-[#0F172A] text-white font-body-sm text-body-sm font-semibold py-sm px-md rounded flex items-center justify-center gap-sm hover:bg-[#1E293B] transition-colors w-full shadow-sm">
+<span class="material-symbols-outlined text-sm">person_add</span> Add New Investor
+</button>
+<button onclick="generateReport()" class="bg-white text-[#0F172A] border border-[#E2E8F0] font-body-sm text-body-sm font-semibold py-sm px-md rounded flex items-center justify-center gap-sm hover:bg-slate-50 transition-colors w-full">
+<span class="material-symbols-outlined text-sm">summarize</span> Generate Report
+</button>
+<button onclick="showRequestCapitalCallModal()" class="bg-white text-[#0F172A] border border-[#E2E8F0] font-body-sm text-body-sm font-semibold py-sm px-md rounded flex items-center justify-center gap-sm hover:bg-slate-50 transition-colors w-full">
+<span class="material-symbols-outlined text-sm">account_balance_wallet</span> Request Capital Call
+</button>
+</div>
+<!-- Recent Activities -->
+<div class="bg-level-1 rounded-lg p-md flex-1 overflow-hidden flex flex-col">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-md border-b border-[#F1F5F9] pb-xs">Recent Activities</h3>
+<div class="realtime-activities-container overflow-y-auto pr-sm space-y-sm"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+<!-- Screen: executive-dashboard -->
+<div id="screen-executive-dashboard" class="spa-screen hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-screen py-lg px-md w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline transition-all duration-200 ease-in-out z-20">
+<div class="mb-xl flex items-center gap-sm portal-brand-header">
+<img class="w-10 h-10 rounded object-cover" data-alt="WealthOffice Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcOD4IpPA9tIYNjHSIwArlikfgF2cKj9w8Vg1k67WHIz2eR7EnxfA0e0Gcl0vTzWjeMN_uKy8nAfQPlRmhB0HGmxY1M3p70V1wcT8Dzd7upQROtRlHhQ6o0Ek_7da4T2iTua4NjrIDoWdj36711MZHJYNUNEpRR3LzIUUnTa_Up4Il3wlZX6MDOKjVJqlJ7KdM58D91z_z0veiVPBI4MLIE58KRCNugezo26VgMUP_55Fn737AYsCv_Q">
+<div class="portal-brand-copy">
+<h1 class="portal-brand font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface">WealthOffice</h1>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant admin-only">Institutional Access</p>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant investor-only">Institutional Portal</p>
+</div>
+</div>
+<div class="flex-grow flex flex-col gap-sm">
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="investors" onclick="navigateTo('investors')">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span>Investors</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="portfolio" onclick="navigateTo('portfolio')">
+<span class="material-symbols-outlined" data-icon="pie_chart">pie_chart</span>
+<span>Portfolio</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Reports</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Documents</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="analysis" onclick="navigateTo('analysis')">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analysis</span>
+</a>
+</div>
+<div class="mt-auto flex flex-col gap-sm border-t border-outline-variant pt-sm">
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="profile" onclick="navigateTo('profile')">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Profile</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="settings" onclick="navigateTo('settings')">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="openSupportModal()">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="signOut()">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-64 w-full h-full overflow-hidden">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-grid-margin w-full bg-surface border-b border-outline-variant w-full h-16 z-10 flex-shrink-0">
+<div class="flex items-center gap-md">
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface md:hidden">WealthOffice</h1>
+<!-- Search (Left) -->
+<div class="hidden md:flex items-center bg-[#F1F5F9] rounded px-sm py-xs border border-[#E2E8F0]">
+<span class="material-symbols-outlined text-outline text-sm mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm font-body-sm p-0 w-64 text-on-surface outline-none" placeholder="Search..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-md text-primary font-body-md text-body-md">
+<button class="cursor-pointer active:opacity-80 hover:bg-surface-container-low transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="admin-hide cursor-pointer active:opacity-80 hover:bg-surface-container-low transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<img alt="User profile" class="admin-hide w-8 h-8 rounded-full object-cover border border-outline-variant ml-sm cursor-pointer" data-alt="A professional corporate headshot of a financial executive in a modern office setting. Sharp focus, bright neutral lighting, exuding trust and competence. Minimalist background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj2lEWpsij7VJBRJnxYY9KLPF9YULKCshUoEiXs02Bkd_kMaOyFjM2OuVeUtCuctzTJmDhOst7q-c2X9a4PuBCegH2_Ajk304E2Czu7JDiyU_BRx5PEOcXMYzds3lZ43r_JlWMy3gJ5kogZHaMJSjyWPvUqB4AhPhNchqRDx-5wrYgtVf1Pb7EXMMbCRqdaCWvyAhIJiIEpra65Y0zzxtybcqFoHaEB31J8nDrIBXlVSe1leW0PIscUw">
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto p-grid-margin pb-2xl">
+<div class="max-w-[1440px] mx-auto space-y-lg">
+<div class="flex justify-between items-end mb-xl">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Key metrics and recent activity for your firm.</p>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-grid-gutter">
+<!-- Metrics Row (Spans full width, internal grid) -->
+<div class="col-span-1 md:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-grid-gutter">
+<!-- AUM -->
+<div class="bg-level-1 rounded-lg p-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Total AUM</span>
+<div class="mt-sm flex items-end justify-between">
+<span class="font-data-mono text-display-lg font-semibold text-primary">$4.2B</span>
+<span class="font-body-sm text-body-sm text-[#009668] flex items-center bg-[#009668]/10 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="trending_up">trending_up</span>+12.4%
+                                </span>
+</div>
+</div>
+<!-- Total Investors -->
+<div class="bg-level-1 rounded-lg p-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Total Investors</span>
+<div class="mt-sm flex items-end justify-between">
+<span class="font-data-mono text-display-lg font-semibold text-primary">1,842</span>
+<span class="font-body-sm text-body-sm text-[#009668] flex items-center bg-[#009668]/10 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="trending_up">trending_up</span>+3.1%
+                                </span>
+</div>
+</div>
+<!-- Quarterly Growth -->
+<div class="bg-level-1 rounded-lg p-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Q3 Growth</span>
+<div class="mt-sm flex items-end justify-between">
+<span class="font-data-mono text-display-lg font-semibold text-primary">$142M</span>
+<span class="font-body-sm text-body-sm text-[#009668] flex items-center bg-[#009668]/10 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="trending_up">trending_up</span>+8.2%
+                                </span>
+</div>
+</div>
+</div>
+<!-- Investor Distribution & Quick Actions -->
+<div class="col-span-1 md:col-span-8 flex flex-col gap-grid-gutter">
+<div class="bg-level-1 rounded-lg p-md h-[400px] flex flex-col">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-md border-b border-[#F1F5F9] pb-xs">Investor Distribution</h3>
+<div class="flex-1 relative flex items-center justify-center">
+<!-- Placeholder for Chart -->
+<div class="w-64 h-64 rounded-full border-[24px] border-[#0F172A] relative">
+<div class="absolute inset-0 rounded-full border-[24px] border-[#2563EB]" style="clip-path: polygon(50% 50%, 100% 0, 100% 50%, 50% 50%); transform: rotate(45deg);"></div>
+<div class="absolute inset-0 rounded-full border-[24px] border-[#64748B]" style="clip-path: polygon(50% 50%, 100% 50%, 100% 100%, 0 100%, 0 50%, 50% 50%); transform: rotate(135deg);"></div>
+<div class="absolute inset-0 flex items-center justify-center flex-col">
+<span class="font-data-mono text-headline-sm text-primary">Top 10</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Hold 64%</span>
+</div>
+</div>
+<div class="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-sm mr-xl">
+<div class="flex items-center gap-xs"><div class="w-3 h-3 bg-[#0F172A]"></div><span class="font-body-sm text-body-sm">Institutional</span></div>
+<div class="flex items-center gap-xs"><div class="w-3 h-3 bg-[#2563EB]"></div><span class="font-body-sm text-body-sm">Family Office</span></div>
+<div class="flex items-center gap-xs"><div class="w-3 h-3 bg-[#64748B]"></div><span class="font-body-sm text-body-sm">Retail</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions Sidebar -->
+<div class="col-span-1 md:col-span-4 flex flex-col gap-grid-gutter">
+<div class="bg-level-1 rounded-lg p-md flex flex-col gap-md">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase border-b border-[#F1F5F9] pb-xs">Quick Actions</h3>
+<button onclick="showAddInvestorModal()" class="bg-[#0F172A] text-white font-body-sm text-body-sm font-semibold py-sm px-md rounded flex items-center justify-center gap-sm hover:bg-[#1E293B] transition-colors w-full">
+<span class="material-symbols-outlined text-sm">person_add</span> Add New Investor
+</button>
+<button onclick="generateReport()" class="bg-white text-[#0F172A] border border-[#E2E8F0] font-body-sm text-body-sm font-semibold py-sm px-md rounded flex items-center justify-center gap-sm hover:bg-slate-50 transition-colors w-full">
+<span class="material-symbols-outlined text-sm">summarize</span> Generate Report
+</button>
+<button onclick="showRequestCapitalCallModal()" class="bg-white text-[#0F172A] border border-[#E2E8F0] font-body-sm text-body-sm font-semibold py-sm px-md rounded flex items-center justify-center gap-sm hover:bg-slate-50 transition-colors w-full">
+<span class="material-symbols-outlined text-sm">account_balance_wallet</span> Request Capital Call
+</button>
+</div>
+<!-- Recent Activities -->
+<div class="bg-level-1 rounded-lg p-md flex-1 overflow-hidden flex flex-col">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-md border-b border-[#F1F5F9] pb-xs">Recent Activities</h3>
+<div class="realtime-activities-container overflow-y-auto pr-sm space-y-sm"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+<!-- Screen: investor-dashboard -->
+<div id="screen-investor-dashboard" class="spa-screen hidden">
+<!-- Mobile Nav (Hidden on md+) -->
+<nav class="md:hidden flex justify-between items-center w-full px-grid-margin py-base h-16 bg-surface border-b border-outline-variant sticky top-0 z-50 shadow-sm">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-secondary" data-icon="account_balance" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+<div class="text-headline-sm font-headline-lg font-bold text-primary">WealthOffice</div>
+</div>
+<div class="flex gap-md items-center">
+<div onclick="document.body.classList.remove('simulating-mobile')" title="Switch to Desktop View" class="w-8 h-8 rounded-full bg-[#0F172A] text-white flex items-center justify-center overflow-hidden border border-outline-variant cursor-pointer hover:opacity-85">
+<span class="font-label-caps text-label-caps text-xs">AM</span>
+</div>
+<button onclick="signOut()" class="p-1 rounded-full text-on-surface-variant hover:text-[#ba1a1a] transition-colors">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+</button>
+</div>
+</nav>
+<nav class="hidden md:flex flex-col h-screen py-lg px-md w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline transition-all duration-200 ease-in-out z-20">
+<div class="mb-xl flex items-center gap-sm portal-brand-header">
+<img class="w-10 h-10 rounded object-cover" data-alt="WealthOffice Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcOD4IpPA9tIYNjHSIwArlikfgF2cKj9w8Vg1k67WHIz2eR7EnxfA0e0Gcl0vTzWjeMN_uKy8nAfQPlRmhB0HGmxY1M3p70V1wcT8Dzd7upQROtRlHhQ6o0Ek_7da4T2iTua4NjrIDoWdj36711MZHJYNUNEpRR3LzIUUnTa_Up4Il3wlZX6MDOKjVJqlJ7KdM58D91z_z0veiVPBI4MLIE58KRCNugezo26VgMUP_55Fn737AYsCv_Q">
+<div class="portal-brand-copy">
+<h1 class="portal-brand font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface">WealthOffice</h1>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant admin-only">Institutional Access</p>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant investor-only">Institutional Portal</p>
+</div>
+</div>
+<div class="flex-grow flex flex-col gap-sm">
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="investors" onclick="navigateTo('investors')">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span>Investors</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="portfolio" onclick="navigateTo('portfolio')">
+<span class="material-symbols-outlined" data-icon="pie_chart">pie_chart</span>
+<span>Portfolio</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Reports</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Documents</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="analysis" onclick="navigateTo('analysis')">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analysis</span>
+</a>
+</div>
+<div class="mt-auto flex flex-col gap-sm border-t border-outline-variant pt-sm">
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="profile" onclick="navigateTo('profile')">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Profile</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="settings" onclick="navigateTo('settings')">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="openSupportModal()">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="signOut()">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow md:ml-64 p-md md:p-grid-margin lg:p-xl w-full max-w-[1440px] mx-auto pb-32 md:pb-xl">
+<!-- Header -->
+<header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-lg md:mb-xl gap-md">
+<div>
+<h1 id="investor-welcome-name" class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary font-bold">Welcome, Investor</h1>
+<p id="investor-welcome-subtitle" class="text-body-md font-body-md text-on-surface-variant mt-xs">Here is your consolidated investment overview.</p>
+</div>
+<div class="flex gap-sm w-full md:w-auto">
+<button onclick="generateInvestorStatement()" class="flex-1 md:flex-none bg-surface-container-lowest border border-outline-variant text-primary px-lg py-sm rounded-lg hover:bg-surface-container transition-colors text-body-sm font-body-sm font-medium flex items-center justify-center gap-xs shadow-sm">
+<span class="material-symbols-outlined text-[18px]">download</span> Statement
+</button>
+</div>
+</header>
+<!-- Summary Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md mb-lg md:mb-xl">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md card-shadow flex flex-col justify-between h-[140px]">
+<div class="text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider">Net Worth in Fund</div>
+<div>
+<div id="investor-networth" class="text-headline-md font-data-mono text-primary mb-xs font-bold">$0.00</div>
+<div class="flex items-center gap-xs text-[12px] font-medium text-tertiary-fixed-dim">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span id="investor-networth-badge">0.0% YTD</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md card-shadow flex flex-col justify-between h-[140px]">
+<div class="text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider">Total Contributed</div>
+<div>
+<div id="investor-contributed" class="text-headline-md font-data-mono text-primary mb-xs font-bold">$0.00</div>
+<div class="flex items-center gap-xs text-[12px] text-on-surface-variant">
+<span id="investor-contributed-badge">0% paid</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md card-shadow flex flex-col justify-between h-[140px]">
+<div class="text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider">Remaining Commitment</div>
+<div>
+<div id="investor-remaining" class="text-headline-md font-data-mono text-primary mb-xs font-bold">$0.00</div>
+<div class="flex items-center gap-xs text-[12px] text-secondary">
+<span class="material-symbols-outlined text-[14px]">info</span>
+<span id="investor-remaining-badge">No outstanding calls</span>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md card-shadow flex flex-col justify-between h-[140px]">
+<div class="text-label-caps font-label-caps text-on-surface-variant uppercase tracking-wider">Total Distributions</div>
+<div>
+<div id="investor-distributions" class="text-headline-md font-data-mono text-primary mb-xs font-bold">$0.00</div>
+<div class="flex items-center gap-xs text-[12px] text-on-surface-variant">
+<span>Last distribution reported</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Recent Transactions Section -->
+<section class="mt-lg md:mt-xl bg-surface-container-lowest border border-outline-variant rounded-xl p-md md:p-lg card-shadow">
+    <div class="flex justify-between items-center mb-md pb-xs border-b border-outline-variant">
+        <h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Recent Transactions</h2>
+        <a href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')" class="text-label-caps font-label-caps text-secondary hover:underline">See All</a>
+    </div>
+    
+    <!-- Table View (Desktop Only) -->
+    <div class="hidden md:block overflow-x-auto simulation-hide">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="border-b border-surface-container-highest bg-surface-bright">
+                    <th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Date</th>
+                    <th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant">Asset/Partner</th>
+                    <th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant">Type</th>
+                    <th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant text-right">Amount</th>
+                    <th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody id="investor-dashboard-tbody-desktop" class="font-body-sm text-body-sm">
+                <!-- Populated dynamically by java.js -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Card List View (Mobile / Simulation Mode) -->
+    <div id="investor-dashboard-tbody-mobile" class="block md:hidden space-y-sm simulation-show-list">
+        <!-- Populated dynamically by java.js -->
+    </div>
+</section>
+</main>
+<!-- Mobile BottomNavBar (Hidden on desktop md+) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface border-t border-outline-variant h-20 shadow-[0_-10px_15px_-3px_rgba(15,23,42,0.05)] md:hidden">
+<!-- Active: Home -->
+<button onclick="navigateTo('dashboard')" class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 active:scale-90 transition-transform duration-100">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</button>
+<!-- Inactive: Portfolio -->
+<button onclick="navigateTo('portfolio')" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary active:scale-90 transition-transform duration-100">
+<span class="material-symbols-outlined" data-icon="pie_chart">pie_chart</span>
+<span class="font-label-caps text-label-caps mt-1">Portfolio</span>
+</button>
+<!-- Inactive: Reports -->
+<button onclick="navigateTo('ledger')" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary active:scale-90 transition-transform duration-100">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-caps text-label-caps mt-1">Reports</span>
+</button>
+</nav>
+
+</div>
+
+<!-- Screen: investors -->
+<div id="screen-investors" class="spa-screen hidden">
+<!-- SideNavBar (Hidden on Mobile) -->
+<nav class="hidden md:flex flex-col h-screen py-lg px-md w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline transition-all duration-200 ease-in-out z-20">
+<div class="mb-xl flex items-center gap-sm portal-brand-header">
+<img class="w-10 h-10 rounded object-cover" data-alt="WealthOffice Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcOD4IpPA9tIYNjHSIwArlikfgF2cKj9w8Vg1k67WHIz2eR7EnxfA0e0Gcl0vTzWjeMN_uKy8nAfQPlRmhB0HGmxY1M3p70V1wcT8Dzd7upQROtRlHhQ6o0Ek_7da4T2iTua4NjrIDoWdj36711MZHJYNUNEpRR3LzIUUnTa_Up4Il3wlZX6MDOKjVJqlJ7KdM58D91z_z0veiVPBI4MLIE58KRCNugezo26VgMUP_55Fn737AYsCv_Q">
+<div class="portal-brand-copy">
+<h1 class="portal-brand font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface">WealthOffice</h1>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant admin-only">Institutional Access</p>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant investor-only">Institutional Portal</p>
+</div>
+</div>
+<div class="flex-grow flex flex-col gap-sm">
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="investors" onclick="navigateTo('investors')">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span>Investors</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="portfolio" onclick="navigateTo('portfolio')">
+<span class="material-symbols-outlined" data-icon="pie_chart">pie_chart</span>
+<span>Portfolio</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Reports</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Documents</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="analysis" onclick="navigateTo('analysis')">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analysis</span>
+</a>
+</div>
+<div class="mt-auto flex flex-col gap-sm border-t border-outline-variant pt-sm">
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="profile" onclick="navigateTo('profile')">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Profile</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="settings" onclick="navigateTo('settings')">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="openSupportModal()">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="signOut()">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar (Web & Mobile) -->
+<header class="flex justify-between items-center px-grid-margin w-full bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline h-16 z-10 sticky top-0">
+<!-- Search Bar (Left) -->
+<div class="flex-1 max-w-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input id="investor-search-top" class="w-full bg-surface-container-lowest border border-outline-variant rounded-DEFAULT pl-xl pr-sm py-xs font-body-sm text-body-sm focus:border-secondary focus:ring-2 focus:ring-secondary/10 focus:outline-none transition-colors placeholder:text-on-surface-variant" placeholder="Search..." type="text">
+</div>
+</div>
+<!-- Brand (Mobile Only) -->
+<div class="md:hidden font-headline-sm text-headline-sm font-bold text-on-surface dark:text-inverse-on-surface">
+                WealthOffice
+            </div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-md text-primary dark:text-primary-fixed">
+<button class="p-xs rounded-full hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="admin-hide p-xs rounded-full hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<img alt="User profile" class="admin-hide w-8 h-8 rounded-full border border-outline-variant object-cover ml-xs cursor-pointer active:opacity-80" data-alt="A professional headshot of a corporate user. Clean, well-lit, looking directly at the camera with a subtle, confident expression. The background should be neutral and minimalist to fit a modern UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtt9JZQYoFU_YhrWkhIyj4Y3fGFxiqicdG7pXY3wG61JytoCUqR8YXKVZanuT7Xsp1a_P1v0ZUGuzfNb2jSXUhWAP2XfwNW7IwsgywZUhd2eIOkVIA5RSWcP0ozMC9cgxwVSVkm9I6hzqyk5udzc-6FXjh-lTfQQcmqwfYYPNz-AoaET7FDTo0Bx107nrWGJhEnf3wxz6IZdV4OSDFuSe4KD9OxC9VYBAm-Clo3Kbljg99EckL3sTt-A">
+</div>
+</header>
+<!-- Page Content -->
+<div class="flex-1 p-md md:p-xl max-w-7xl mx-auto w-full">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-md mb-xl">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-xs">Investor Management</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage and monitor investor commitments and activity.</p>
+</div>
+<button onclick="showAddInvestorModal()" class="bg-primary text-on-primary px-lg py-sm rounded-DEFAULT font-label-caps text-label-caps hover:bg-primary/90 transition-colors flex items-center gap-xs whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Add New Investor
+                </button>
+</div>
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md mb-xl">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-xs">Total Commitments</p>
+<p id="investors-total-commitments" class="font-display-lg text-display-lg text-on-background font-data-mono">$0.00</p>
+<div class="mt-sm flex items-center gap-xs text-on-tertiary-container">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="font-body-sm text-body-sm">Updated active pool</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-xs">Active Investors</p>
+<p id="investors-active-count" class="font-display-lg text-display-lg text-on-background font-data-mono">0</p>
+<div class="mt-sm flex items-center gap-xs text-on-tertiary-container">
+<span class="material-symbols-outlined text-[16px]">group_add</span>
+<span class="font-body-sm text-body-sm">Count of active contracts</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-xs">Avg. Contribution</p>
+<p id="investors-avg-commitment" class="font-display-lg text-display-lg text-on-background font-data-mono">$0.00</p>
+</div>
+</div>
+<!-- Table Controls -->
+<div class="flex flex-col md:flex-row justify-between items-center gap-md mb-md">
+<div class="relative w-full md:w-96">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input id="investor-search-table" class="w-full bg-surface-container-lowest border border-outline-variant rounded-DEFAULT pl-xl pr-sm py-xs font-body-sm text-body-sm focus:border-secondary focus:ring-2 focus:ring-secondary/10 focus:outline-none transition-colors" placeholder="Search investors by name or status..." type="text">
+</div>
+<div class="flex gap-sm w-full md:w-auto">
+<button onclick="showInvestorFilterModal()" class="flex-1 md:flex-none flex items-center justify-center gap-xs border border-outline-variant bg-surface-container-lowest px-sm py-xs rounded-DEFAULT font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        Filter
+                    </button>
+<button onclick="exportInvestorsCSV()" class="flex-1 md:flex-none flex items-center justify-center gap-xs border border-outline-variant bg-surface-container-lowest px-sm py-xs rounded-DEFAULT font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Export CSV
+                    </button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-x-auto shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-surface-container-highest bg-surface">
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant font-semibold">Name</th>
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant font-semibold text-right">Commitment</th>
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant font-semibold text-right">Ownership</th>
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant font-semibold">Status</th>
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant font-semibold text-right">Last Contribution</th>
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant font-semibold text-center">Actions</th>
+</tr>
+</thead>
+<tbody id="investors-table-tbody" class="font-body-sm text-body-sm">
+<!-- Populated dynamically by java.js -->
+</tbody>
+</table>
+<!-- Pagination Footer -->
+<div class="px-md py-sm border-t border-surface-container-highest flex items-center justify-between bg-surface">
+<span class="font-body-sm text-body-sm text-on-surface-variant"><span id="investors-pagination-text">Showing 0 of 0 entries</span></span>
+<div class="flex gap-xs">
+<button id="investors-prev-btn" onclick="changePage('investors', -1)" class="p-xs border border-outline-variant rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-low transition-colors disabled:opacity-50" disabled>
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<button id="investors-next-btn" onclick="changePage('investors', 1)" class="p-xs border border-outline-variant rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-low transition-colors disabled:opacity-50">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+<!-- Screen: portfolio -->
+<div id="screen-portfolio" class="spa-screen hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-screen py-lg px-md w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline transition-all duration-200 ease-in-out z-20">
+<div class="mb-xl flex items-center gap-sm portal-brand-header">
+<img class="w-10 h-10 rounded object-cover" data-alt="WealthOffice Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcOD4IpPA9tIYNjHSIwArlikfgF2cKj9w8Vg1k67WHIz2eR7EnxfA0e0Gcl0vTzWjeMN_uKy8nAfQPlRmhB0HGmxY1M3p70V1wcT8Dzd7upQROtRlHhQ6o0Ek_7da4T2iTua4NjrIDoWdj36711MZHJYNUNEpRR3LzIUUnTa_Up4Il3wlZX6MDOKjVJqlJ7KdM58D91z_z0veiVPBI4MLIE58KRCNugezo26VgMUP_55Fn737AYsCv_Q">
+<div class="portal-brand-copy">
+<h1 class="portal-brand font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface">WealthOffice</h1>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant admin-only">Institutional Access</p>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant investor-only">Institutional Portal</p>
+</div>
+</div>
+<div class="flex-grow flex flex-col gap-sm">
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="investors" onclick="navigateTo('investors')">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span>Investors</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="portfolio" onclick="navigateTo('portfolio')">
+<span class="material-symbols-outlined" data-icon="pie_chart">pie_chart</span>
+<span>Portfolio</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Reports</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Documents</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="analysis" onclick="navigateTo('analysis')">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analysis</span>
+</a>
+</div>
+<div class="mt-auto flex flex-col gap-sm border-t border-outline-variant pt-sm">
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="profile" onclick="navigateTo('profile')">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Profile</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="settings" onclick="navigateTo('settings')">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="openSupportModal()">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="signOut()">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-64 relative h-screen overflow-hidden">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-grid-margin w-full bg-surface dark:bg-inverse-surface w-full h-16 border-b border-outline-variant dark:border-outline z-10 sticky top-0">
+<div class="flex items-center gap-md">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-inverse-on-surface md:hidden">WealthOffice</span>
+<!-- Search could go here based on "search_bar": "on_left" -->
+<div class="hidden md:flex items-center bg-surface-container px-sm py-base rounded border border-outline-variant focus-within:border-secondary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant mr-xs text-[18px]">search</span>
+<input class="bg-transparent border-none focus:ring-0 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant p-0 w-64" placeholder="Search portfolios..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex gap-sm">
+<button class="p-xs rounded-full hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:opacity-80 text-on-surface-variant">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="admin-hide p-xs rounded-full hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:opacity-80 text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="admin-hide w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate executive. The subject is wearing a sharply tailored navy blue suit against a clean, well-lit white studio background. The lighting is soft and flattering, typical of high-end corporate portraiture. The image is crisp, detailed, and conveys trust and authority." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlXpJAkXK89k8rkx5rPxXfiyWpqdxcrTpmRzOeAOezuqj_HyJaYntuSNhTNVcqvXrWDIbQtk4lrWKR4WMAxcUIRi7GJV6LSXfze-I2CmGGnvEKiTb2PhG0wQQXajAKm4-caWRVoO9U4X7p6NsksaWWhCUYXlAUpC4VoXS0FQQUYheRHAT2U9lI4JlBqF1QqUBZFOj_39yTQFjHfte3pIxMIkLN4QpK2r9YiVKJDFHyozpkoq-a8qQQLg">
+</div>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<main class="flex-1 overflow-y-auto p-grid-margin bg-background">
+<!-- Page Header -->
+<div class="mb-xl flex justify-between items-end">
+<div>
+<h2 id="portfolio-title" class="font-headline-lg text-headline-lg md:text-display-lg font-bold text-on-background mb-base">Portfolio Performance</h2>
+<p id="portfolio-subtitle" class="font-body-md text-body-md text-on-surface-variant">Consolidated View</p>
+</div>
+<div class="flex gap-sm">
+<button onclick="exportPortfolioCSV()" class="px-md py-xs bg-surface-container-lowest border border-outline-variant rounded font-label-caps text-label-caps text-primary hover:bg-surface-container-low transition-colors shadow-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">download</span> Export CSV
+</button>
+<button onclick="generateReport()" class="admin-only px-md py-xs bg-primary text-on-primary rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity shadow-sm">
+    Generate Report
+</button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-4 md:grid-cols-12 gap-grid-gutter">
+<!-- Summary Metrics (Span 12) -->
+<div class="col-span-4 md:col-span-12 grid grid-cols-2 md:grid-cols-4 gap-md">
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-xs">Net Asset Value (NAV)</span>
+<div class="flex items-baseline gap-sm">
+<span id="portfolio-nav" class="font-data-mono text-headline-md text-on-surface font-bold">$0.00</span>
+<span class="font-label-caps text-label-caps text-tertiary-fixed-dim bg-tertiary-container px-xs py-[2px] rounded flex items-center"><span class="material-symbols-outlined text-[12px]">trending_up</span> <span id="portfolio-nav-badge">0.0% YTD</span></span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-xs">Internal Rate of Return (IRR)</span>
+<div class="flex items-baseline gap-sm">
+<span id="portfolio-irr" class="font-data-mono text-headline-md text-on-surface font-bold">0.0%</span>
+<span class="font-label-caps text-label-caps text-tertiary-fixed-dim bg-tertiary-container px-xs py-[2px] rounded">Gross</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-xs">Total Value to Paid-In (TVPI)</span>
+<div class="flex items-baseline gap-sm">
+<span id="portfolio-tvpi" class="font-data-mono text-headline-md text-on-surface font-bold">0.00x</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Target: 2.0x</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-xs">Distributions (DPI)</span>
+<div class="flex items-baseline gap-sm">
+<span id="portfolio-dpi" class="font-data-mono text-headline-md text-on-surface font-bold">0.00x</span>
+</div>
+</div>
+</div>
+<!-- Main Chart (Span 8) -->
+<div class="col-span-4 md:col-span-8 bg-surface-container-lowest border border-outline-variant rounded p-lg flex flex-col h-[400px]">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Historical Performance</h3>
+<div class="flex border border-outline-variant rounded overflow-hidden">
+<button data-chart-period="1Y" onclick="setHistoricalPeriod('1Y')" class="px-sm py-[4px] font-label-caps text-label-caps bg-surface-container-low text-on-surface border-r border-outline-variant">1Y</button>
+<button data-chart-period="3Y" onclick="setHistoricalPeriod('3Y')" class="px-sm py-[4px] font-label-caps text-label-caps hover:bg-surface-container-low text-on-surface-variant border-r border-outline-variant">3Y</button>
+<button data-chart-period="MAX" onclick="setHistoricalPeriod('MAX')" class="px-sm py-[4px] font-label-caps text-label-caps hover:bg-surface-container-low text-on-surface-variant">MAX</button>
+</div>
+</div>
+<div class="flex-1 relative chart-grid mt-sm">
+<!-- SVG Chart (paths updated by java.js) -->
+<svg id="portfolio-chart-svg" class="w-full h-full absolute inset-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+<defs>
+<linearGradient id="blue-gradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#2563EB" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#2563EB" stop-opacity="0"></stop>
+</linearGradient>
+</defs>
+<path class="chart-area" fill="url(#blue-gradient)" d=""></path>
+<path class="chart-line" fill="none" stroke="#2563EB" stroke-width="0.8" d=""></path>
+</svg>
+<!-- No-data placeholder -->
+<div id="portfolio-chart-placeholder" class="absolute inset-0 flex items-center justify-center text-on-surface-variant font-body-sm" style="display:none">No historical performance data available.</div>
+<!-- Y-Axis Labels -->
+<div id="portfolio-chart-y-axis" class="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-on-surface-variant font-data-mono text-[10px] -ml-8 py-2">
+<span>—</span><span>—</span><span>—</span><span>—</span>
+</div>
+</div>
+</div>
+<!-- Capital Calls & Breakdowns (Span 4) -->
+<div class="col-span-4 md:col-span-4 flex flex-col gap-grid-gutter">
+<!-- Capital Calls Widget -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-md flex-1">
+<div class="flex justify-between items-center mb-md pb-xs border-b border-outline-variant">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Capital Calls</h3>
+<button onclick="viewAllCapitalCalls()" class="text-secondary hover:underline font-label-caps text-label-caps">View All</button>
+</div>
+<ul id="portfolio-capital-calls-list" class="flex flex-col gap-sm">
+<!-- Populated dynamically by java.js -->
+</ul>
+</div>
+<!-- Asset Allocation -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-md flex-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-md pb-xs border-b border-outline-variant">Asset Allocation</h3>
+<div id="portfolio-asset-allocation-list" class="flex flex-col gap-sm">
+<!-- Populated dynamically by java.js -->
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+<!-- Screen: analysis -->
+<div id="screen-analysis" class="spa-screen hidden">
+<!-- SideNavBar (Desktop Only) -->
+<nav class="hidden md:flex flex-col h-screen py-lg px-md w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline transition-all duration-200 ease-in-out z-20">
+<div class="mb-xl flex items-center gap-sm portal-brand-header">
+<img class="w-10 h-10 rounded object-cover" data-alt="WealthOffice Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcOD4IpPA9tIYNjHSIwArlikfgF2cKj9w8Vg1k67WHIz2eR7EnxfA0e0Gcl0vTzWjeMN_uKy8nAfQPlRmhB0HGmxY1M3p70V1wcT8Dzd7upQROtRlHhQ6o0Ek_7da4T2iTua4NjrIDoWdj36711MZHJYNUNEpRR3LzIUUnTa_Up4Il3wlZX6MDOKjVJqlJ7KdM58D91z_z0veiVPBI4MLIE58KRCNugezo26VgMUP_55Fn737AYsCv_Q">
+<div class="portal-brand-copy">
+<h1 class="portal-brand font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface">WealthOffice</h1>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant admin-only">Institutional Access</p>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant investor-only">Institutional Portal</p>
+</div>
+</div>
+<div class="flex-grow flex flex-col gap-sm">
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">Dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="investors" onclick="navigateTo('investors')">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span>Investors</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="portfolio" onclick="navigateTo('portfolio')">
+<span class="material-symbols-outlined" data-icon="pie_chart">pie_chart</span>
+<span>Portfolio</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Reports</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Documents</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="analysis" onclick="navigateTo('analysis')">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analysis</span>
+</a>
+</div>
+<div class="mt-auto flex flex-col gap-sm border-t border-outline-variant pt-sm">
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="profile" onclick="navigateTo('profile')">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Profile</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="settings" onclick="navigateTo('settings')">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="openSupportModal()">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="signOut()">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-64 relative h-screen overflow-hidden">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-grid-margin w-full bg-surface dark:bg-inverse-surface w-full h-16 border-b border-outline-variant dark:border-outline z-10 sticky top-0">
+<div class="flex items-center gap-md">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-inverse-on-surface md:hidden">WealthOffice</span>
+</div>
+<div class="flex items-center gap-md text-primary dark:text-primary-fixed">
+<button class="p-xs rounded-full hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="admin-hide p-xs rounded-full hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<img alt="User profile" class="admin-hide w-8 h-8 rounded-full border border-outline-variant object-cover ml-xs cursor-pointer active:opacity-80" data-alt="A professional headshot of a corporate user. Clean, well-lit, looking directly at the camera with a subtle, confident expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtt9JZQYoFU_YhrWkhIyj4Y3fGFxiqicdG7pXY3wG61JytoCUqR8YXKVZanuT7Xsp1a_P1v0ZUGuzfNb2jSXUhWAP2XfwNW7IwsgywZUhd2eIOkVIA5RSWcP0ozMC9cgxwVSVkm9I6hzqyk5udzc-6FXjh-lTfQQcmqwfYYPNz-AoaET7FDTo0Bx107nrWGJhEnf3wxz6IZdV4OSDFuSe4KD9OxC9VYBAm-Clo3Kbljg99EckL3sTt-A">
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<main class="flex-1 overflow-y-auto p-grid-margin bg-background">
+<header class="mb-lg flex justify-between items-end">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-on-surface mb-base">Financial Analysis</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Deep-dive risk assessment and liquidity benchmarking.</p>
+</div>
+<div class="hidden md:flex gap-md">
+<button class="bg-surface-container-lowest card-border text-primary text-body-sm font-body-sm py-sm px-md rounded flex items-center gap-xs hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span> Export Report
+                </button>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-4 md:grid-cols-12 gap-grid-gutter">
+<!-- Key Metrics - Top Row -->
+<div class="col-span-4 md:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-grid-gutter mb-lg">
+<div class="bg-surface-container-lowest rounded-lg p-md card-border flex flex-col justify-between">
+<div class="flex justify-between items-center mb-md">
+<span class="text-label-caps font-label-caps text-on-surface-variant">Alpha (Jensen's)</span>
+<span class="material-symbols-outlined text-outline-variant text-[18px]">trending_up</span>
+</div>
+<div class="flex items-baseline gap-sm">
+<span id="analysis-alpha" class="text-display-lg font-display-lg font-data-mono">1.45</span>
+<span id="analysis-alpha-badge" class="text-body-sm font-body-sm text-[#059669] bg-[#D1FAE5] px-1 rounded">+0.12 pts</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-md card-border flex flex-col justify-between">
+<div class="flex justify-between items-center mb-md">
+<span class="text-label-caps font-label-caps text-on-surface-variant">Beta (vs S&amp;P 500)</span>
+<span class="material-symbols-outlined text-outline-variant text-[18px]">balance</span>
+</div>
+<div class="flex items-baseline gap-sm">
+<span id="analysis-beta" class="text-display-lg font-display-lg font-data-mono">0.82</span>
+<span id="analysis-beta-badge" class="text-body-sm font-body-sm text-[#059669] bg-[#D1FAE5] px-1 rounded">Low Volatility</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-md card-border flex flex-col justify-between">
+<div class="flex justify-between items-center mb-md">
+<span class="text-label-caps font-label-caps text-on-surface-variant">Sharpe Ratio</span>
+<span class="material-symbols-outlined text-outline-variant text-[18px]">assessment</span>
+</div>
+<div class="flex items-baseline gap-sm">
+<span id="analysis-sharpe" class="text-display-lg font-display-lg font-data-mono">2.14</span>
+<span id="analysis-sharpe-badge" class="text-body-sm font-body-sm text-outline-variant">Risk-Free Rate: 4.5%</span>
+</div>
+</div>
+</div>
+<!-- Main Chart Area -->
+<div class="col-span-4 md:col-span-8 bg-surface-container-lowest rounded-lg p-lg card-border h-[400px] flex flex-col">
+<div class="flex justify-between items-center mb-md">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Risk-Adjusted Return vs. Benchmark</h3>
+<div class="flex gap-sm">
+<span class="text-label-caps font-label-caps text-on-surface-variant flex items-center gap-xs"><div class="w-2 h-2 rounded-full bg-secondary"></div> Portfolio</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant flex items-center gap-xs"><div class="w-2 h-2 rounded-full bg-outline-variant"></div> Benchmark</span>
+</div>
+</div>
+<div class="flex-1 bg-surface flex items-center justify-center card-border rounded-lg relative overflow-hidden group cursor-crosshair">
+<div id="analysis-chart-placeholder" class="absolute inset-0 flex items-center justify-center text-on-surface-variant font-body-sm bg-surface-container-low" style="display:none">No historical performance data available.</div>
+<svg id="analysis-chart-svg" class="absolute inset-0 opacity-80" height="100%" preserveAspectRatio="none" viewBox="0 0 800 300" width="100%">
+<path id="analysis-chart-portfolio-line" d="M0,250 C100,200 200,280 300,150 C400,20 500,180 600,100 C700,20 750,150 800,80" fill="none" stroke="#2563EB" stroke-width="2"></path>
+<path id="analysis-chart-benchmark-line" d="M0,280 C150,250 250,290 350,200 C450,110 550,220 650,160 C720,120 760,180 800,150" fill="none" stroke="#94A3B8" stroke-dasharray="5,5" stroke-width="2"></path>
+</svg>
+<div id="analysis-chart-tooltip" class="hidden group-hover:flex absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary-container text-on-primary-container text-body-sm font-body-sm p-sm rounded shadow-lg">
+                        Q3 '23: Outperformed by 4.2%
+                     </div>
+</div>
+</div>
+<!-- Secondary Metrics / Controls -->
+<div class="col-span-4 md:col-span-4 flex flex-col gap-grid-gutter">
+<div class="bg-surface-container-lowest rounded-lg p-md card-border">
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-md">Liquidity Profile</h3>
+<div class="flex justify-between items-end mb-sm">
+<span class="text-body-sm font-body-sm text-on-surface-variant">Tier 1 (Cash/Equivalents)</span>
+<span id="analysis-liq-tier1-pct" class="text-data-mono font-data-mono text-on-surface">45%</span>
+</div>
+<div class="w-full h-2 bg-surface rounded-full mb-md overflow-hidden">
+<div id="analysis-liq-tier1-bar" class="h-full bg-secondary" style="width: 45%;"></div>
+</div>
+<div class="flex justify-between items-end mb-sm">
+<span class="text-body-sm font-body-sm text-on-surface-variant">Tier 2 (Marketable)</span>
+<span id="analysis-liq-tier2-pct" class="text-data-mono font-data-mono text-on-surface">35%</span>
+</div>
+<div class="w-full h-2 bg-surface rounded-full mb-md overflow-hidden">
+<div id="analysis-liq-tier2-bar" class="h-full bg-[#94A3B8]" style="width: 35%;"></div>
+</div>
+<div class="flex justify-between items-end mb-sm">
+<span class="text-body-sm font-body-sm text-on-surface-variant">Tier 3 (Illiquid)</span>
+<span id="analysis-liq-tier3-pct" class="text-data-mono font-data-mono text-on-surface">20%</span>
+</div>
+<div class="w-full h-2 bg-surface rounded-full overflow-hidden">
+<div id="analysis-liq-tier3-bar" class="h-full bg-outline" style="width: 20%;"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-md card-border flex-1">
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-md">Parameters</h3>
+<label class="block text-label-caps font-label-caps text-on-surface-variant mb-xs">Analysis Period</label>
+<select id="analysis-period-select" onchange="renderAnalysis()" class="w-full bg-surface-container-lowest border-outline-variant text-on-surface text-body-sm font-body-sm rounded p-sm focus-ring mb-md">
+<option value="1Y">Trailing 12 Months</option>
+<option value="YTD">Year to Date</option>
+<option value="ALL">Since Inception</option>
+</select>
+<label class="block text-label-caps font-label-caps text-on-surface-variant mb-xs">Benchmark Index</label>
+<select id="analysis-benchmark-select" onchange="renderAnalysis()" class="w-full bg-surface-container-lowest border-outline-variant text-on-surface text-body-sm font-body-sm rounded p-sm focus-ring">
+<option value="SP500">S&amp;P 500 TR</option>
+<option value="RUSSELL2000">Russell 2000</option>
+<option value="MSCIWORLD">MSCI World</option>
+</select>
+</div>
+</div>
+<!-- Granular Data Table -->
+<div class="col-span-4 md:col-span-12 bg-surface-container-lowest rounded-lg card-border overflow-hidden mt-lg">
+<div class="px-lg py-md border-b border-outline-variant flex justify-between items-center bg-surface">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Asset Class Breakdown</h3>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Data as of Oct 24, 2023</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface">
+<th class="py-sm px-lg text-label-caps font-label-caps text-on-surface-variant font-medium table-row-divider w-1/3">Asset Class</th>
+<th class="py-sm px-lg text-label-caps font-label-caps text-on-surface-variant font-medium table-row-divider text-right">Allocation</th>
+<th class="py-sm px-lg text-label-caps font-label-caps text-on-surface-variant font-medium table-row-divider text-right">Return (YTD)</th>
+<th class="py-sm px-lg text-label-caps font-label-caps text-on-surface-variant font-medium table-row-divider text-right">Vol (30D)</th>
+</tr>
+</thead>
+<tbody id="analysis-asset-tbody">
+<tr class="hover:bg-surface-container-low transition-colors table-row-divider">
+<td class="py-md px-lg text-body-sm font-body-sm text-on-surface">Large Cap Equities</td>
+<td class="py-md px-lg text-data-mono font-data-mono text-on-surface text-right">42.5%</td>
+<td class="py-md px-lg text-data-mono font-data-mono text-[#059669] text-right">+14.2%</td>
+<td class="py-md px-lg text-data-mono font-data-mono text-on-surface text-right">12.4%</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors table-row-divider">
+<td class="py-md px-lg text-body-sm font-body-sm text-on-surface">Fixed Income (Gov)</td>
+<td class="py-md px-lg text-data-mono font-data-mono text-on-surface text-right">25.0%</td>
+<td class="py-md px-lg text-data-mono font-data-mono text-[#059669] text-right">+2.1%</td>
+<td class="py-md px-lg text-data-mono font-data-mono text-on-surface text-right">4.1%</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors table-row-divider">
+<td class="py-md px-lg text-body-sm font-body-sm text-on-surface">Real Estate (Core)</td>
+<td class="py-md px-lg text-data-mono font-data-mono text-on-surface text-right">15.5%</td>
+<td class="py-md px-lg text-data-mono font-data-mono text-[#DC2626] text-right">-1.4%</td>
+<td class="py-md px-lg text-data-mono font-data-mono text-on-surface text-right">8.7%</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-md px-lg text-body-sm font-body-sm text-on-surface">Private Equity</td>
+<td class="py-md px-lg text-data-mono font-data-mono text-on-surface text-right">17.0%</td>
+<td class="py-md px-lg text-data-mono font-data-mono text-[#059669] text-right">+22.8%</td>
+<td class="py-md px-lg text-data-mono font-data-mono text-on-surface text-right">--</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+<!-- Screen: ledger -->
+<div id="screen-ledger" class="spa-screen hidden">
+<nav class="hidden md:flex flex-col h-screen py-lg px-md w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline transition-all duration-200 ease-in-out z-20">
+<div class="mb-xl flex items-center gap-sm portal-brand-header">
+<img class="w-10 h-10 rounded object-cover" data-alt="WealthOffice Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcOD4IpPA9tIYNjHSIwArlikfgF2cKj9w8Vg1k67WHIz2eR7EnxfA0e0Gcl0vTzWjeMN_uKy8nAfQPlRmhB0HGmxY1M3p70V1wcT8Dzd7upQROtRlHhQ6o0Ek_7da4T2iTua4NjrIDoWdj36711MZHJYNUNEpRR3LzIUUnTa_Up4Il3wlZX6MDOKjVJqlJ7KdM58D91z_z0veiVPBI4MLIE58KRCNugezo26VgMUP_55Fn737AYsCv_Q">
+<div class="portal-brand-copy">
+<h1 class="portal-brand font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface">WealthOffice</h1>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant admin-only">Institutional Access</p>
+<p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant investor-only">Institutional Portal</p>
+</div>
+</div>
+<div class="flex-grow flex flex-col gap-sm">
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="investors" onclick="navigateTo('investors')">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span>Investors</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="portfolio" onclick="navigateTo('portfolio')">
+<span class="material-symbols-outlined" data-icon="pie_chart">pie_chart</span>
+<span>Portfolio</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Reports</span>
+</a>
+<a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Documents</span>
+</a>
+<a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="analysis" onclick="navigateTo('analysis')">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analysis</span>
+</a>
+</div>
+<div class="mt-auto flex flex-col gap-sm border-t border-outline-variant pt-sm">
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="profile" onclick="navigateTo('profile')">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Profile</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="settings" onclick="navigateTo('settings')">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="openSupportModal()">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="signOut()">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-64 flex flex-col min-h-screen w-full">
+<!-- TopNavBar -->
+<header class="w-full h-16 flex justify-between items-center px-grid-margin border-b border-outline-variant dark:border-outline bg-surface dark:bg-inverse-surface z-10 sticky top-0">
+<div class="flex items-center gap-md w-1/3">
+<span class="md:hidden font-headline-sm text-headline-sm font-bold text-on-surface dark:text-inverse-on-surface">WealthOffice</span>
+<div class="hidden md:flex items-center bg-surface-container-low rounded-DEFAULT px-sm py-xs border border-outline-variant/50 w-full max-w-sm">
+<span class="material-symbols-outlined text-on-surface-variant mr-xs">search</span>
+<input id="ledger-search" class="bg-transparent border-none focus:ring-0 text-body-sm font-body-sm w-full placeholder:text-on-surface-variant/70 text-on-surface" placeholder="Search transactions by name or date..." type="text">
+</div>
+</div>
+<div class="hidden md:flex font-headline-sm text-headline-sm font-bold text-on-surface dark:text-inverse-on-surface">
+                WealthOffice
+            </div>
+<div class="flex items-center gap-sm justify-end w-1/3">
+<button class="p-xs rounded-full text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="admin-hide p-xs rounded-full text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="admin-hide w-8 h-8 rounded-full bg-primary-fixed ml-sm overflow-hidden border border-outline-variant cursor-pointer">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate executive, clean lighting, light background, highly detailed." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF6i-9xEtAmbkXP_R1ZUht5tkv7cvRkz8SarxRl34xj8FoWsWevTYrDEciVv2zA5gdLLWA-RROsmXby78jLzOrWctr5BDN6HI6tHhYvyW7DUGcKKk31Q2cgrgO2hUeOTnBGJrZZz7f-Pipya_KYon-UKNw2HRT16ceWV70IrzbDobhR4669gbqngN1vXouznkYWH2SlJkSBV14Qn6DFmbi8R_jZF0VfZWKR5LHSrUXDW6-lIPO0IUdNA">
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="p-grid-margin w-full max-w-7xl mx-auto flex-1">
+<!-- Header & Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-xl gap-md">
+<div>
+<h2 id="ledger-title" class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-base">Transaction History</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Comprehensive ledger of all financial movements.</p>
+</div>
+<div class="flex gap-sm">
+<button onclick="showAddTransactionModal()" class="admin-only flex items-center gap-xs px-md py-sm bg-[#0051d5] text-white rounded-DEFAULT font-body-sm text-body-sm hover:bg-[#003ea8] transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+    Add Transaction
+</button>
+<button onclick="exportTransactionsCSV()" class="flex items-center gap-xs px-md py-sm bg-surface-container-lowest border border-outline-variant rounded-DEFAULT text-primary font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Export CSV
+                    </button>
+<button onclick="exportPDF()" class="flex items-center gap-xs px-md py-sm bg-primary text-on-primary rounded-DEFAULT font-body-sm text-body-sm hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                        Export PDF
+                    </button>
+</div>
+</div>
+<!-- Filters -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md mb-lg flex flex-col md:flex-row gap-md items-end">
+<div class="w-full md:w-1/4">
+<label class="block font-body-sm text-body-sm font-semibold text-on-surface-variant mb-xs">Date Range</label>
+<div class="relative">
+<input id="filter-date" class="w-full bg-transparent border border-outline-variant rounded-DEFAULT px-sm py-xs text-body-sm font-body-sm text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/10 transition-all" type="date">
+</div>
+</div>
+<div class="w-full md:w-1/4">
+<label class="block font-body-sm text-body-sm font-semibold text-on-surface-variant mb-xs">Transaction Type</label>
+<select id="filter-type" class="w-full bg-transparent border border-outline-variant rounded-DEFAULT px-sm py-xs text-body-sm font-body-sm text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/10 transition-all appearance-none">
+<option value="all types">All Types</option>
+<option value="Contribution">Contribution</option>
+<option value="Distribution">Distribution</option>
+<option value="Fee">Fee</option>
+</select>
+</div>
+<div class="w-full md:w-1/4">
+<label class="block font-body-sm text-body-sm font-semibold text-on-surface-variant mb-xs">Status</label>
+<select id="filter-status" class="w-full bg-transparent border border-outline-variant rounded-DEFAULT px-sm py-xs text-body-sm font-body-sm text-on-surface focus:border-secondary focus:ring-2 focus:ring-secondary/10 transition-all appearance-none">
+<option value="all statuses">All Statuses</option>
+<option value="COMPLETED">Completed</option>
+<option value="PENDING">Pending</option>
+</select>
+</div>
+<div class="w-full md:w-auto">
+<button id="btn-apply-filters" class="w-full md:w-auto px-md py-xs bg-surface-container border border-outline-variant rounded-DEFAULT text-primary font-body-sm text-body-sm hover:bg-surface-variant transition-colors h-[38px]">
+                        Apply Filters
+                    </button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-surface-container-highest bg-surface-bright">
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant whitespace-nowrap">Date</th>
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant">Investor Name</th>
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant">Type</th>
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant text-right">Amount</th>
+<th class="py-sm px-md font-label-caps text-label-caps text-on-surface-variant text-center">Status</th>
+</tr>
+</thead>
+<tbody id="ledger-table-tbody" class="font-body-sm text-body-sm">
+<!-- Populated dynamically by java.js -->
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="flex items-center justify-between px-md py-sm border-t border-surface-container-highest bg-surface-bright">
+<span class="font-body-sm text-body-sm text-on-surface-variant"><span id="ledger-pagination-text">Showing 1 to 5 of 5 entries</span></span>
+<div class="flex gap-xs">
+<button id="transactions-prev-btn" onclick="changePage('transactions', -1)" class="p-xs border border-outline-variant rounded-DEFAULT text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50" disabled>
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button id="transactions-next-btn" onclick="changePage('transactions', 1)" class="p-xs border border-outline-variant rounded-DEFAULT text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Screen: profile -->
+<div id="screen-profile" class="spa-screen hidden">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation (Same as investors/ledger) -->
+        <nav class="hidden md:flex flex-col h-screen py-lg px-md w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline transition-all duration-200 ease-in-out z-20">
+            <div class="mb-xl flex items-center gap-sm portal-brand-header">
+                <img class="w-10 h-10 rounded object-cover" data-alt="WealthOffice Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcOD4IpPA9tIYNjHSIwArlikfgF2cKj9w8Vg1k67WHIz2eR7EnxfA0e0Gcl0vTzWjeMN_uKy8nAfQPlRmhB0HGmxY1M3p70V1wcT8Dzd7upQROtRlHhQ6o0Ek_7da4T2iTua4NjrIDoWdj36711MZHJYNUNEpRR3LzIUUnTa_Up4Il3wlZX6MDOKjVJqlJ7KdM58D91z_z0veiVPBI4MLIE58KRCNugezo26VgMUP_55Fn737AYsCv_Q">
+                <div class="portal-brand-copy">
+                    <h1 class="portal-brand font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface">WealthOffice</h1>
+                    <p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant admin-only">Institutional Access</p>
+                    <p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant investor-only">Institutional Portal</p>
+                </div>
+            </div>
+            <div class="flex-grow flex flex-col gap-sm">
+                <a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+                    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    <span>Overview</span>
+                </a>
+                <a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+                    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="investors" onclick="navigateTo('investors')">
+                    <span class="material-symbols-outlined" data-icon="groups">groups</span>
+                    <span>Investors</span>
+                </a>
+                <a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="portfolio" onclick="navigateTo('portfolio')">
+                    <span class="material-symbols-outlined" data-icon="pie_chart">pie_chart</span>
+                    <span>Portfolio</span>
+                </a>
+                <a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+                    <span class="material-symbols-outlined" data-icon="description">description</span>
+                    <span>Reports</span>
+                </a>
+                <a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+                    <span class="material-symbols-outlined" data-icon="description">description</span>
+                    <span>Documents</span>
+                </a>
+                <a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="analysis" onclick="navigateTo('analysis')">
+                    <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                    <span>Analysis</span>
+                </a>
+            </div>
+            <div class="mt-auto flex flex-col gap-sm border-t border-outline-variant pt-sm">
+                <a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="profile" onclick="navigateTo('profile')">
+                    <span class="material-symbols-outlined" data-icon="person">person</span>
+                    <span>Profile</span>
+                </a>
+                <a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="settings" onclick="navigateTo('settings')">
+                    <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    <span>Settings</span>
+                </a>
+                <a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="openSupportModal()">
+                    <span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+                    <span>Support</span>
+                </a>
+                <a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="signOut()">
+                    <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                    <span>Sign Out</span>
+                </a>
+            </div>
+        </nav>
+        <main class="flex-1 md:ml-64 flex flex-col min-h-screen">
+            <header class="flex justify-between items-center px-grid-margin w-full bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline h-16 z-10 sticky top-0 flex-shrink-0">
+                <h1 class="font-headline-sm text-headline-sm font-bold text-on-surface">User Profile</h1>
+            </header>
+            <div class="p-md md:p-xl max-w-3xl mx-auto w-full space-y-lg flex-grow overflow-y-auto">
+                <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg card-shadow">
+                    <div class="flex items-center gap-md mb-lg">
+                        <div class="w-16 h-16 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-headline-lg" id="profile-initial">U</div>
+                        <div>
+                            <h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold" id="profile-name">User Account</h2>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant" id="profile-role">Portal Member</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-md pt-md border-t border-outline-variant">
+                        <div>
+                            <span class="font-label-caps text-label-caps text-on-surface-variant block">Email Address</span>
+                            <span class="font-body-md text-body-md text-on-surface font-medium" id="profile-email">email@example.com</span>
+                        </div>
+                        <div>
+                            <span class="font-label-caps text-label-caps text-on-surface-variant block">Account Status</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-tertiary-fixed text-on-tertiary-fixed mt-1">Verified Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Screen: settings -->
+<div id="screen-settings" class="spa-screen hidden">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation (Same as investors/ledger) -->
+        <nav class="hidden md:flex flex-col h-screen py-lg px-md w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline transition-all duration-200 ease-in-out z-20">
+            <div class="mb-xl flex items-center gap-sm portal-brand-header">
+                <img class="w-10 h-10 rounded object-cover" data-alt="WealthOffice Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcOD4IpPA9tIYNjHSIwArlikfgF2cKj9w8Vg1k67WHIz2eR7EnxfA0e0Gcl0vTzWjeMN_uKy8nAfQPlRmhB0HGmxY1M3p70V1wcT8Dzd7upQROtRlHhQ6o0Ek_7da4T2iTua4NjrIDoWdj36711MZHJYNUNEpRR3LzIUUnTa_Up4Il3wlZX6MDOKjVJqlJ7KdM58D91z_z0veiVPBI4MLIE58KRCNugezo26VgMUP_55Fn737AYsCv_Q">
+                <div class="portal-brand-copy">
+                    <h1 class="portal-brand font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface">WealthOffice</h1>
+                    <p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant admin-only">Institutional Access</p>
+                    <p class="portal-brand-subtitle font-body-sm text-body-sm text-on-surface-variant investor-only">Institutional Portal</p>
+                </div>
+            </div>
+            <div class="flex-grow flex flex-col gap-sm">
+                <a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+                    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    <span>Overview</span>
+                </a>
+                <a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="dashboard" onclick="navigateTo('dashboard')">
+                    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="investors" onclick="navigateTo('investors')">
+                    <span class="material-symbols-outlined" data-icon="groups">groups</span>
+                    <span>Investors</span>
+                </a>
+                <a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="portfolio" onclick="navigateTo('portfolio')">
+                    <span class="material-symbols-outlined" data-icon="pie_chart">pie_chart</span>
+                    <span>Portfolio</span>
+                </a>
+                <a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+                    <span class="material-symbols-outlined" data-icon="description">description</span>
+                    <span>Reports</span>
+                </a>
+                <a class="investor-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="ledger" onclick="navigateTo('ledger')">
+                    <span class="material-symbols-outlined" data-icon="description">description</span>
+                    <span>Documents</span>
+                </a>
+                <a class="admin-only flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="analysis" onclick="navigateTo('analysis')">
+                    <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                    <span>Analysis</span>
+                </a>
+            </div>
+            <div class="mt-auto flex flex-col gap-sm border-t border-outline-variant pt-sm">
+                <a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="profile" onclick="navigateTo('profile')">
+                    <span class="material-symbols-outlined" data-icon="person">person</span>
+                    <span>Profile</span>
+                </a>
+                <a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" data-nav="settings" onclick="navigateTo('settings')">
+                    <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    <span>Settings</span>
+                </a>
+                <a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="openSupportModal()">
+                    <span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+                    <span>Support</span>
+                </a>
+                <a class="flex items-center gap-md px-sm py-xs rounded text-on-surface-variant hover:bg-surface-container transition-all duration-200 font-label-caps text-label-caps" href="javascript:void(0)" onclick="signOut()">
+                    <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                    <span>Sign Out</span>
+                </a>
+            </div>
+        </nav>
+        <main class="flex-1 md:ml-64 flex flex-col min-h-screen">
+            <header class="flex justify-between items-center px-grid-margin w-full bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline h-16 z-10 sticky top-0 flex-shrink-0">
+                <h1 class="font-headline-sm text-headline-sm font-bold text-on-surface">Platform Settings</h1>
+            </header>
+            <div class="p-md md:p-xl max-w-3xl mx-auto w-full space-y-lg flex-grow overflow-y-auto">
+                <!-- Sync Status Card -->
+                <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg card-shadow space-y-md">
+                    <h3 class="font-body-md text-body-md font-semibold text-on-surface border-b border-outline-variant pb-xs">Platform Sync Options</h3>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="font-body-md text-body-md font-medium text-on-surface block">Real-time Connection Status</span>
+                            <span class="font-body-sm text-body-sm text-on-surface-variant block">Using Server-Sent Events (SSE) near-real-time streaming.</span>
+                        </div>
+                        <span class="sync-status-badge inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide bg-tertiary-fixed text-on-tertiary-fixed">LIVE</span>
+                    </div>
+                </div>
+
+                <!-- Reporting Period Card -->
+                <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg card-shadow space-y-md">
+                    <h3 class="font-body-md text-body-md font-semibold text-on-surface border-b border-outline-variant pb-xs">Reporting Period</h3>
+                    <div class="flex flex-col gap-sm">
+                        <label class="block text-body-sm font-semibold text-on-surface-variant">Global Reporting Window</label>
+                        <select id="global-reporting-period-select" onchange="changeReportingPeriod(this.value)" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                            <option value="T12M">Trailing 12 Months (T12M)</option>
+                            <option value="YTD">Year to Date (YTD)</option>
+                            <option value="ALL" selected>Since Inception (All Time)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Admin Tools Card -->
+                <div class="admin-only bg-surface-container-lowest border border-outline-variant rounded-xl p-lg card-shadow space-y-md">
+                    <h3 class="font-body-md text-body-md font-semibold text-on-surface border-b border-[#ffdad6] pb-xs text-[#ba1a1a]">Admin Development Tools</h3>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Perform safe administrative actions on the live database. These operations are destructive and require immediate validation.</p>
+                    <div class="flex flex-col sm:flex-row gap-sm pt-sm">
+                        <button onclick="triggerLoadSeedData()" class="flex-1 py-sm bg-primary text-on-primary rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">
+                            Load Default Seed Data
+                        </button>
+                        <button onclick="triggerClearActivities()" class="flex-1 py-sm bg-transparent border border-outline text-on-surface rounded font-label-caps text-label-caps hover:bg-surface-container transition-colors">
+                            Clear Recent Activities
+                        </button>
+                        <button onclick="triggerResetDatabase()" class="flex-1 py-sm bg-transparent border border-[#ba1a1a] text-[#ba1a1a] rounded font-label-caps text-label-caps hover:bg-[#ffdad6]/10 transition-colors">
+                            Reset to Empty Database
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Investor navigation for shared Portfolio, Documents, Profile and Settings screens -->
+<nav id="investor-mobile-nav" class="hidden fixed bottom-0 left-0 z-50 h-20 w-full items-center justify-around border-t border-outline-variant bg-surface px-4 pb-4 pt-2 shadow-[0_-10px_15px_-3px_rgba(15,23,42,0.05)] md:hidden">
+    <button onclick="navigateTo('dashboard')" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary">
+        <span class="material-symbols-outlined">home</span><span class="font-label-caps text-label-caps mt-1">Home</span>
+    </button>
+    <button onclick="navigateTo('portfolio')" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary">
+        <span class="material-symbols-outlined">pie_chart</span><span class="font-label-caps text-label-caps mt-1">Portfolio</span>
+    </button>
+    <button onclick="navigateTo('ledger')" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary">
+        <span class="material-symbols-outlined">description</span><span class="font-label-caps text-label-caps mt-1">Documents</span>
+    </button>
+</nav>
+
+<!-- Modal: Add Investor -->
+<div id="modal-add-investor" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center pb-sm border-b border-outline-variant mb-md">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Add New Investor</h3>
+            <button onclick="closeModal('add-investor')" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="form-add-investor" onsubmit="handleNewInvestorSubmit(event)" class="space-y-sm">
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Full Name</label>
+                <input required id="new-inv-name" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="text" placeholder="e.g. Apex Partners LLC">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Investor Type</label>
+                <select id="new-inv-type" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <option value="Institutional">Institutional</option>
+                    <option value="Family Office">Family Office</option>
+                    <option value="Retail">Retail</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Email Address</label>
+                <input required id="new-inv-email" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="email" placeholder="email@domain.com">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Phone Number</label>
+                <input required id="new-inv-phone" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="tel" placeholder="+1 (555) 123-4567">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Commitment Amount ($)</label>
+                <input required id="new-inv-commitment" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="number" min="1" placeholder="e.g. 15000000">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Status</label>
+                <select id="new-inv-status" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <option value="Active">Active</option>
+                    <option value="Pending">Pending</option>
+                </select>
+            </div>
+            <div class="flex gap-sm pt-md border-t border-outline-variant mt-md">
+                <button type="button" onclick="closeModal('add-investor')" class="flex-1 py-sm border border-outline-variant rounded font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Cancel</button>
+                <button type="submit" class="flex-1 py-sm bg-primary text-on-primary rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Save Investor</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Add Transaction -->
+<div id="modal-add-transaction" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center pb-sm border-b border-outline-variant mb-md">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Add Transaction</h3>
+            <button onclick="closeModal('add-transaction')" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="form-add-transaction" onsubmit="handleNewTransactionSubmit(event)" class="space-y-sm">
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Investor / Partner</label>
+                <select id="new-tx-investor" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Transaction Type</label>
+                <select id="new-tx-type" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <option value="Contribution">Contribution</option>
+                    <option value="Distribution">Distribution</option>
+                    <option value="Fee">Fee</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Amount ($)</label>
+                <input required id="new-tx-amount" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="number" min="1" placeholder="e.g. 5000000">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Transaction Date</label>
+                <input id="new-tx-date" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="date">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Description</label>
+                <input id="new-tx-description" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="text" placeholder="e.g. Initial Draw Call">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Status</label>
+                <select id="new-tx-status" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <option value="COMPLETED">Completed</option>
+                    <option value="PENDING">Pending</option>
+                </select>
+            </div>
+            <div class="flex gap-sm pt-md border-t border-outline-variant mt-md">
+                <button type="button" onclick="closeModal('add-transaction')" class="flex-1 py-sm border border-outline-variant rounded font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Cancel</button>
+                <button type="submit" class="flex-1 py-sm bg-primary text-on-primary rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Post Transaction</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Support -->
+<div id="modal-support" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-md">
+        <div class="flex justify-between items-center pb-sm border-b border-outline-variant mb-md">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Support &amp; Help</h3>
+            <button onclick="closeModal('support')" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="space-y-md">
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-md">
+                <p class="font-body-sm text-body-sm font-bold text-on-surface mb-xs">WealthOffice Platform Support</p>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mb-sm">For technical issues, data inquiries, or account management, contact your dedicated relationship manager.</p>
+                <div class="space-y-xs">
+                    <div class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-secondary text-[18px]">email</span>
+                        <span class="font-label-caps text-label-caps text-on-surface">shad2004@gmail.com</span>
+                    </div>
+                    <div class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-secondary text-[18px]">phone</span>
+                        <span class="font-label-caps text-label-caps text-on-surface">01521582448</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-surface-container-low border border-outline-variant rounded-lg p-md">
+                <p class="font-body-sm text-body-sm font-bold text-on-surface mb-xs">Platform Information</p>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">WealthOffice Institutional Access — Real-time investment management and reporting platform for accredited investors and fund managers.</p>
+            </div>
+            <button onclick="closeModal('support')" class="w-full py-sm bg-primary text-on-primary rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Add Investment Position -->
+<div id="modal-add-investment" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center pb-sm border-b border-outline-variant mb-md">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Add Investment Position</h3>
+            <button onclick="closeModal('add-investment')" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="form-add-investment" onsubmit="handleNewInvestmentSubmit(event)" class="space-y-sm">
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Asset Name</label>
+                <input required id="new-inv-asset-name" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="text" placeholder="e.g. Acme Corp LP">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Asset Type</label>
+                <select id="new-inv-asset-type" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <option value="Private Equity">Private Equity</option>
+                    <option value="Venture Capital">Venture Capital</option>
+                    <option value="Real Estate">Real Estate</option>
+                    <option value="Infrastructure">Infrastructure</option>
+                    <option value="Hedge Fund">Hedge Fund</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Committed Amount ($)</label>
+                <input required id="new-inv-asset-amount" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="number" min="1" placeholder="e.g. 10000000">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Current Market Value ($)</label>
+                <input required id="new-inv-asset-value" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="number" min="0" placeholder="e.g. 12000000">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Linked Investor</label>
+                <select id="new-inv-asset-investor" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+            <div class="flex gap-sm pt-md border-t border-outline-variant mt-md">
+                <button type="button" onclick="closeModal('add-investment')" class="flex-1 py-sm border border-outline-variant rounded font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Cancel</button>
+                <button type="submit" class="flex-1 py-sm bg-primary text-on-primary rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Save Position</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Request Capital Call -->
+<div id="modal-request-capital-call" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center pb-sm border-b border-outline-variant mb-md">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Request Capital Call</h3>
+            <button onclick="closeModal('request-capital-call')" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="form-request-capital-call" onsubmit="handleCapitalCallSubmit(event)" class="space-y-sm">
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Select Fund</label>
+                <select required id="new-cc-fund" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Target Investor</label>
+                <select id="new-cc-investor" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <option value="">All Investors</option>
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Call Amount ($)</label>
+                <input required id="new-cc-amount" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="number" min="1" placeholder="e.g. 15000000">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Due Date</label>
+                <input required id="new-cc-due-date" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="date">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Description</label>
+                <input id="new-cc-description" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="text" placeholder="e.g. Draw for Acquisition">
+            </div>
+            <div class="flex gap-sm pt-md border-t border-outline-variant mt-md">
+                <button type="button" onclick="closeModal('request-capital-call')" class="flex-1 py-sm border border-outline-variant rounded font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Cancel</button>
+                <button type="submit" class="flex-1 py-sm bg-primary text-on-primary rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Submit Capital Call</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Edit Investor -->
+<div id="modal-edit-investor" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center pb-sm border-b border-outline-variant mb-md">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Edit Investor</h3>
+            <button onclick="closeModal('edit-investor')" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="form-edit-investor" onsubmit="handleEditInvestorSubmit(event)" class="space-y-sm">
+            <input type="hidden" id="edit-inv-id">
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Full Name</label>
+                <input required id="edit-inv-name" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="text">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Investor Type</label>
+                <select id="edit-inv-type" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <option value="Institutional">Institutional</option>
+                    <option value="Family Office">Family Office</option>
+                    <option value="Retail">Retail</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Email Address</label>
+                <input required id="edit-inv-email" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="email">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Phone Number</label>
+                <input required id="edit-inv-phone" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="tel">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Commitment Amount ($)</label>
+                <input required id="edit-inv-commitment" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors" type="number" min="1">
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Link User Account</label>
+                <select id="edit-inv-user-id" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <option value="">-- Unlinked / No Portal Access --</option>
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Status</label>
+                <select id="edit-inv-status" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <option value="Active">Active</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="flex gap-sm pt-md border-t border-outline-variant mt-md">
+                <button type="button" onclick="closeModal('edit-investor')" class="flex-1 py-sm border border-outline-variant rounded font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Cancel</button>
+                <button type="submit" class="flex-1 py-sm bg-primary text-on-primary rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: View Investor Details -->
+<div id="modal-view-investor" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-md">
+        <div class="flex justify-between items-center pb-sm border-b border-outline-variant mb-md">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Investor details</h3>
+            <button onclick="closeModal('view-investor')" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div id="investor-detail-content" class="space-y-md">
+            <!-- Loaded dynamically -->
+        </div>
+        <div class="flex pt-md border-t border-outline-variant mt-md">
+            <button onclick="closeModal('view-investor')" class="flex-grow py-sm bg-primary text-on-primary rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Investor Filter -->
+<div id="modal-investor-filter" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-50 transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-md">
+        <div class="flex justify-between items-center pb-sm border-b border-outline-variant mb-md">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Filter Investors</h3>
+            <button onclick="closeModal('investor-filter')" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="space-y-sm">
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Status</label>
+                <select id="filter-inv-status" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <option value="">All Statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-body-sm font-semibold text-on-surface-variant mb-xs">Investor Type</label>
+                <select id="filter-inv-type" class="w-full bg-transparent border border-outline-variant rounded p-sm text-body-sm focus:border-secondary focus:outline-none transition-colors">
+                    <option value="">All Types</option>
+                    <option value="Institutional">Institutional</option>
+                    <option value="Family Office">Family Office</option>
+                    <option value="Retail">Retail</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex gap-sm pt-md border-t border-outline-variant mt-md">
+            <button onclick="resetInvestorFilters()" class="flex-1 py-sm border border-outline-variant rounded font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Reset</button>
+            <button onclick="applyInvestorFilters()" class="flex-1 py-sm bg-primary text-on-primary rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Apply Filters</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Confirm Deactivate -->
+<div id="modal-confirm-deactivate" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-[60] transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-sm">
+        <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-xs">Deactivate Investor</h3>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Are you sure you want to deactivate this investor? They will be marked as Inactive.</p>
+        <input type="hidden" id="confirm-deactivate-id">
+        <div class="flex gap-sm">
+            <button onclick="closeModal('confirm-deactivate')" class="flex-1 py-sm border border-outline-variant rounded font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Cancel</button>
+            <button onclick="submitCustomDeactivate()" class="flex-1 py-sm bg-[#ba1a1a] text-white rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Deactivate</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Confirm Delete -->
+<div id="modal-confirm-delete" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-[60] transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-sm">
+        <h3 class="font-headline-sm text-headline-sm text-[#ba1a1a] font-bold mb-xs">Delete Investor</h3>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Are you sure you want to permanently delete this investor and all their financial records? This action cannot be undone.</p>
+        <input type="hidden" id="confirm-delete-id">
+        <div class="flex gap-sm">
+            <button onclick="closeModal('confirm-delete')" class="flex-1 py-sm border border-outline-variant rounded font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Cancel</button>
+            <button onclick="submitCustomDelete()" class="flex-1 py-sm bg-[#ba1a1a] text-white rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Delete Permanently</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Confirm Seed -->
+<div id="modal-confirm-seed" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-[60] transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-sm">
+        <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-xs">Load Seed Data</h3>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Load default seed data? This will overwrite the current database.</p>
+        <div class="flex gap-sm">
+            <button onclick="closeModal('confirm-seed')" class="flex-1 py-sm border border-outline-variant rounded font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Cancel</button>
+            <button onclick="submitCustomSeed()" class="flex-1 py-sm bg-primary text-on-primary rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Load Seed</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Confirm Reset -->
+<div id="modal-confirm-reset" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-[60] transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-sm">
+        <h3 class="font-headline-sm text-headline-sm text-[#ba1a1a] font-bold mb-xs">Reset Database</h3>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Reset database to empty? ALL records will be deleted.</p>
+        <div class="flex gap-sm">
+            <button onclick="closeModal('confirm-reset')" class="flex-1 py-sm border border-outline-variant rounded font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Cancel</button>
+            <button onclick="submitCustomReset()" class="flex-1 py-sm bg-[#ba1a1a] text-white rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Reset All</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Confirm Clear Activities -->
+<div id="modal-confirm-clear-activities" class="fixed inset-0 bg-[#000000]/40 backdrop-blur-sm hidden items-center justify-center z-[60] transition-all duration-300">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-lg w-full max-w-sm">
+        <h3 class="font-headline-sm text-headline-sm text-[#ba1a1a] font-bold mb-xs">Clear Activities</h3>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Are you sure you want to clear all recent activities and logs?</p>
+        <div class="flex gap-sm">
+            <button onclick="closeModal('confirm-clear-activities')" class="flex-1 py-sm border border-outline-variant rounded font-label-caps text-label-caps text-on-surface hover:bg-surface-container-low transition-colors">Cancel</button>
+            <button onclick="submitCustomClearActivities()" class="flex-1 py-sm bg-[#ba1a1a] text-white rounded font-label-caps text-label-caps hover:opacity-90 transition-opacity">Clear Logs</button>
+        </div>
+    </div>
+</div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-grid-gutter right-grid-gutter z-[9999] flex flex-col gap-xs pointer-events-none"></div>
+
+    <!-- Consolidated Script -->
+    <script src="java.js"></script>
+</body>
+</html>
