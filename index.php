@@ -4,11 +4,7 @@
  */
 
 require_once __DIR__ . '/config.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_name(SESSION_NAME);
-    session_start();
-}
+require_once __DIR__ . '/includes/auth_middleware.php';
 
 // If user is logged in, send them to the app
 if (!empty($_SESSION['user_id'])) {

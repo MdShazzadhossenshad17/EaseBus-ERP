@@ -103,7 +103,9 @@ class Validator {
     public function match(string $field, string $otherField, string $label = '', string $otherLabel = ''): self {
         $label = $label ?: $field;
         $otherLabel = $otherLabel ?: $otherField;
-        if (isset($this->data[$field], $this->data[$otherField]) && $this->data[$field] !== $this->data[$otherField]) {
+        $hasField = isset($this->data[$field]) && $this->data[$field] !== '';
+        $hasOther = isset($this->data[$otherField]) && $this->data[$otherField] !== '';
+        if ($hasField && (!$hasOther || $this->data[$field] !== $this->data[$otherField])) {
             $this->errors[$field] = "{$label} must match {$otherLabel}.";
         }
         return $this;

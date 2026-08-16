@@ -20,6 +20,14 @@ if (empty($_SESSION['user_id'])) {
 $userRole = $_SESSION['user_role'] ?? 'guest';
 $biz = Database::getBusinessSettings();
 $csrfToken = generateCsrfToken();
+$username = $_SESSION['username'] ?? 'User';
+$jsUsername = json_encode($username, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$jsCurrency = json_encode($biz['currency'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$jsCurrencySymbol = json_encode($biz['currency_symbol'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$jsUserRole = json_encode($userRole, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$jsAppName = json_encode($biz['name'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$jsCsrf = json_encode($csrfToken, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$avatarInitial = esc(mb_substr($username, 0, 1));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,12 +54,12 @@ $csrfToken = generateCsrfToken();
     <!-- State -->
     <script>
         window.APP_CONFIG = {
-            name: "<?php echo esc($biz['name']); ?>",
-            currency: "<?php echo esc($biz['currency']); ?>",
-            currencySymbol: "<?php echo esc($biz['currency_symbol']); ?>",
-            userRole: "<?php echo esc($userRole); ?>",
-            username: "<?php echo esc($_SESSION['username'] ?? 'User'); ?>",
-            csrfToken: "<?php echo esc($csrfToken); ?>"
+            name: <?php echo $jsAppName; ?>,
+            currency: <?php echo $jsCurrency; ?>,
+            currencySymbol: <?php echo $jsCurrencySymbol; ?>,
+            userRole: <?php echo $jsUserRole; ?>,
+            username: <?php echo $jsUsername; ?>,
+            csrfToken: <?php echo $jsCsrf; ?>
         };
         try {
             sessionStorage.setItem('csrf_token', window.APP_CONFIG.csrfToken);
@@ -140,7 +148,7 @@ $csrfToken = generateCsrfToken();
         <div class="p-4 border-t border-slate-800">
             <div class="flex items-center">
                 <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-sm font-bold">
-                    <?php echo substr($_SESSION['username'] ?? 'U', 0, 1); ?>
+                    <?php echo $avatarInitial; ?>
                 </div>
                 <div class="ml-3">
                     <p class="text-sm font-medium text-white"><?php echo esc($_SESSION['username'] ?? ''); ?></p>

@@ -1,8 +1,10 @@
 <?php
 /**
  * BusinessM — API Router
- * 
+ *
  * Routes requests to appropriate module controllers.
+ * Note: per-module authentication and CSRF are enforced inside each module
+ * (e.g. api/auth.php is public; everything else calls requireAuth()/verifyCsrf()).
  */
 
 require_once __DIR__ . '/../includes/database.php';

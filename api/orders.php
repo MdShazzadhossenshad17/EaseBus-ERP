@@ -262,7 +262,10 @@ if ($method === 'POST' && $action === 'create') {
             );
             
             $variantStock = Database::fetchOne("SELECT current_stock FROM product_variants WHERE id = ?", [$item['variant_id']]);
-            $stockBefore = (int)($variantStock['current_stock'] ?? 100);
+            if (!$variantStock) {
+                throw new RuntimeException('Product variant not found while recording sale.');
+            }
+            $stockBefore = (int) $variantStock['current_stock'];
             $newStock = max(0, $stockBefore - $item['quantity']);
             
             Database::execute("UPDATE product_variants SET current_stock = ? WHERE id = ?", [$newStock, $item['variant_id']]);

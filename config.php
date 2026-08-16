@@ -6,7 +6,10 @@
  
 // Try to detect the actual URL from the server environment
 $actualUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
-if ($actualUrl === '/') $actualUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/businessM';
+$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+if ($scriptDir === '/' || $scriptDir === '\\' || $scriptDir === '.') {
+    $actualUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/businessM';
+}
 
 // Database
 define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
