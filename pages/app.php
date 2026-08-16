@@ -128,7 +128,6 @@ $avatarInitial = esc(mb_substr($username, 0, 1));
                 <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">handshake</span> Investors & Equity
             </a>
             
-            <?php if ($userRole === 'admin' || $userRole === 'manager'): ?>
             <div class="pt-4 pb-1">
                 <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Management</p>
             </div>
@@ -142,7 +141,6 @@ $avatarInitial = esc(mb_substr($username, 0, 1));
             <a href="#settings" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
                 <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">settings</span> Settings
             </a>
-            <?php endif; ?>
         </nav>
         
         <div class="p-4 border-t border-slate-800">
