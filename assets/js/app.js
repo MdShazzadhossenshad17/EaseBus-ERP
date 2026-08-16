@@ -15,7 +15,7 @@ window.App = {
             this.setupRouter();
 
             if (loggedIn) {
-                const hash = window.location.hash.substring(1) || 'dashboard';
+                const hash = decodeURIComponent(window.location.hash.substring(1)).trim().replace(/[\s_]+/g, '-') || 'dashboard';
                 this.navigate(hash);
             }
         }).catch(err => {
@@ -26,7 +26,7 @@ window.App = {
             this.setupRouter();
 
             if (loggedIn) {
-                const hash = window.location.hash.substring(1) || 'dashboard';
+                const hash = decodeURIComponent(window.location.hash.substring(1)).trim().replace(/[\s_]+/g, '-') || 'dashboard';
                 this.navigate(hash);
             }
         });
@@ -257,7 +257,7 @@ window.App = {
     setupRouter() {
         window.addEventListener('hashchange', () => {
             if (this.checkAuth()) {
-                const hash = window.location.hash.substring(1) || 'dashboard';
+                const hash = decodeURIComponent(window.location.hash.substring(1)).trim().replace(/[\s_]+/g, '-') || 'dashboard';
                 this.navigate(hash);
             }
         });
@@ -266,6 +266,9 @@ window.App = {
     pendingAction: null,
 
     async navigate(route, action = null) {
+        if (!route) route = 'dashboard';
+        route = decodeURIComponent(route).trim().replace(/[\s_]+/g, '-');
+
         if (!this.checkAuth()) return;
         if (action) this.pendingAction = action;
 
@@ -273,7 +276,7 @@ window.App = {
         const isCreator = currentUser && (currentUser.role === 'creator' || currentUser.username === 'shad@dbms.com');
         const isReadOnly = window.Creator && window.Creator.isReadOnlyMode;
 
-        if (isCreator && !isReadOnly && route === 'dashboard') {
+        if (isCreator && !isReadOnly && (route === 'dashboard' || route === '' || route === 'overview')) {
             route = 'creator-overview';
         }
         

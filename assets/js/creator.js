@@ -15,7 +15,7 @@ window.Creator = {
             return;
         }
 
-        const tab = route.replace('creator-', '') || 'overview';
+        const tab = route.replace(/^creator[-_\s]*/i, '').trim() || 'overview';
         this.activeTab = tab;
 
         let summary = { users: [], platform_totals: { total_stores: 1, total_orders: 0, total_products: 0, total_revenue: 0 } };
