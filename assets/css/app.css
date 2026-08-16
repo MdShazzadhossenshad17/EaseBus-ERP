@@ -2,6 +2,8 @@
 
 .font-inter { font-family: 'Inter', sans-serif; }
 .font-geist { font-family: 'Geist', sans-serif; }
+.font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
+.font-outfit { font-family: 'Outfit', sans-serif; }
 .font-mono-data { font-family: 'JetBrains Mono', monospace; }
 
 /* Utility classes for data display */

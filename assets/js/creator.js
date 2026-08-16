@@ -7,6 +7,8 @@ window.Creator = {
     activeTab: 'overview',
     inspectedUserId: null,
     isReadOnlyMode: false,
+    liveTimer: null,
+    lastSummaryData: null,
 
     async render(container, route = 'creator-overview') {
         const currentUser = API.getCurrentUser();
@@ -21,7 +23,10 @@ window.Creator = {
         let summary = { users: [], platform_totals: { total_stores: 1, total_orders: 0, total_products: 0, total_revenue: 0 } };
         try {
             const res = await API.request('users/creator_summary');
-            if (res && res.data) summary = res.data;
+            if (res && res.data) {
+                summary = res.data;
+                this.lastSummaryData = summary;
+            }
         } catch(e) {}
 
         const allUsers = summary.users || [];
@@ -31,51 +36,93 @@ window.Creator = {
 
         container.innerHTML = `
             <!-- Creator Top Header Banner -->
-            <div class="mb-6 p-6 bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 text-white rounded-2xl shadow-xl border border-indigo-500/30 relative overflow-hidden">
-                <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="mb-6 p-6 bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 text-white rounded-2xl shadow-2xl border border-amber-500/30 relative overflow-hidden font-jakarta">
+                <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
                     <div>
-                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/30 text-xs font-semibold mb-2">
-                            <span class="material-symbols-outlined text-sm">shield_person</span> Master Creator Command Center
+                        <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-400/15 text-amber-300 border border-amber-400/40 text-xs font-bold font-outfit mb-2.5 shadow-sm">
+                            <span class="material-symbols-outlined text-sm text-amber-400">shield_person</span> Master Creator Command Center
                         </div>
-                        <h1 class="text-2xl font-bold tracking-tight">Md Shazzad Hossen Shad</h1>
-                        <p class="text-slate-300 text-xs mt-1">Platform Creator Account: <code class="text-amber-300 font-mono">shad@dbms.com</code> • Real-time Monitoring & Management over Platform Tenants.</p>
+                        <h1 class="text-3xl font-extrabold tracking-tight font-jakarta text-white">Md Shazzad Hossen Shad</h1>
+                        <p class="text-slate-300 text-xs mt-1.5 font-inter">Platform Creator Account: <code class="text-amber-300 font-mono font-bold bg-amber-950/60 px-2 py-0.5 rounded border border-amber-500/30">shad@dbms.com</code> • Real-time Monitoring & Management over Platform Tenants.</p>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold font-mono">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> LIVE MONITORING ACTIVE
+                    <div class="flex items-center gap-3">
+                        <span class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold font-mono shadow-[0_0_15px_rgba(16,185,129,0.25)]">
+                            <span class="relative flex h-2.5 w-2.5">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                            </span>
+                            REAL-TIME LIVE SYNC (3s)
                         </span>
                     </div>
                 </div>
             </div>
 
             <!-- Creator Navigation Sub-Header Tabs -->
-            <div class="flex flex-wrap border-b border-slate-200 bg-white px-4 rounded-xl shadow-sm mb-6 text-xs font-semibold">
-                <a href="#creator-overview" class="py-3 px-4 flex items-center gap-2 border-b-2 ${tab === 'overview' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-900'}">
-                    <span class="material-symbols-outlined text-sm">dashboard</span> Platform Overview
+            <div class="flex flex-wrap border-b border-slate-800 bg-slate-900/90 backdrop-blur-xl px-4 rounded-xl shadow-lg mb-6 text-xs font-bold font-outfit">
+                <a href="#creator-overview" class="py-3.5 px-4 flex items-center gap-2 border-b-2 transition-all ${tab === 'overview' ? 'border-amber-400 text-amber-300 bg-slate-800/60' : 'border-transparent text-slate-400 hover:text-white hover:bg-slate-800/30'}">
+                    <span class="material-symbols-outlined text-sm ${tab === 'overview' ? 'text-amber-400' : 'text-slate-400'}">dashboard</span> Platform Overview
                 </a>
-                <a href="#creator-stores" class="py-3 px-4 flex items-center gap-2 border-b-2 ${tab === 'stores' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-900'}">
-                    <span class="material-symbols-outlined text-sm">store</span> Client Stores (${storeUsers.length})
+                <a href="#creator-stores" class="py-3.5 px-4 flex items-center gap-2 border-b-2 transition-all ${tab === 'stores' ? 'border-blue-400 text-blue-300 bg-slate-800/60' : 'border-transparent text-slate-400 hover:text-white hover:bg-slate-800/30'}">
+                    <span class="material-symbols-outlined text-sm ${tab === 'stores' ? 'text-blue-400' : 'text-slate-400'}">store</span> Client Stores (<span id="creator-stores-count">${storeUsers.length}</span>)
                 </a>
-                <a href="#creator-transactions" class="py-3 px-4 flex items-center gap-2 border-b-2 ${tab === 'transactions' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-900'}">
-                    <span class="material-symbols-outlined text-sm">swap_horiz</span> Live Transactions Feed
+                <a href="#creator-transactions" class="py-3.5 px-4 flex items-center gap-2 border-b-2 transition-all ${tab === 'transactions' ? 'border-emerald-400 text-emerald-300 bg-slate-800/60' : 'border-transparent text-slate-400 hover:text-white hover:bg-slate-800/30'}">
+                    <span class="material-symbols-outlined text-sm ${tab === 'transactions' ? 'text-emerald-400' : 'text-slate-400'}">swap_horiz</span> Live Transactions Feed
                 </a>
-                <a href="#creator-inventory" class="py-3 px-4 flex items-center gap-2 border-b-2 ${tab === 'inventory' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-900'}">
-                    <span class="material-symbols-outlined text-sm">inventory_2</span> Global Inventory Auditor
+                <a href="#creator-inventory" class="py-3.5 px-4 flex items-center gap-2 border-b-2 transition-all ${tab === 'inventory' ? 'border-purple-400 text-purple-300 bg-slate-800/60' : 'border-transparent text-slate-400 hover:text-white hover:bg-slate-800/30'}">
+                    <span class="material-symbols-outlined text-sm ${tab === 'inventory' ? 'text-purple-400' : 'text-slate-400'}">inventory_2</span> Global Inventory Auditor
                 </a>
-                <a href="#creator-health" class="py-3 px-4 flex items-center gap-2 border-b-2 ${tab === 'health' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-900'}">
-                    <span class="material-symbols-outlined text-sm">dns</span> Database & Server Health
+                <a href="#creator-health" class="py-3.5 px-4 flex items-center gap-2 border-b-2 transition-all ${tab === 'health' ? 'border-cyan-400 text-cyan-300 bg-slate-800/60' : 'border-transparent text-slate-400 hover:text-white hover:bg-slate-800/30'}">
+                    <span class="material-symbols-outlined text-sm ${tab === 'health' ? 'text-cyan-400' : 'text-slate-400'}">dns</span> Database & Server Health
                 </a>
             </div>
 
             <!-- Tab Content Container -->
-            <div id="creator-tab-content">
+            <div id="creator-tab-content" class="font-jakarta">
                 ${this.renderTabContent(tab, totals, storeUsers)}
             </div>
 
             <!-- Inspect User Data Modal Container -->
             <div id="creator-inspect-modal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center p-4"></div>
         `;
+
+        this.startLivePolling();
+    },
+
+    startLivePolling() {
+        if (this.liveTimer) clearInterval(this.liveTimer);
+        this.liveTimer = setInterval(async () => {
+            if (!document.getElementById('creator-tab-content')) {
+                this.stopLivePolling();
+                return;
+            }
+            try {
+                const res = await API.request('users/creator_summary');
+                if (res && res.data) {
+                    this.lastSummaryData = res.data;
+                    const allUsers = res.data.users || [];
+                    const storeUsers = allUsers.filter(u => u.username !== 'shad@dbms.com' && u.role !== 'creator');
+                    const totals = res.data.platform_totals || {};
+                    totals.total_stores = storeUsers.length;
+
+                    const countEl = document.getElementById('creator-stores-count');
+                    if (countEl) countEl.textContent = storeUsers.length;
+
+                    const contentDiv = document.getElementById('creator-tab-content');
+                    if (contentDiv && !document.getElementById('creator-inspect-modal')?.classList.contains('flex')) {
+                        contentDiv.innerHTML = this.renderTabContent(this.activeTab, totals, storeUsers);
+                    }
+                }
+            } catch(e) {}
+        }, 3000);
+    },
+
+    stopLivePolling() {
+        if (this.liveTimer) {
+            clearInterval(this.liveTimer);
+            this.liveTimer = null;
+        }
+    },
     },
 
     renderTabContent(tab, totals, users) {
