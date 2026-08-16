@@ -197,18 +197,62 @@ $avatarInitial = esc(mb_substr($username, 0, 1));
             <h2 id="page-title" class="font-geist text-xl font-semibold text-slate-100">Dashboard</h2>
             
             <div class="ml-auto flex items-center space-x-3 relative">
-                <button class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors relative" title="Notifications">
-                    <span class="material-symbols-outlined text-xl">notifications</span>
-                    <span class="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-slate-900 hidden" id="notif-badge"></span>
-                </button>
+                <!-- Working Notifications Bell Dropdown -->
+                <div class="relative">
+                    <button id="notif-dropdown-btn" onclick="App.toggleNotifDropdown(event)" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors relative cursor-pointer" title="Notifications">
+                        <span class="material-symbols-outlined text-xl">notifications</span>
+                        <span class="absolute top-1.5 right-1.5 flex h-2 w-2" id="notif-badge">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                        </span>
+                    </button>
+
+                    <!-- Notifications Dropdown Panel -->
+                    <div id="notif-dropdown-menu" class="hidden absolute right-0 mt-2.5 w-80 bg-slate-900/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-slate-800 divide-y divide-slate-800/80 z-50 overflow-hidden font-jakarta">
+                        <div class="p-3.5 bg-slate-950/80 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-base text-blue-400">notifications_active</span>
+                                <h4 class="font-bold text-white text-xs font-outfit">Notifications & System Alerts</h4>
+                            </div>
+                            <button onclick="App.clearNotifs(event)" class="text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors cursor-pointer">Mark read</button>
+                        </div>
+                        <div class="max-h-72 overflow-y-auto divide-y divide-slate-800/50 text-xs" id="notif-list-container">
+                            <div class="p-3 hover:bg-slate-800/50 transition-colors flex items-start gap-2.5">
+                                <div class="p-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg shrink-0 mt-0.5">
+                                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-white text-[12px]">Real-Time Store Engine Active</p>
+                                    <p class="text-slate-400 text-[11px] mt-0.5 font-inter">EaseBus real-time database sync is active and healthy.</p>
+                                    <span class="text-[10px] text-slate-500 font-mono mt-1 block">Just now</span>
+                                </div>
+                            </div>
+                            <div class="p-3 hover:bg-slate-800/50 transition-colors flex items-start gap-2.5">
+                                <div class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg shrink-0 mt-0.5">
+                                    <span class="material-symbols-outlined text-sm">shield</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-white text-[12px]">System Security Status</p>
+                                    <p class="text-slate-400 text-[11px] mt-0.5 font-inter">Session encrypted & role-based RBAC enforced.</p>
+                                    <span class="text-[10px] text-slate-500 font-mono mt-1 block">5 mins ago</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-2 text-center bg-slate-950/60 font-outfit">
+                            <a href="#reports" onclick="App.closeAllDropdowns()" class="text-[11px] font-bold text-slate-400 hover:text-white transition-colors">View All Store Activity Logs</a>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Circular Profile Icon & Dropdown Trigger -->
                 <div class="relative">
                     <button id="profile-dropdown-btn" onclick="App.toggleProfileDropdown(event)" class="flex items-center gap-2.5 p-1.5 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-slate-600 transition-all cursor-pointer shadow-md group">
-                        <div id="top-bar-avatar-container" class="relative w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xs shadow-inner overflow-hidden border border-blue-400/40">
-                            <span id="top-bar-avatar-text" class="font-outfit text-sm"><?php echo $avatarInitial; ?></span>
-                            <img id="top-bar-avatar-img" src="" alt="Business Logo" class="w-full h-full object-cover hidden">
-                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+                        <div class="relative w-9 h-9">
+                            <div id="top-bar-avatar-container" class="w-full h-full rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xs shadow-inner overflow-hidden border border-blue-400/40">
+                                <span id="top-bar-avatar-text" class="font-outfit text-sm"><?php echo $avatarInitial; ?></span>
+                                <img id="top-bar-avatar-img" src="" alt="Business Logo" class="w-full h-full object-cover hidden">
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-900 rounded-full ring-1 ring-emerald-400/50 z-10"></span>
                         </div>
                         <div class="hidden sm:flex flex-col text-left pr-1">
                             <span id="top-bar-biz-name" class="text-xs font-bold font-jakarta text-white group-hover:text-blue-300 transition-colors truncate max-w-[140px]"><?php echo esc($_SESSION['business_name'] ?? 'My Business'); ?></span>

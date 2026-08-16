@@ -7,6 +7,26 @@ window.App = {
     userNavHTML: null,
     
     init() {
+        // Global click-outside listener to dismiss dropdowns
+        document.addEventListener('click', (e) => {
+            const profBtn = document.getElementById('profile-dropdown-btn');
+            const profMenu = document.getElementById('profile-dropdown-menu');
+            const notifBtn = document.getElementById('notif-dropdown-btn');
+            const notifMenu = document.getElementById('notif-dropdown-menu');
+
+            if (profMenu && !profMenu.classList.contains('hidden')) {
+                if (!profMenu.contains(e.target) && !profBtn?.contains(e.target)) {
+                    this.closeProfileDropdown();
+                }
+            }
+
+            if (notifMenu && !notifMenu.classList.contains('hidden')) {
+                if (!notifMenu.contains(e.target) && !notifBtn?.contains(e.target)) {
+                    this.closeNotifDropdown();
+                }
+            }
+        });
+
         // Sync session with real PHP backend first
         API.init().then(() => {
             this.setupAuth();
@@ -211,6 +231,7 @@ window.App = {
 
     toggleProfileDropdown(e) {
         if (e) e.stopPropagation();
+        this.closeNotifDropdown();
         const menu = document.getElementById('profile-dropdown-menu');
         const arrow = document.getElementById('profile-dropdown-arrow');
         if (!menu) return;
@@ -230,6 +251,31 @@ window.App = {
         const arrow = document.getElementById('profile-dropdown-arrow');
         if (menu) menu.classList.add('hidden');
         if (arrow) arrow.style.transform = 'rotate(0deg)';
+    },
+
+    toggleNotifDropdown(e) {
+        if (e) e.stopPropagation();
+        this.closeProfileDropdown();
+        const menu = document.getElementById('notif-dropdown-menu');
+        if (!menu) return;
+        menu.classList.toggle('hidden');
+    },
+
+    closeNotifDropdown() {
+        const menu = document.getElementById('notif-dropdown-menu');
+        if (menu) menu.classList.add('hidden');
+    },
+
+    closeAllDropdowns() {
+        this.closeProfileDropdown();
+        this.closeNotifDropdown();
+    },
+
+    clearNotifs(e) {
+        if (e) e.stopPropagation();
+        const badge = document.getElementById('notif-badge');
+        if (badge) badge.classList.add('hidden');
+        UI.toast('All notifications marked as read', 'success');
     },
 
     updateTopBarProfile(user) {
