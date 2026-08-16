@@ -304,15 +304,15 @@ window.Orders = {
 
             tbody.innerHTML = orders.map(o => `
                 <tr class="hover:bg-slate-50/80 text-xs">
-                    <td class="font-mono-data font-bold text-slate-900 py-3">${o.order_no}</td>
-                    <td class="text-slate-600 py-3">${UI.formatDate(o.order_date)}</td>
+                    <td class="font-mono-data font-bold text-slate-900 py-3">${o.order_number || o.order_no || 'N/A'}</td>
+                    <td class="text-slate-600 py-3">${UI.formatDate(o.created_at || o.order_date)}</td>
                     <td class="py-3">
-                        <div class="font-medium text-slate-900">${o.customer_name}</div>
-                        <div class="text-[11px] text-slate-400 font-mono">${o.customer_phone}</div>
+                        <div class="font-medium text-slate-900">${o.customer_name || 'Walk-in'}</div>
+                        <div class="text-[11px] text-slate-400 font-mono">${o.customer_phone || ''}</div>
                     </td>
                     <td class="data-number text-right font-bold text-slate-900 py-3">${UI.formatMoney(o.total_amount)}</td>
                     <td class="text-center py-3">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border ${getPaymentColor(o.payment_status)}">${o.payment_status}</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border ${getPaymentColor(o.payment_status)}">${o.payment_status || 'paid'}</span>
                     </td>
                     <td class="text-right py-3">
                         <button class="btn btn-secondary text-xs py-1 px-3 text-[11px] inline-flex items-center gap-1" onclick="Orders.showInvoiceModal(${o.id})">
@@ -321,6 +321,7 @@ window.Orders = {
                     </td>
                 </tr>
             `).join('');
+
 
         } catch (e) {
             tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-red-500 text-xs">Failed to load orders.</td></tr>`;
@@ -393,7 +394,7 @@ window.Orders = {
         if (!v) return;
         document.getElementById('item-write-name').value = `${v.product_name} - ${v.variant_name}`;
         document.getElementById('item-write-sku').value = v.variant_sku || '';
-        document.getElementById('item-write-price').value = v.avg_cost_price || 0;
+        document.getElementById('item-write-price').value = v.selling_price || v.v_price || v.avg_cost_price || 0;
     },
 
     showCreateView() {
@@ -415,22 +416,28 @@ window.Orders = {
             submitBtn.textContent = 'Processing Order...';
 
             try {
-                const { actualDiscount } = this.recalculateTotals();
+                const { subtotal, actualDiscount, shipping, grandTotal } = this.recalculateTotals();
 
                 const res = await API.post('orders/create', {
                     customer_name: document.getElementById('cust-write-name').value,
                     customer_phone: document.getElementById('cust-write-phone').value,
                     customer_address: document.getElementById('cust-write-address').value,
                     payment_status: document.getElementById('ord-pay-status').value,
+                    payment_method: document.getElementById('ord-pay-method')?.value || 'cash',
+                    subtotal: subtotal,
                     discount_amount: actualDiscount,
-                    delivery_charge: document.getElementById('ord-shipping').value || 0,
+                    delivery_charge: parseFloat(document.getElementById('ord-shipping')?.value || 0),
+                    total_amount: grandTotal,
                     notes: document.getElementById('ord-notes').value || '',
                     items: this.cartItems.map(item => ({
+                        product_id: item.product_id || item.variant_id || 0,
                         variant_id: item.variant_id || 0,
                         item_name: item.item_name,
+                        product_name: item.item_name,
                         variant_sku: item.variant_sku,
                         unit_price: item.unit_price,
                         quantity: item.quantity,
+                        total: item.unit_price * item.quantity,
                         discount: 0
                     }))
                 });

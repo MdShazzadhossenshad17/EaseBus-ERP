@@ -154,7 +154,7 @@ if ($method === 'POST' && $action === 'create') {
         // 2. Resolve Items (Write System or Variant ID)
         foreach ($input['items'] as $index => $item) {
             $variantId = (int) ($item['variant_id'] ?? 0);
-            $itemName = trim($item['item_name'] ?? '');
+            $itemName = trim($item['item_name'] ?? $item['product_name'] ?? '');
             $sku = trim($item['variant_sku'] ?? '');
             $qty = (int) ($item['quantity'] ?? 1);
             $unitPrice = (float) ($item['unit_price'] ?? 0);

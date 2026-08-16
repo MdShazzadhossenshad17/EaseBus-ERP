@@ -108,20 +108,20 @@ if ($method === 'GET' && $action === 'categories') {
 if ($method === 'POST' && $action === 'create') {
     requirePermission('expenses', 'create');
     verifyCsrf();
-    
+
     $input = getJsonInput();
     $v = new Validator($input);
-    
+
     $v->required('amount')->numeric('amount')->min('amount', 0.01)
       ->required('account_id')->integer('account_id')
       ->required('expense_date')->date('expense_date')
       ->required('description');
-      
+
     if ($v->fails()) jsonError('Validation failed', 400, ['errors' => $v->errors()]);
-    
+
     $accountId = (int) $v->value('account_id');
     $amount = (float) $v->value('amount');
-    
+
     // Resolve Category (Write-in or ID)
     $categoryId = null;
     $categoryName = trim($input['category_name'] ?? '');
@@ -135,21 +135,21 @@ if ($method === 'POST' && $action === 'create') {
     } elseif (!empty($input['category_id'])) {
         $categoryId = (int) $input['category_id'];
     }
-    
+
     if (!$categoryId) {
         jsonError('Please select or write an expense category', 400);
     }
-    
+
     try {
         Database::beginTransaction();
-        
+
         $account = Database::fetchOne("SELECT current_balance FROM financial_accounts WHERE id = ? FOR UPDATE", [$accountId]);
         if (!$account) jsonError('Financial account not found.');
-        
+
         if ((float) $account['current_balance'] < $amount) {
             jsonError('Insufficient balance in selected account.');
         }
-        
+
         $expenseId = Database::insert(
             "INSERT INTO expenses (category_id, amount, account_id, description, receipt_reference, expense_date, created_by)
              VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -163,18 +163,51 @@ if ($method === 'POST' && $action === 'create') {
                 getCurrentUserId()
             ]
         );
-        
+
         // Record cash outflow
         recordCashTransaction($accountId, 'outflow', $amount, "Expense: {$v->value('description')}", 'expense', $expenseId);
-        
+
         Database::commit();
         auditLog('create', 'expense', $expenseId, null, ['amount' => $amount]);
-        
+
         jsonSuccess('Expense recorded successfully', ['id' => $expenseId]);
-        
+
     } catch (Exception $e) {
         Database::rollback();
         jsonError('Failed to record expense: ' . $e->getMessage(), 500);
+    }
+}
+
+// DELETE /api/expenses?action=delete&id=123
+if ($method === 'DELETE' && $action === 'delete') {
+    requirePermission('expenses', 'delete');
+    verifyCsrf();
+
+    $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
+    if (!$id) jsonError('Expense ID required');
+
+    $expense = Database::fetchOne("SELECT id, description, amount FROM expenses WHERE id = ?", [$id]);
+    if (!$expense) jsonError('Expense not found', 404);
+
+    try {
+        Database::beginTransaction();
+
+        // Reverse the cash transaction
+        Database::execute(
+            "UPDATE financial_accounts SET current_balance = current_balance + ? WHERE id = (SELECT account_id FROM expenses WHERE id = ?)",
+            [$expense['amount'], $id]
+        );
+
+        // Delete the expense
+        Database::execute("DELETE FROM expenses WHERE id = ?", [$id]);
+
+        Database::commit();
+        auditLog('delete', 'expense', $id, ['description' => $expense['description'], 'amount' => $expense['amount']], null);
+
+        jsonSuccess('Expense deleted successfully');
+    } catch (Exception $e) {
+        Database::rollback();
+        jsonError('Failed to delete expense: ' . $e->getMessage(), 500);
     }
 }
 

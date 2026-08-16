@@ -6,15 +6,29 @@ window.App = {
     currentRoute: 'dashboard',
     
     init() {
-        this.setupAuth();
-        const loggedIn = this.checkAuth();
-        this.setupSidebar();
-        this.setupRouter();
-        
-        if (loggedIn) {
-            const hash = window.location.hash.substring(1) || 'dashboard';
-            this.navigate(hash);
-        }
+        // Sync session with real PHP backend first
+        API.init().then(() => {
+            this.setupAuth();
+            const loggedIn = this.checkAuth();
+            this.setupSidebar();
+            this.setupRouter();
+
+            if (loggedIn) {
+                const hash = window.location.hash.substring(1) || 'dashboard';
+                this.navigate(hash);
+            }
+        }).catch(err => {
+            console.warn('API init failed, proceeding with local-only mode:', err);
+            this.setupAuth();
+            const loggedIn = this.checkAuth();
+            this.setupSidebar();
+            this.setupRouter();
+
+            if (loggedIn) {
+                const hash = window.location.hash.substring(1) || 'dashboard';
+                this.navigate(hash);
+            }
+        });
     },
 
     checkAuth() {

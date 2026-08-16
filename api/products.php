@@ -279,11 +279,41 @@ if ($method === 'PUT' && $action === 'update') {
 if ($method === 'GET' && $action === 'categories') {
     $categories = Database::fetchAll("SELECT id, name FROM categories WHERE status = 'active' ORDER BY name ASC");
     $subcategories = Database::fetchAll("SELECT id, category_id, name FROM subcategories WHERE status = 'active' ORDER BY name ASC");
-    
+
     jsonSuccess('Categories loaded', [
         'categories' => $categories,
         'subcategories' => $subcategories
     ]);
+}
+
+// DELETE /api/products?action=delete&id=123
+if ($method === 'DELETE' && $action === 'delete') {
+    requirePermission('products', 'delete');
+    verifyCsrf();
+
+    $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
+    if (!$id) jsonError('Product ID required');
+
+    $product = Database::fetchOne("SELECT id, sku, name FROM products WHERE id = ?", [$id]);
+    if (!$product) jsonError('Product not found', 404);
+
+    try {
+        Database::beginTransaction();
+
+        // Delete variants first (foreign key constraint)
+        Database::execute("DELETE FROM product_variants WHERE product_id = ?", [$id]);
+
+        // Delete the product
+        Database::execute("DELETE FROM products WHERE id = ?", [$id]);
+
+        Database::commit();
+        auditLog('delete', 'product', $id, ['sku' => $product['sku'], 'name' => $product['name']], null);
+
+        jsonSuccess('Product deleted successfully');
+    } catch (Exception $e) {
+        Database::rollback();
+        jsonError('Failed to delete product: ' . $e->getMessage(), 500);
+    }
 }
 
 jsonError('Endpoint not found', 404);

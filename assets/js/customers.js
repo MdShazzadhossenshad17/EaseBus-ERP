@@ -125,11 +125,12 @@ window.Customers = {
     async loadCustomers() {
         const tbody = document.getElementById('cust-list');
         if (!tbody) return;
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400 text-xs">Loading customers...</td></tr>`;
 
         try {
-            const res = await API.get('customers/summary');
-            const customers = (res && res.data && res.data.customers) ? res.data.customers : [];
-            const summary = (res && res.data && res.data.summary) ? res.data.summary : null;
+            const res = await API.get('customers/list');
+            const summary = res?.data?.summary || null;
+            const customers = res?.data?.customers || [];
 
             this.customersData = customers;
             this.updateKPIs(summary, customers);

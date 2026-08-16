@@ -272,4 +272,24 @@ if ($method === 'GET' && $action === 'couriers') {
     jsonSuccess('Couriers loaded', ['couriers' => $couriers]);
 }
 
+// DELETE /api/deliveries?action=delete&id=123
+if ($method === 'DELETE' && $action === 'delete') {
+    requirePermission('deliveries', 'delete');
+    verifyCsrf();
+
+    $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
+    if (!$id) jsonError('Delivery ID required');
+
+    $delivery = Database::fetchOne("SELECT id, tracking_number, status FROM deliveries WHERE id = ?", [$id]);
+    if (!$delivery) jsonError('Delivery not found', 404);
+
+    try {
+        Database::execute("DELETE FROM deliveries WHERE id = ?", [$id]);
+        auditLog('delete', 'delivery', $id, ['tracking' => $delivery['tracking_number'], 'status' => $delivery['status']], null);
+        jsonSuccess('Delivery deleted successfully');
+    } catch (Exception $e) {
+        jsonError('Failed to delete delivery: ' . $e->getMessage(), 500);
+    }
+}
+
 jsonError('Endpoint not found', 404);

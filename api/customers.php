@@ -124,9 +124,37 @@ if ($method === 'PUT' && $action === 'update') {
         
         auditLog('update', 'customer', $id, null, ['name' => $v->value('name')]);
         jsonSuccess('Customer updated successfully');
-        
+
     } catch (Exception $e) {
         jsonError('Failed to update customer: ' . $e->getMessage(), 500);
+    }
+}
+
+if ($method === 'DELETE' && $action === 'delete') {
+    requirePermission('customers', 'delete');
+    verifyCsrf();
+
+    $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
+    if (!$id) jsonError('Customer ID required');
+
+    $customer = Database::fetchOne("SELECT id, name FROM customers WHERE id = ?", [$id]);
+    if (!$customer) jsonError('Customer not found', 404);
+
+    try {
+        Database::beginTransaction();
+
+        // Delete associated deliveries first (foreign key constraint)
+        Database::execute("DELETE FROM deliveries WHERE customer_id = ?", [$id]);
+
+        // Delete the customer
+        Database::execute("DELETE FROM customers WHERE id = ?", [$id]);
+
+        Database::commit();
+        auditLog('delete', 'customer', $id, ['name' => $customer['name']], null);
+        jsonSuccess('Customer deleted successfully');
+    } catch (Exception $e) {
+        Database::rollback();
+        jsonError('Failed to delete customer: ' . $e->getMessage(), 500);
     }
 }
 

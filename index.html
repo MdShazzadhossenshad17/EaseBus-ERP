@@ -37,14 +37,10 @@
             name: "EaseBus",
             currency: "BDT",
             currencySymbol: "৳",
-            userRole: "admin",
-            username: "Admin",
-            csrfToken: "easebus_live_token"
+            userRole: "",
+            username: "",
+            csrfToken: ""
         };
-        try { 
-            sessionStorage.setItem('csrf_token', window.APP_CONFIG.csrfToken);
-            localStorage.setItem('easebus_auth', 'true');
-        } catch(e) {}
     </script>
 </head>
 <body class="bg-slate-50 text-slate-900 font-inter antialiased flex h-screen overflow-hidden">

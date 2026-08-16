@@ -133,9 +133,28 @@ if ($method === 'PUT' && $action === 'update') {
         
         auditLog('update', 'supplier', $id, null, ['name' => $v->value('name'), 'status' => $v->value('status')]);
         jsonSuccess('Supplier updated successfully');
-        
+
     } catch (Exception $e) {
         jsonError('Failed to update supplier: ' . $e->getMessage(), 500);
+    }
+}
+
+if ($method === 'DELETE' && $action === 'delete') {
+    requirePermission('suppliers', 'delete');
+    verifyCsrf();
+
+    $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
+    if (!$id) jsonError('Supplier ID required');
+
+    $supplier = Database::fetchOne("SELECT id, name FROM suppliers WHERE id = ?", [$id]);
+    if (!$supplier) jsonError('Supplier not found', 404);
+
+    try {
+        Database::execute("DELETE FROM suppliers WHERE id = ?", [$id]);
+        auditLog('delete', 'supplier', $id, ['name' => $supplier['name']], null);
+        jsonSuccess('Supplier deleted successfully');
+    } catch (Exception $e) {
+        jsonError('Failed to delete supplier: ' . $e->getMessage(), 500);
     }
 }
 
