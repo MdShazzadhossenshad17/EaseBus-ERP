@@ -123,7 +123,6 @@ window.Creator = {
             this.liveTimer = null;
         }
     },
-    },
 
     renderTabContent(tab, totals, users) {
         if (tab === 'stores') {
