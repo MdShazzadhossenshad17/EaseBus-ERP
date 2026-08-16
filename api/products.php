@@ -305,12 +305,13 @@ if ($method === 'GET' && $action === 'categories') {
     ]);
 }
 
-// DELETE /api/products?action=delete&id=123
-if ($method === 'DELETE' && $action === 'delete') {
+// DELETE or POST /api/products?action=delete
+if (($method === 'DELETE' || $method === 'POST') && $action === 'delete') {
     requirePermission('products', 'delete');
     verifyCsrf();
 
-    $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
+    $input = getJsonInput();
+    $id = (int) ($input['id'] ?? $_GET['id'] ?? $_POST['id'] ?? 0);
     if (!$id) jsonError('Product ID required');
 
     $product = Database::fetchOne("SELECT id, sku, name FROM products WHERE id = ?", [$id]);
@@ -319,10 +320,9 @@ if ($method === 'DELETE' && $action === 'delete') {
     try {
         Database::beginTransaction();
 
-        // Delete variants first (foreign key constraint)
+        // Delete movements, variants, and product
+        Database::execute("DELETE FROM inventory_movements WHERE product_id = ?", [$id]);
         Database::execute("DELETE FROM product_variants WHERE product_id = ?", [$id]);
-
-        // Delete the product
         Database::execute("DELETE FROM products WHERE id = ?", [$id]);
 
         Database::commit();

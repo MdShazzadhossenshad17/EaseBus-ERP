@@ -95,6 +95,27 @@ window.Products = {
             this.loadMetadata(),
             this.loadProducts()
         ]);
+
+        this.startLivePolling();
+    },
+
+    pollingTimer: null,
+
+    startLivePolling() {
+        this.stopLivePolling();
+        this.pollingTimer = setInterval(() => {
+            if (window.App && window.App.currentRoute === 'products') {
+                this.loadSummary();
+                this.loadProducts(true);
+            }
+        }, 4000);
+    },
+
+    stopLivePolling() {
+        if (this.pollingTimer) {
+            clearInterval(this.pollingTimer);
+            this.pollingTimer = null;
+        }
     },
 
     searchTimeout: null,
@@ -151,7 +172,7 @@ window.Products = {
         }
     },
 
-    async loadProducts() {
+    async loadProducts(isSilent = false) {
         const search = document.getElementById('product-search')?.value || '';
         const catId = document.getElementById('product-cat-filter')?.value || 'all';
         const status = document.getElementById('product-status-filter')?.value || 'active';
@@ -159,12 +180,21 @@ window.Products = {
         if (!tbody) return;
 
         try {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400 text-xs">Loading products...</td></tr>`;
+            if (!isSilent && (!this._lastProductsData || this._lastProductsData.length === 0)) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400 text-xs">Loading products...</td></tr>`;
+            }
             let url = `products/list?status=${status}&search=${encodeURIComponent(search)}`;
             if (catId !== 'all') url += `&category_id=${catId}`;
 
             const res = await API.get(url);
             const products = res.data.products || [];
+
+            const jsonStr = JSON.stringify(products);
+            if (isSilent && this._lastJsonStr === jsonStr) {
+                return; // Omit re-rendering if data is identical (zero blinking!)
+            }
+            this._lastJsonStr = jsonStr;
+            this._lastProductsData = products;
 
             if (products.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400 text-xs">No matching products found in catalog.</td></tr>`;

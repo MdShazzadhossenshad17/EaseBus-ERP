@@ -203,15 +203,23 @@ window.Inventory = {
         }
     },
 
-    async loadInventory() {
+    async loadInventory(isSilent = false) {
         const search = document.getElementById('inv-search')?.value || '';
         const tbody = document.getElementById('inv-list');
         if (!tbody) return;
 
         try {
-            tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400 text-xs">Loading stock inventory...</td></tr>`;
+            if (!isSilent && (!this.inventoryData || this.inventoryData.length === 0)) {
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400 text-xs">Loading stock inventory...</td></tr>`;
+            }
             const res = await API.get(`inventory/list?search=${encodeURIComponent(search)}`);
             const data = res.data.inventory;
+
+            const jsonStr = JSON.stringify(data);
+            if (isSilent && this._lastInvJsonStr === jsonStr) {
+                return; // Omit DOM re-rendering if data hasn't changed (zero blinking!)
+            }
+            this._lastInvJsonStr = jsonStr;
             this.inventoryData = data;
 
             if (!data || data.length === 0) {
@@ -250,6 +258,9 @@ window.Inventory = {
                                 <button class="btn btn-secondary text-xs py-1 px-2.5 text-[11px] inline-flex items-center gap-1 font-semibold rounded-lg hover:text-white cursor-pointer" onclick="Inventory.showEditModal(${v.product_id})">
                                     <span class="material-symbols-outlined text-xs">edit</span> Edit
                                 </button>
+                                <button class="btn btn-secondary text-xs py-1 px-2.5 text-[11px] inline-flex items-center gap-1 font-semibold rounded-lg text-red-400 hover:text-white hover:bg-red-500/20 border border-red-500/30 cursor-pointer" onclick="Inventory.confirmDelete(${v.product_id}, '${(v.product_name || '').replace(/'/g, "\\'")}')">
+                                    <span class="material-symbols-outlined text-xs">delete</span> Remove
+                                </button>
                                 <button class="btn btn-secondary text-xs py-1 px-2.5 text-[11px] inline-flex items-center gap-1 font-semibold rounded-lg hover:text-white cursor-pointer" onclick="Inventory.showHistoryModal(${v.variant_id}, '${(v.product_name || '').replace(/'/g, "\\'")}')">
                                     <span class="material-symbols-outlined text-xs">history</span> History
                                 </button>
@@ -264,14 +275,22 @@ window.Inventory = {
         }
     },
 
-    async loadMovements() {
+    async loadMovements(isSilent = false) {
         const tbody = document.getElementById('movements-list');
         if (!tbody) return;
 
         try {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400 text-xs">Loading movement logs...</td></tr>`;
+            if (!isSilent && (!this.movementsData || this.movementsData.length === 0)) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400 text-xs">Loading movement logs...</td></tr>`;
+            }
             const res = await API.get('inventory/movements');
             const data = res.data.movements;
+
+            const jsonStr = JSON.stringify(data);
+            if (isSilent && this._lastMovJsonStr === jsonStr) {
+                return; // Omit DOM re-rendering if data hasn't changed (zero blinking!)
+            }
+            this._lastMovJsonStr = jsonStr;
             this.movementsData = data;
 
             if (!data || data.length === 0) {
@@ -578,6 +597,52 @@ window.Inventory = {
             UI.toast('Failed to load item details: ' + (err.message || err), 'error');
         } finally {
             UI.setLoading(false);
+        }
+    },
+
+    confirmDelete(productId, productName) {
+        const modal = document.getElementById('inv-modal');
+        modal.innerHTML = `
+            <div class="bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-red-500/30 animate-fade-in font-jakarta">
+                <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-red-950/40">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-red-400">warning</span>
+                        <h3 class="font-outfit font-bold text-lg text-white">Remove Product from Inventory</h3>
+                    </div>
+                    <button class="text-slate-400 hover:text-white p-1 transition-colors cursor-pointer" onclick="document.getElementById('inv-modal').classList.add('hidden')">
+                        <span class="material-symbols-outlined text-xl">close</span>
+                    </button>
+                </div>
+
+                <div class="p-6 space-y-4">
+                    <p class="text-xs text-slate-300 font-inter">Are you sure you want to permanently delete <strong class="text-white font-bold">${productName}</strong> and all its stock inventory records?</p>
+                    <div class="p-3 bg-red-500/10 rounded-xl border border-red-500/20 text-[11px] text-red-300 font-inter">
+                        ⚠️ This action will remove all stock levels, SKUs, and movement logs for this item.
+                    </div>
+
+                    <div class="pt-3 flex justify-end gap-2 border-t border-slate-800 font-outfit">
+                        <button type="button" class="btn btn-secondary text-xs px-4 py-2 bg-slate-800 text-slate-300 hover:text-white" onclick="document.getElementById('inv-modal').classList.add('hidden')">Cancel</button>
+                        <button type="button" onclick="Inventory.executeDelete(${productId})" class="btn btn-primary text-xs px-5 py-2 bg-red-600 hover:bg-red-500 font-bold shadow-md border border-red-400/30 cursor-pointer" id="confirm-del-btn">Yes, Delete Item</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        modal.classList.remove('hidden');
+    },
+
+    async executeDelete(productId) {
+        const btn = document.getElementById('confirm-del-btn');
+        if (btn) { btn.disabled = true; btn.textContent = 'Deleting...'; }
+
+        try {
+            await API.request('products/delete', 'POST', { id: productId });
+            document.getElementById('inv-modal').classList.add('hidden');
+            UI.toast('Product removed from inventory successfully!', 'success');
+            await Promise.all([this.loadSummary(), this.loadInventory()]);
+        } catch (err) {
+            UI.toast(err.message || 'Failed to delete product', 'error');
+        } finally {
+            if (btn) { btn.disabled = false; btn.textContent = 'Yes, Delete Item'; }
         }
     }
 };
