@@ -4,11 +4,12 @@
  * Auto-generated from environment or defaults. DO NOT EDIT MANUALLY.
  */
  
-// Try to detect the actual URL from the server environment
-$actualUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
-$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
-if ($scriptDir === '/' || $scriptDir === '\\' || $scriptDir === '.') {
-    $actualUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/businessM';
+$scheme = $_SERVER['REQUEST_SCHEME'] ?? (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http');
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+$actualUrl = "{$scheme}://{$host}{$scriptDir}";
+if ($scriptDir === '/' || $scriptDir === '\\' || $scriptDir === '.' || empty($scriptDir)) {
+    $actualUrl = "{$scheme}://{$host}/businessM";
 }
 
 // Database

