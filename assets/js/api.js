@@ -159,6 +159,15 @@ const API = {
                 return this.currentUser;
             }
         } catch(e) {}
+        if (window.APP_CONFIG && window.APP_CONFIG.username && window.APP_CONFIG.username !== 'User') {
+            this.currentUser = {
+                id: window.APP_CONFIG.userId || (window.APP_CONFIG.userRole === 'creator' ? 99999 : 1),
+                username: window.APP_CONFIG.username,
+                full_name: window.APP_CONFIG.username === 'shad@dbms.com' ? 'Md Shazzad Hossen Shad (Creator)' : window.APP_CONFIG.username,
+                role: window.APP_CONFIG.userRole || 'admin'
+            };
+            return this.currentUser;
+        }
         return null;
     },
 

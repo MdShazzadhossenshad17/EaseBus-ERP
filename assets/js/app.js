@@ -312,7 +312,16 @@ window.App = {
                 this.navigate('dashboard');
                 return;
             }
-            if (titleEl) titleEl.textContent = 'Platform Creator Command Center';
+            
+            const creatorTitles = {
+                'creator-overview': 'Platform Creator — Platform Overview',
+                'creator-stores': 'Platform Creator — Client Stores & Tenants',
+                'creator-transactions': 'Platform Creator — Live Transactions Feed',
+                'creator-inventory': 'Platform Creator — Global Inventory Auditor',
+                'creator-health': 'Platform Creator — Server & Database Health'
+            };
+            if (titleEl) titleEl.textContent = creatorTitles[route] || 'Platform Creator Command Center';
+
             try {
                 if (window.Creator && typeof window.Creator.render === 'function') {
                     await window.Creator.render(container, route);
@@ -320,7 +329,7 @@ window.App = {
                     container.innerHTML = UI.emptyState('error', 'Creator Module Error', 'Creator module script not loaded.');
                 }
             } catch(e) {
-                console.error(e);
+                console.error('Creator render error:', e);
                 container.innerHTML = UI.emptyState('error', 'Creator Error', 'Failed to render Creator Command Portal.');
             } finally {
                 UI.setLoading(false);

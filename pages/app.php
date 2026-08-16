@@ -59,6 +59,7 @@ $avatarInitial = esc(mb_substr($username, 0, 1));
             currencySymbol: <?php echo $jsCurrencySymbol; ?>,
             userRole: <?php echo $jsUserRole; ?>,
             username: <?php echo $jsUsername; ?>,
+            userId: <?php echo (int)($_SESSION['user_id'] ?? 0); ?>,
             csrfToken: <?php echo $jsCsrf; ?>
         };
         try {
