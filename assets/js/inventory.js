@@ -116,14 +116,14 @@ window.Inventory = {
         this.stopLivePolling();
         this.pollingTimer = setInterval(() => {
             if (window.App && window.App.currentRoute === 'inventory') {
-                this.loadSummary();
+                this.loadSummary(true);
                 if (this.activeTab === 'stock') {
-                    this.loadInventory();
+                    this.loadInventory(true);
                 } else {
-                    this.loadMovements();
+                    this.loadMovements(true);
                 }
             }
-        }, 3000);
+        }, 4000);
     },
 
     stopLivePolling() {
@@ -169,12 +169,18 @@ window.Inventory = {
         }
     },
 
-    async loadSummary() {
+    async loadSummary(isSilent = false) {
         try {
             const res = await API.get('inventory/summary');
             const s = res.data.summary;
             const container = document.getElementById('inv-kpi-container');
             if (!container) return;
+
+            const jsonStr = JSON.stringify(s);
+            if (isSilent && this._lastSummaryJsonStr === jsonStr) {
+                return; // Omit re-rendering KPI summary cards if data hasn't changed (zero blinking!)
+            }
+            this._lastSummaryJsonStr = jsonStr;
 
             container.innerHTML = `
                 <div class="card p-5 bg-white border-l-4 border-blue-600 shadow-sm">

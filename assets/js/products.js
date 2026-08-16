@@ -124,12 +124,18 @@ window.Products = {
         this.searchTimeout = setTimeout(() => this.loadProducts(), 400);
     },
 
-    async loadSummary() {
+    async loadSummary(isSilent = false) {
         try {
             const res = await API.get('products/summary');
             const s = res.data.summary;
             const container = document.getElementById('prod-kpi-container');
             if (!container) return;
+
+            const jsonStr = JSON.stringify(s);
+            if (isSilent && this._lastSummaryJsonStr === jsonStr) {
+                return; // Omit re-rendering KPI cards if summary data hasn't changed (zero blinking!)
+            }
+            this._lastSummaryJsonStr = jsonStr;
 
             container.innerHTML = `
                 <div class="card p-5 bg-white border-l-4 border-blue-600 shadow-sm">
@@ -219,15 +225,9 @@ window.Products = {
                         }">${p.status}</span>
                     </td>
                     <td class="text-right py-3 font-outfit">
-                        <button class="btn btn-primary bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] py-1 px-2.5 mr-1 inline-flex items-center gap-1 font-bold rounded-lg shadow-sm border border-emerald-400/30 cursor-pointer" onclick="Products.showQuickAddStockModal(${p.id}, '${p.name.replace(/'/g, "\\'")}', '${p.sku}')">
-                            <span class="material-symbols-outlined text-xs">add_box</span> + Add Stock
+                        <button class="btn btn-secondary text-[11px] py-1 px-3 inline-flex items-center gap-1.5 font-bold hover:text-white cursor-pointer rounded-lg bg-slate-800 text-slate-200 border border-slate-700" onclick="Products.viewDetails(${p.id})">
+                            <span class="material-symbols-outlined text-xs">visibility</span> View Details
                         </button>
-                        <button class="btn btn-secondary text-[11px] py-1 px-2 mr-1 inline-flex items-center gap-1 hover:text-white" onclick="Products.viewDetails(${p.id})">
-                            <span class="material-symbols-outlined text-xs">visibility</span> View
-                        </button>
-                        <a href="#inventory" onclick="setTimeout(() => window.Inventory && window.Inventory.showEditModal(${p.id}), 150)" class="btn btn-secondary text-[11px] py-1 px-2 font-semibold text-amber-400 hover:text-white inline-flex items-center gap-1 border border-slate-800">
-                            <span class="material-symbols-outlined text-xs">tune</span> Edit in Inventory
-                        </a>
                     </td>
                 </tr>
             `).join('');
