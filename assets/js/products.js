@@ -8,19 +8,35 @@ window.Products = {
     async render(container) {
         container.innerHTML = `
             <!-- Top Bar -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 font-jakarta">
                 <div>
-                    <h1 class="text-2xl font-geist font-bold text-slate-900 tracking-tight">Products & Stock Catalog</h1>
-                    <p class="text-slate-500 text-sm mt-0.5">Manage your product catalog, prices, suppliers, and variant inventory levels.</p>
+                    <h1 class="text-2xl font-bold text-white tracking-tight">Products & Stock Upload</h1>
+                    <p class="text-slate-400 text-xs mt-1 font-inter">Add new products and upload initial inventory stock to your store catalog.</p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button class="btn btn-secondary flex items-center gap-1 text-xs" onclick="Products.loadSummary(); Products.loadProducts();">
+                <div class="flex items-center gap-2 font-outfit">
+                    <button class="btn btn-secondary flex items-center gap-1 text-xs py-2 px-3 bg-slate-800 text-slate-300 hover:text-white" onclick="Products.loadSummary(); Products.loadProducts();">
                         <span class="material-symbols-outlined text-sm">refresh</span> Refresh
                     </button>
-                    <button class="btn btn-primary flex items-center gap-1 text-xs" onclick="Products.showCreateModal()">
-                        <span class="material-symbols-outlined text-sm">add</span> Add Product
+                    <button class="btn btn-primary flex items-center gap-1 text-xs py-2 px-4 bg-blue-600 hover:bg-blue-500 font-bold shadow-md border border-blue-400/30 cursor-pointer" onclick="Products.showCreateModal()">
+                        <span class="material-symbols-outlined text-sm">add_box</span> Add New Product
                     </button>
                 </div>
+            </div>
+
+            <!-- Workflow Separation Notice Banner -->
+            <div class="p-3.5 rounded-2xl bg-blue-950/40 border border-blue-800/60 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-jakarta shadow-lg">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 border border-blue-500/30">
+                        <span class="material-symbols-outlined text-lg">info</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white font-outfit">Products Upload & Stock Inflow Catalog</h4>
+                        <p class="text-[11px] text-slate-400 font-inter">Use this page to upload new products & initial stock. Product details, price editing, cost price updates, and stock inventory controls are conducted inside <strong>Inventory Management</strong>.</p>
+                    </div>
+                </div>
+                <a href="#inventory" class="px-3.5 py-1.5 text-xs font-bold font-outfit rounded-xl bg-blue-600 hover:bg-blue-500 text-white border border-blue-400/30 shadow transition-all shrink-0 flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm">inventory_2</span> Go to Inventory Control
+                </a>
             </div>
 
             <!-- KPI Cards Header -->
@@ -174,14 +190,14 @@ window.Products = {
                     </td>
                     <td class="text-right py-3 font-outfit">
                         <button class="btn btn-primary bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] py-1 px-2.5 mr-1 inline-flex items-center gap-1 font-bold rounded-lg shadow-sm border border-emerald-400/30 cursor-pointer" onclick="Products.showQuickAddStockModal(${p.id}, '${p.name.replace(/'/g, "\\'")}', '${p.sku}')">
-                            <span class="material-symbols-outlined text-xs">add_box</span> + Stock
+                            <span class="material-symbols-outlined text-xs">add_box</span> + Add Stock
                         </button>
-                        <button class="btn btn-secondary text-[11px] py-1 px-2 mr-1 inline-flex items-center gap-1" onclick="Products.viewDetails(${p.id})">
+                        <button class="btn btn-secondary text-[11px] py-1 px-2 mr-1 inline-flex items-center gap-1 hover:text-white" onclick="Products.viewDetails(${p.id})">
                             <span class="material-symbols-outlined text-xs">visibility</span> View
                         </button>
-                        <button class="btn btn-secondary text-[11px] py-1 px-2 inline-flex items-center gap-1" onclick="Products.edit(${p.id})">
-                            <span class="material-symbols-outlined text-xs">edit</span> Edit
-                        </button>
+                        <a href="#inventory" onclick="setTimeout(() => window.Inventory && window.Inventory.showEditModal(${p.id}), 150)" class="btn btn-secondary text-[11px] py-1 px-2 font-semibold text-amber-400 hover:text-white inline-flex items-center gap-1 border border-slate-800">
+                            <span class="material-symbols-outlined text-xs">tune</span> Edit in Inventory
+                        </a>
                     </td>
                 </tr>
             `).join('');

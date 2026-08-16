@@ -106,6 +106,31 @@ window.Inventory = {
             this.loadSummary(),
             this.loadInventory()
         ]);
+
+        this.startLivePolling();
+    },
+
+    pollingTimer: null,
+
+    startLivePolling() {
+        this.stopLivePolling();
+        this.pollingTimer = setInterval(() => {
+            if (window.App && window.App.currentRoute === 'inventory') {
+                this.loadSummary();
+                if (this.activeTab === 'stock') {
+                    this.loadInventory();
+                } else {
+                    this.loadMovements();
+                }
+            }
+        }, 3000);
+    },
+
+    stopLivePolling() {
+        if (this.pollingTimer) {
+            clearInterval(this.pollingTimer);
+            this.pollingTimer = null;
+        }
     },
 
     searchTimeout: null,
@@ -218,9 +243,16 @@ window.Inventory = {
                         <td class="data-number text-right text-xs py-3">${UI.formatMoney(cost)}</td>
                         <td class="data-number text-right font-semibold text-xs py-3 text-blue-700">${UI.formatMoney(val)}</td>
                         <td class="text-right py-3">
-                            <div class="flex justify-end gap-1">
-                                <button class="btn btn-secondary text-xs py-1 px-2 text-[11px]" onclick="Inventory.showAdjustModal(${v.variant_id}, '${v.variant_sku}', '${v.product_name}')">Adjust</button>
-                                <button class="btn btn-secondary text-xs py-1 px-2 text-[11px]" onclick="Inventory.showHistoryModal(${v.variant_id}, '${v.product_name}')">History</button>
+                            <div class="flex justify-end gap-1 font-outfit">
+                                <button class="btn btn-primary bg-blue-600 hover:bg-blue-500 text-white text-[11px] py-1 px-2.5 font-bold rounded-lg shadow-sm border border-blue-400/30 cursor-pointer inline-flex items-center gap-1" onclick="Inventory.showAdjustModal(${v.variant_id}, '${v.variant_sku}', '${(v.product_name || '').replace(/'/g, "\\'")}')">
+                                    <span class="material-symbols-outlined text-xs">tune</span> Adjust
+                                </button>
+                                <button class="btn btn-secondary text-xs py-1 px-2.5 text-[11px] inline-flex items-center gap-1 font-semibold rounded-lg hover:text-white cursor-pointer" onclick="Inventory.showEditModal(${v.product_id})">
+                                    <span class="material-symbols-outlined text-xs">edit</span> Edit
+                                </button>
+                                <button class="btn btn-secondary text-xs py-1 px-2.5 text-[11px] inline-flex items-center gap-1 font-semibold rounded-lg hover:text-white cursor-pointer" onclick="Inventory.showHistoryModal(${v.variant_id}, '${(v.product_name || '').replace(/'/g, "\\'")}')">
+                                    <span class="material-symbols-outlined text-xs">history</span> History
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -437,6 +469,115 @@ window.Inventory = {
             `;
         } catch (e) {
             document.getElementById('history-modal-body').innerHTML = `<div class="py-8 text-center text-red-500 text-xs">Failed to load movement timeline.</div>`;
+        }
+    },
+
+    async showEditModal(productId) {
+        const modal = document.getElementById('inv-modal');
+        try {
+            UI.setLoading(true);
+            const res = await API.get(`products/details?id=${productId}`);
+            const p = res.data.product;
+
+            modal.innerHTML = `
+                <div class="bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-800 animate-fade-in font-jakarta">
+                    <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/80">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-amber-400">edit_note</span>
+                            <h3 class="font-outfit font-bold text-lg text-white">Edit Inventory Item & Prices</h3>
+                        </div>
+                        <button class="text-slate-400 hover:text-white p-1 transition-colors cursor-pointer" onclick="document.getElementById('inv-modal').classList.add('hidden')">
+                            <span class="material-symbols-outlined text-xl">close</span>
+                        </button>
+                    </div>
+
+                    <form id="edit-inv-item-form" class="p-6 space-y-4">
+                        <input type="hidden" name="id" value="${p.id}">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 font-outfit">Product Name *</label>
+                                <input type="text" name="name" class="form-input bg-slate-950 border-slate-800 text-white font-semibold text-xs py-2" value="${p.name || ''}" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 font-outfit">SKU Code *</label>
+                                <input type="text" name="sku" class="form-input bg-slate-950 border-slate-800 text-white font-mono text-xs py-2" value="${p.sku || ''}" required>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 font-outfit">Unit Purchase Cost (৳)</label>
+                                <input type="number" step="0.01" name="purchase_price" class="form-input bg-slate-950 border-slate-800 text-white font-digit text-xs py-2" value="${p.purchase_price || 0}">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 font-outfit">Selling Price (৳) *</label>
+                                <input type="number" step="0.01" name="selling_price" class="form-input bg-slate-950 border-slate-800 text-white font-digit text-xs py-2" value="${p.selling_price || 0}" required>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1 font-outfit">Min Stock Alert Threshold</label>
+                                <input type="number" name="min_stock_level" class="form-input bg-slate-950 border-slate-800 text-white font-digit text-xs py-2" value="${p.min_stock_level || 5}">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 font-outfit">Status</label>
+                                <select name="status" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2">
+                                    <option value="active" ${p.status === 'active' ? 'selected' : ''}>Active</option>
+                                    <option value="inactive" ${p.status === 'inactive' ? 'selected' : ''}>Inactive</option>
+                                    <option value="archived" ${p.status === 'archived' ? 'selected' : ''}>Archived</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 font-outfit">Category Name</label>
+                            <input type="text" name="category_name" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2" value="${p.category_name || ''}">
+                        </div>
+
+                        <div class="pt-4 flex justify-end gap-2 border-t border-slate-800 font-outfit">
+                            <button type="button" class="btn btn-secondary text-xs px-4 py-2 bg-slate-800 text-slate-300 hover:text-white" onclick="document.getElementById('inv-modal').classList.add('hidden')">Cancel</button>
+                            <button type="submit" class="btn btn-primary text-xs px-5 py-2 bg-amber-600 hover:bg-amber-500 font-bold shadow-md border border-amber-400/30 cursor-pointer" id="save-edit-inv-btn">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+
+            document.getElementById('edit-inv-item-form').onsubmit = async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const btn = document.getElementById('save-edit-inv-btn');
+                btn.disabled = true;
+                btn.textContent = 'Saving...';
+
+                try {
+                    await API.post('products/update', {
+                        id: form.id.value,
+                        name: form.name.value,
+                        sku: form.sku.value,
+                        purchase_price: form.purchase_price.value || 0,
+                        selling_price: form.selling_price.value || 0,
+                        min_stock_level: form.min_stock_level.value || 5,
+                        category_name: form.category_name.value,
+                        status: form.status.value
+                    });
+
+                    modal.classList.add('hidden');
+                    UI.toast('Inventory item updated successfully!', 'success');
+                    await Promise.all([this.loadSummary(), this.loadInventory()]);
+
+                } catch (err) {
+                    UI.toast(err.message || 'Failed to update item', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Save Changes';
+                }
+            };
+        } catch (err) {
+            UI.toast('Failed to load item details: ' + (err.message || err), 'error');
+        } finally {
+            UI.setLoading(false);
         }
     }
 };

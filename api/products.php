@@ -219,8 +219,8 @@ if ($method === 'POST' && $action === 'create') {
     }
 }
 
-// PUT /api/products?action=update
-if ($method === 'PUT' && $action === 'update') {
+// POST or PUT /api/products?action=update
+if (($method === 'PUT' || $method === 'POST') && $action === 'update') {
     requirePermission('products', 'update');
     verifyCsrf();
     
@@ -272,9 +272,15 @@ if ($method === 'PUT' && $action === 'update') {
                 (float) $v->value('selling_price'),
                 (int) $v->value('min_stock_level', 5),
                 !empty($input['supplier_id']) ? (int) $input['supplier_id'] : null,
-                $v->value('status'),
+                $v->value('status', 'active'),
                 $id
             ]
+        );
+
+        // Sync variant cost and selling price
+        Database::execute(
+            "UPDATE product_variants SET avg_cost_price = ?, selling_price = ? WHERE product_id = ?",
+            [(float) $v->value('purchase_price', 0), (float) $v->value('selling_price'), $id]
         );
         
         Database::commit();
