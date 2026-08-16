@@ -44,7 +44,10 @@ const UI = {
 
     /** Format money */
     formatMoney(amount, showSymbol = true) {
-        const symbol = window.APP_CONFIG?.currencySymbol || '৳';
+        let symbol = window.APP_CONFIG?.currencySymbol || '৳';
+        if (typeof symbol !== 'string' || symbol.includes('ó') || symbol.includes('º') || symbol.includes('Ã')) {
+            symbol = '৳';
+        }
         const num = parseFloat(amount);
         if (isNaN(num)) return showSymbol ? `${symbol} 0.00` : '0.00';
         const formatted = Math.abs(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });

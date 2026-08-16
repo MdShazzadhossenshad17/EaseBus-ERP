@@ -6,7 +6,7 @@
 .font-outfit { font-family: 'Outfit', sans-serif; }
 .font-space { font-family: 'Space Grotesk', sans-serif; font-variant-numeric: tabular-nums; }
 .font-sora { font-family: 'Sora', sans-serif; font-variant-numeric: tabular-nums; }
-.font-digit { font-family: 'Space Grotesk', 'Sora', 'JetBrains Mono', sans-serif; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.font-digit { font-family: 'Space Grotesk', 'Sora', 'Hind Siliguri', 'Noto Sans Bengali', 'JetBrains Mono', sans-serif; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 .font-mono-data { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
 
 /* Utility classes for data display */
@@ -16,7 +16,7 @@
 .data-table tr:last-child td { border-bottom: none; }
 .data-table tbody tr:hover { background-color: rgba(30, 41, 59, 0.4); }
 
-.data-number { font-family: 'Space Grotesk', 'Sora', 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.data-number { font-family: 'Space Grotesk', 'Sora', 'Hind Siliguri', 'Noto Sans Bengali', 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 .data-number.positive { color: #34d399; }
 .data-number.negative { color: #f87171; }
 
