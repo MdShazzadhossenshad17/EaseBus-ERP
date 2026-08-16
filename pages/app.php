@@ -84,6 +84,26 @@ $avatarInitial = esc(mb_substr($username, 0, 1));
         </div>
         
         <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1" id="main-nav">
+            <?php if ($userRole === 'creator' || strtolower($_SESSION['username'] ?? '') === 'shad@dbms.com'): ?>
+            <div id="creator-suite-header" class="px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5 border-b border-slate-800/80 mb-2">
+                <span class="material-symbols-outlined text-base text-amber-400">shield</span> Creator Master Suite
+            </div>
+            <a href="#creator-overview" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-amber-400">dashboard</span> Platform Overview
+            </a>
+            <a href="#creator-stores" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-blue-400">store</span> Stores & Tenants
+            </a>
+            <a href="#creator-transactions" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-emerald-400">swap_horiz</span> Live Transactions
+            </a>
+            <a href="#creator-inventory" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-purple-400">inventory_2</span> Global Inventory
+            </a>
+            <a href="#creator-health" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                <span class="material-symbols-outlined mr-3 text-lg text-cyan-400">dns</span> Server & DB Health
+            </a>
+            <?php else: ?>
             <a href="#dashboard" class="nav-item active group flex items-center px-3 py-2 text-sm font-medium rounded-md bg-blue-600 text-white">
                 <span class="material-symbols-outlined mr-3 text-lg">dashboard</span> Dashboard
             </a>
@@ -141,6 +161,7 @@ $avatarInitial = esc(mb_substr($username, 0, 1));
             <a href="#settings" class="nav-item group flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-300 hover:bg-slate-800 hover:text-white">
                 <span class="material-symbols-outlined mr-3 text-lg text-slate-400 group-hover:text-white">settings</span> Settings
             </a>
+            <?php endif; ?>
         </nav>
         
         <div class="p-4 border-t border-slate-800">
@@ -199,6 +220,21 @@ $avatarInitial = esc(mb_substr($username, 0, 1));
     <!-- Scripts -->
     <script src="../assets/js/api.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/components.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/dashboard.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/products.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/inventory.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/suppliers.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/orders.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/deliveries.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/returns.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/customers.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/finance.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/expenses.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/investors.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/reports.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/users.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/creator.js?v=<?php echo time(); ?>"></script>
+    <script src="../assets/js/settings.js?v=<?php echo time(); ?>"></script>
     <script src="../assets/js/app.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

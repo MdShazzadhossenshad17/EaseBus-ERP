@@ -391,7 +391,12 @@ window.App = {
     loadScript(src) {
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
-            script.src = src;
+            const path = window.location.pathname || '';
+            let finalSrc = src;
+            if (path.includes('/pages/') && !src.startsWith('../') && !src.startsWith('/')) {
+                finalSrc = '../' + src;
+            }
+            script.src = finalSrc;
             script.onload = resolve;
             script.onerror = reject;
             document.head.appendChild(script);
