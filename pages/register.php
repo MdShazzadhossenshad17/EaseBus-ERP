@@ -78,7 +78,28 @@ if (!empty($_SESSION['user_id'])) {
                 Account created successfully. <a href="login.php" class="font-bold text-blue-400 hover:text-blue-300 underline transition-colors">Click here to log in.</a>
             </div>
 
-            <form id="register-form" class="space-y-4">
+                <div>
+                    <label for="business_name" class="block text-sm font-medium text-slate-300 mb-1.5">Business / Company Name</label>
+                    <input type="text" id="business_name" name="business_name" class="input-field" placeholder="e.g. Apex Enterprise / EaseBus Trading">
+                </div>
+
+                <!-- Business Logo Selection -->
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label for="business_logo" class="block text-sm font-medium text-slate-300">Business Logo / Avatar</label>
+                        <span class="text-xs text-slate-500 font-mono">(Optional — Skip or add now)</span>
+                    </div>
+                    <input type="url" id="business_logo" name="business_logo" class="input-field mb-2 text-xs" placeholder="Paste Logo Image URL (e.g. https://.../logo.png)">
+                    
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-slate-400">Preset Badges:</span>
+                        <button type="button" onclick="setLogoPreset('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80')" class="px-2 py-1 text-[11px] font-bold rounded bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 transition-colors">💎 Modern</button>
+                        <button type="button" onclick="setLogoPreset('https://images.unsplash.com/photo-1633409325618-4f094c355a6d?w=150&auto=format&fit=crop&q=80')" class="px-2 py-1 text-[11px] font-bold rounded bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 transition-colors">🚀 Tech</button>
+                        <button type="button" onclick="setLogoPreset('https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=150&auto=format&fit=crop&q=80')" class="px-2 py-1 text-[11px] font-bold rounded bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 transition-colors">🏬 Retail</button>
+                        <button type="button" onclick="setLogoPreset('')" class="px-2 py-1 text-[11px] font-bold rounded bg-slate-800 hover:bg-slate-700 text-slate-400 border border-slate-700 transition-colors">Clear</button>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="username" class="block text-sm font-medium text-slate-300 mb-1.5">Username</label>
@@ -107,7 +128,7 @@ if (!empty($_SESSION['user_id'])) {
                 </div>
 
                 <button type="submit" id="submit-btn" class="btn-primary mt-6">
-                    Create Admin Account
+                    Create Account & Business Workspace
                 </button>
             </form>
             
@@ -118,6 +139,10 @@ if (!empty($_SESSION['user_id'])) {
     </div>
 
     <script>
+        function setLogoPreset(url) {
+            document.getElementById('business_logo').value = url;
+        }
+
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const form = e.target;
@@ -137,6 +162,8 @@ if (!empty($_SESSION['user_id'])) {
                     body: JSON.stringify({
                         username: form.username.value,
                         full_name: form.full_name.value,
+                        business_name: form.business_name.value,
+                        business_logo: form.business_logo.value,
                         email: form.email.value,
                         phone: form.phone.value,
                         password: form.password.value

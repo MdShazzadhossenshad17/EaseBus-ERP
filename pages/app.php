@@ -196,14 +196,76 @@ $avatarInitial = esc(mb_substr($username, 0, 1));
             
             <h2 id="page-title" class="font-geist text-xl font-semibold text-slate-100">Dashboard</h2>
             
-            <div class="ml-auto flex items-center space-x-4">
-                <button class="text-slate-400 hover:text-white relative">
-                    <span class="material-symbols-outlined">notifications</span>
-                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-slate-900 hidden" id="notif-badge"></span>
+            <div class="ml-auto flex items-center space-x-3 relative">
+                <button class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors relative" title="Notifications">
+                    <span class="material-symbols-outlined text-xl">notifications</span>
+                    <span class="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-slate-900 hidden" id="notif-badge"></span>
                 </button>
-                <button id="header-logout-btn" onclick="App.logout(event)" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold font-outfit rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30 transition-all cursor-pointer" title="Log Out">
-                    <span class="material-symbols-outlined text-sm">logout</span> Log Out
-                </button>
+
+                <!-- Circular Profile Icon & Dropdown Trigger -->
+                <div class="relative">
+                    <button id="profile-dropdown-btn" onclick="App.toggleProfileDropdown(event)" class="flex items-center gap-2.5 p-1.5 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 hover:border-slate-600 transition-all cursor-pointer shadow-md group">
+                        <div id="top-bar-avatar-container" class="relative w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-xs shadow-inner overflow-hidden border border-blue-400/40">
+                            <span id="top-bar-avatar-text" class="font-outfit text-sm"><?php echo $avatarInitial; ?></span>
+                            <img id="top-bar-avatar-img" src="" alt="Business Logo" class="w-full h-full object-cover hidden">
+                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+                        </div>
+                        <div class="hidden sm:flex flex-col text-left pr-1">
+                            <span id="top-bar-biz-name" class="text-xs font-bold font-jakarta text-white group-hover:text-blue-300 transition-colors truncate max-w-[140px]"><?php echo esc($_SESSION['business_name'] ?? 'My Business'); ?></span>
+                            <span id="top-bar-owner-name" class="text-[10px] text-slate-400 font-inter truncate max-w-[140px]"><?php echo esc($_SESSION['username'] ?? ''); ?></span>
+                        </div>
+                        <span class="material-symbols-outlined text-slate-400 group-hover:text-white text-sm transition-transform duration-200" id="profile-dropdown-arrow">expand_more</span>
+                    </button>
+
+                    <!-- Interactive Profile Dropdown Panel -->
+                    <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2.5 w-72 bg-slate-900/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-slate-800 divide-y divide-slate-800/80 z-50 overflow-hidden font-jakarta">
+                        <!-- Profile Card Header -->
+                        <div class="p-4 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/40">
+                            <div class="flex items-center gap-3">
+                                <div id="dropdown-avatar-container" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-base shadow-lg overflow-hidden border border-blue-400/40">
+                                    <span id="dropdown-avatar-text" class="font-outfit text-lg"><?php echo $avatarInitial; ?></span>
+                                    <img id="dropdown-avatar-img" src="" alt="Business Logo" class="w-full h-full object-cover hidden">
+                                </div>
+                                <div class="overflow-hidden">
+                                    <h4 id="dropdown-biz-name" class="font-bold text-white text-sm truncate"><?php echo esc($_SESSION['business_name'] ?? 'My Business'); ?></h4>
+                                    <p id="dropdown-owner-name" class="text-xs text-slate-300 font-inter truncate"><?php echo esc($_SESSION['username'] ?? ''); ?></p>
+                                    <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold font-outfit bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                        <span class="w-1 h-1 rounded-full bg-blue-400"></span> Store Owner
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Links -->
+                        <div class="py-2 px-1.5 font-outfit">
+                            <a href="#settings" onclick="App.closeProfileDropdown()" class="flex items-center gap-3 px-3 py-2.5 text-xs font-semibold rounded-xl text-slate-200 hover:bg-slate-800 hover:text-white transition-all group">
+                                <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center group-hover:bg-blue-500/20">
+                                    <span class="material-symbols-outlined text-sm">storefront</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-white text-xs">Business Profile & Logo</div>
+                                    <div class="text-[10px] text-slate-400 font-inter">Update business name, logo, phone</div>
+                                </div>
+                            </a>
+                            <a href="#settings" onclick="App.closeProfileDropdown(); window.Settings && window.Settings.activeTab && (window.Settings.activeTab = 'security');" class="flex items-center gap-3 px-3 py-2.5 text-xs font-semibold rounded-xl text-slate-200 hover:bg-slate-800 hover:text-white transition-all group">
+                                <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:bg-amber-500/20">
+                                    <span class="material-symbols-outlined text-sm">lock_reset</span>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-white text-xs">Account Security</div>
+                                    <div class="text-[10px] text-slate-400 font-inter">Change account password</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Logout Button -->
+                        <div class="p-2">
+                            <button onclick="App.logout(event)" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold font-outfit rounded-xl bg-red-500/15 text-red-300 hover:bg-red-500/25 border border-red-500/30 transition-all cursor-pointer">
+                                <span class="material-symbols-outlined text-sm">logout</span> Sign Out of Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 

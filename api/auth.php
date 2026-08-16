@@ -121,13 +121,18 @@ if ($method === 'POST' && $action === 'register') {
     try {
         Database::beginTransaction();
         
+        $businessName = !empty($input['business_name']) ? trim($input['business_name']) : ($v->value('full_name') . "'s Store");
+        $businessLogo = !empty($input['business_logo']) ? trim($input['business_logo']) : null;
+
         $userId = Database::insert(
-            "INSERT INTO users (username, password_hash, full_name, email, phone, must_change_password, status)
-             VALUES (?, ?, ?, ?, ?, 0, 'active')",
+            "INSERT INTO users (username, password_hash, full_name, business_name, business_logo, email, phone, must_change_password, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 0, 'active')",
             [
                 $v->value('username'),
                 password_hash($v->value('password'), PASSWORD_BCRYPT),
                 $v->value('full_name'),
+                $businessName,
+                $businessLogo,
                 $v->value('email') ?? ($v->value('username') . '@easebus.com'),
                 $v->value('phone') ?? '01700000000'
             ]
@@ -144,8 +149,7 @@ if ($method === 'POST' && $action === 'register') {
         Database::insert("INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)", [$userId, $roleId]);
 
         // Create default business for user
-        $businessName = !empty($input['business_name']) ? trim($input['business_name']) : ($v->value('full_name') . "'s Store");
-        Database::insert("INSERT INTO businesses (name, currency, currency_symbol) VALUES (?, 'BDT', '৳')", [$businessName]);
+        Database::insert("INSERT INTO businesses (name, logo_path, currency, currency_symbol) VALUES (?, ?, 'BDT', '৳')", [$businessName, $businessLogo]);
 
         Database::commit();
 
@@ -153,6 +157,8 @@ if ($method === 'POST' && $action === 'register') {
         session_regenerate_id(true);
         $_SESSION['user_id'] = (int) $userId;
         $_SESSION['username'] = $v->value('username');
+        $_SESSION['business_name'] = $businessName;
+        $_SESSION['business_logo'] = $businessLogo;
         $_SESSION['user_role'] = 'admin';
 
         jsonSuccess('Account created successfully! Welcome to EaseBus.', [
@@ -160,6 +166,8 @@ if ($method === 'POST' && $action === 'register') {
                 'id' => $userId,
                 'username' => $v->value('username'),
                 'full_name' => $v->value('full_name'),
+                'business_name' => $businessName,
+                'business_logo' => $businessLogo,
                 'role' => 'admin',
                 'must_change_password' => false
             ],
@@ -195,7 +203,7 @@ if ($method === 'GET' && $action === 'session') {
     }
     
     $user = Database::fetchOne(
-        "SELECT u.id, u.username, u.full_name, u.status, u.must_change_password, r.name as role_name
+        "SELECT u.id, u.username, u.full_name, u.business_name, u.business_logo, u.email, u.phone, u.status, u.must_change_password, r.name as role_name
          FROM users u
          LEFT JOIN user_roles ur ON ur.user_id = u.id
          LEFT JOIN roles r ON r.id = ur.role_id
@@ -213,6 +221,10 @@ if ($method === 'GET' && $action === 'session') {
             'id' => $user['id'],
             'username' => $user['username'],
             'full_name' => $user['full_name'],
+            'business_name' => $user['business_name'] ?? ($user['full_name'] . "'s Business"),
+            'business_logo' => $user['business_logo'] ?? null,
+            'email' => $user['email'] ?? '',
+            'phone' => $user['phone'] ?? '',
             'role' => $user['role_name'],
             'must_change_password' => (bool) $user['must_change_password']
         ],

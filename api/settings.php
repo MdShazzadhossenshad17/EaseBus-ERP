@@ -9,13 +9,88 @@ $method = getRequestMethod();
 $action = $action ?? $_GET['action'] ?? $_POST['action'] ?? '';
 
 
-if ($method === 'GET' && $action === 'business') {
-    requirePermission('settings', 'read');
-    
+if ($method === 'GET' && ($action === 'business' || $action === 'profile')) {
+    $userId = $_SESSION['user_id'] ?? 0;
+    $user = Database::fetchOne("SELECT id, username, full_name, business_name, business_logo, email, phone FROM users WHERE id = ?", [$userId]);
     $biz = Database::fetchOne("SELECT * FROM businesses ORDER BY id LIMIT 1");
-    if (!$biz) jsonError('Business settings not found');
+
+    jsonSuccess('Business settings loaded', [
+        'business' => $biz,
+        'profile' => [
+            'id' => $user['id'] ?? $userId,
+            'username' => $user['username'] ?? '',
+            'full_name' => $user['full_name'] ?? '',
+            'business_name' => $user['business_name'] ?? ($biz['name'] ?? 'My Business'),
+            'business_logo' => $user['business_logo'] ?? ($biz['logo_path'] ?? ''),
+            'email' => $user['email'] ?? ($biz['email'] ?? ''),
+            'phone' => $user['phone'] ?? ($biz['phone'] ?? ''),
+            'currency_symbol' => $biz['currency_symbol'] ?? '৳',
+            'address' => $biz['address'] ?? ''
+        ]
+    ]);
+}
+
+if (($action === 'profile' || $action === 'update_profile') && ($method === 'POST' || $method === 'PUT')) {
+    $input = getJsonInput();
+    $userId = $_SESSION['user_id'] ?? 0;
     
-    jsonSuccess('Business settings loaded', ['business' => $biz]);
+    $bizName = trim($input['business_name'] ?? $input['name'] ?? '');
+    $bizLogo = trim($input['business_logo'] ?? $input['logo_path'] ?? '');
+    $fullName = trim($input['full_name'] ?? '');
+    $email = trim($input['email'] ?? '');
+    $phone = trim($input['phone'] ?? '');
+    $symbol = trim($input['currency_symbol'] ?? '৳');
+    $address = trim($input['address'] ?? '');
+
+    try {
+        Database::beginTransaction();
+
+        Database::execute(
+            "UPDATE users SET 
+                full_name = COALESCE(NULLIF(?, ''), full_name),
+                business_name = COALESCE(NULLIF(?, ''), business_name),
+                business_logo = COALESCE(NULLIF(?, ''), business_logo),
+                email = COALESCE(NULLIF(?, ''), email),
+                phone = COALESCE(NULLIF(?, ''), phone)
+             WHERE id = ?",
+            [$fullName, $bizName, $bizLogo, $email, $phone, $userId]
+        );
+
+        $biz = Database::fetchOne("SELECT id FROM businesses ORDER BY id LIMIT 1");
+        if ($biz) {
+            Database::execute(
+                "UPDATE businesses SET 
+                    name = COALESCE(NULLIF(?, ''), name),
+                    logo_path = COALESCE(NULLIF(?, ''), logo_path),
+                    email = COALESCE(NULLIF(?, ''), email),
+                    phone = COALESCE(NULLIF(?, ''), phone),
+                    currency_symbol = COALESCE(NULLIF(?, ''), currency_symbol),
+                    address = COALESCE(NULLIF(?, ''), address)
+                 WHERE id = ?",
+                [$bizName, $bizLogo, $email, $phone, $symbol, $address, $biz['id']]
+            );
+        }
+
+        Database::commit();
+
+        if (!empty($bizName)) $_SESSION['business_name'] = $bizName;
+        if (!empty($bizLogo)) $_SESSION['business_logo'] = $bizLogo;
+
+        jsonSuccess('Business profile and logo updated successfully', [
+            'user' => [
+                'id' => $userId,
+                'username' => $_SESSION['username'] ?? '',
+                'full_name' => $fullName,
+                'business_name' => $bizName,
+                'business_logo' => $bizLogo,
+                'email' => $email,
+                'phone' => $phone
+            ]
+        ]);
+    } catch (Exception $e) {
+        Database::rollback();
+        jsonError('Failed to update profile: ' . $e->getMessage(), 500);
+    }
 }
 
 if ($method === 'PUT' && $action === 'business') {

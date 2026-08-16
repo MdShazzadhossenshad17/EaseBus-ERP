@@ -209,6 +209,67 @@ window.App = {
         window.location.href = 'login.php';
     },
 
+    toggleProfileDropdown(e) {
+        if (e) e.stopPropagation();
+        const menu = document.getElementById('profile-dropdown-menu');
+        const arrow = document.getElementById('profile-dropdown-arrow');
+        if (!menu) return;
+        
+        const isHidden = menu.classList.contains('hidden');
+        if (isHidden) {
+            menu.classList.remove('hidden');
+            if (arrow) arrow.style.transform = 'rotate(180deg)';
+        } else {
+            menu.classList.add('hidden');
+            if (arrow) arrow.style.transform = 'rotate(0deg)';
+        }
+    },
+
+    closeProfileDropdown() {
+        const menu = document.getElementById('profile-dropdown-menu');
+        const arrow = document.getElementById('profile-dropdown-arrow');
+        if (menu) menu.classList.add('hidden');
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+    },
+
+    updateTopBarProfile(user) {
+        if (!user) user = API.getCurrentUser();
+        if (!user) return;
+
+        const bizName = user.business_name || user.full_name || 'My Business';
+        const ownerName = user.full_name || user.username || '';
+        const logoUrl = user.business_logo || '';
+
+        const topBizName = document.getElementById('top-bar-biz-name');
+        const topOwnerName = document.getElementById('top-bar-owner-name');
+        const dropBizName = document.getElementById('dropdown-biz-name');
+        const dropOwnerName = document.getElementById('dropdown-owner-name');
+
+        if (topBizName) topBizName.textContent = bizName;
+        if (topOwnerName) topOwnerName.textContent = ownerName;
+        if (dropBizName) dropBizName.textContent = bizName;
+        if (dropOwnerName) dropOwnerName.textContent = ownerName;
+
+        const initial = (bizName || ownerName || 'U').charAt(0).toUpperCase();
+
+        const topText = document.getElementById('top-bar-avatar-text');
+        const topImg = document.getElementById('top-bar-avatar-img');
+        const dropText = document.getElementById('dropdown-avatar-text');
+        const dropImg = document.getElementById('dropdown-avatar-img');
+
+        if (logoUrl) {
+            if (topImg) { topImg.src = logoUrl; topImg.classList.remove('hidden'); }
+            if (topText) topText.classList.add('hidden');
+            if (dropImg) { dropImg.src = logoUrl; dropImg.classList.remove('hidden'); }
+            if (dropText) dropText.classList.add('hidden');
+        } else {
+            if (topImg) topImg.classList.add('hidden');
+            if (topText) { topText.textContent = initial; topText.classList.remove('hidden'); }
+            if (dropImg) dropImg.classList.add('hidden');
+            if (dropText) { dropText.textContent = initial; dropText.classList.remove('hidden'); }
+        }
+    },
+
     setupSidebar() {
         const user = API.getCurrentUser();
         const mainNav = document.getElementById('main-nav');
