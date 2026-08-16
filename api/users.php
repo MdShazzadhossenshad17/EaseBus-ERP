@@ -11,8 +11,14 @@ $action = $action ?? $_GET['action'] ?? $_POST['action'] ?? '';
 
 if ($method === 'GET' && $action === 'list') {
     $search = getSearchQuery();
+    $currentUserId = (int)($_SESSION['user_id'] ?? 0);
     $params = [];
-    $where = "WHERE LOWER(u.username) NOT IN ('shad@dbms.com', 'shad') AND u.id != 99999 AND LOWER(COALESCE(r.name, '')) != 'creator'";
+
+    // Exclude Creator account, demo accounts (admin, system_admin), and the logged in Store Owner (since Staff List displays employees only)
+    $where = "WHERE LOWER(u.username) NOT IN ('shad@dbms.com', 'shad', 'admin', 'system_admin') 
+              AND LOWER(COALESCE(u.email, '')) NOT IN ('shad@dbms.com', 'admin@easebus.com') 
+              AND u.id != 99999 
+              AND u.id != {$currentUserId}";
 
     if ($search) {
         $where .= " AND (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?)";

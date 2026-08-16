@@ -526,12 +526,20 @@ window.Users = {
         try {
             const res = await API.get('users/list');
             const rawUsers = res.data.users || [];
-            // Completely conceal Creator account (shad@dbms.com / 99999) from non-creator User Portal
+            const currentUser = API.getCurrentUser();
+            const currentId = currentUser?.id;
+            const currentUname = (currentUser?.username || '').toLowerCase();
+
+            // Filter out Creator (shad@dbms.com / 99999), Demo System Admin (admin / admin@easebus.com), and the logged-in Store Owner themselves
             const users = rawUsers.filter(u => {
                 const uname = (u.username || '').toLowerCase();
                 const email = (u.email || '').toLowerCase();
                 const role = (u.role_name || u.role || '').toLowerCase();
-                return uname !== 'shad@dbms.com' && uname !== 'shad' && email !== 'shad@dbms.com' && role !== 'creator' && u.id !== 99999;
+                const isCreator = uname === 'shad@dbms.com' || uname === 'shad' || email === 'shad@dbms.com' || role === 'creator' || u.id === 99999;
+                const isDemoAdmin = uname === 'admin' || uname === 'system_admin' || email === 'admin@easebus.com';
+                const isSelfOwner = (currentId && u.id == currentId) || (currentUname && uname === currentUname);
+
+                return !isCreator && !isDemoAdmin && !isSelfOwner;
             });
 
             this.usersData = users;
@@ -545,7 +553,7 @@ window.Users = {
 
     updateKPIs(users) {
         const total = users.length;
-        const owners = users.filter(u => u.role_name === 'admin' || u.role === 'admin' || u.role === 'owner').length;
+        const managers = users.filter(u => u.role_name === 'manager' || u.role === 'manager').length;
         const active = users.filter(u => u.status === 'active').length;
 
         const totalEl = document.getElementById('kpi-total-users');
@@ -553,7 +561,7 @@ window.Users = {
         const activeEl = document.getElementById('kpi-active-staff');
 
         if (totalEl) totalEl.textContent = total;
-        if (adminEl) adminEl.textContent = owners;
+        if (adminEl) adminEl.textContent = managers;
         if (activeEl) activeEl.textContent = active;
     },
 
@@ -564,15 +572,21 @@ window.Users = {
         const tbody = document.getElementById('user-list');
         if (!tbody) return;
 
+        const currentUser = API.getCurrentUser();
+        const currentId = currentUser?.id;
+        const currentUname = (currentUser?.username || '').toLowerCase();
+
         let filtered = this.usersData.filter(u => {
             const uname = (u.username || '').toLowerCase();
             const email = (u.email || '').toLowerCase();
             const r = (u.role_name || u.role || '').toLowerCase();
             
-            // Conceal Creator account
-            if (uname === 'shad@dbms.com' || uname === 'shad' || email === 'shad@dbms.com' || r === 'creator' || u.id === 99999) {
-                return false;
-            }
+            // Exclude Creator, Demo System Admin, and logged-in Store Owner
+            const isCreator = uname === 'shad@dbms.com' || uname === 'shad' || email === 'shad@dbms.com' || r === 'creator' || u.id === 99999;
+            const isDemoAdmin = uname === 'admin' || uname === 'system_admin' || email === 'admin@easebus.com';
+            const isSelfOwner = (currentId && u.id == currentId) || (currentUname && uname === currentUname);
+
+            if (isCreator || isDemoAdmin || isSelfOwner) return false;
 
             const matchSearch = !search ||
                 (u.full_name || u.name || '').toLowerCase().includes(search) ||
@@ -587,7 +601,20 @@ window.Users = {
         });
 
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400 text-xs font-inter">No matching staff accounts found.</td></tr>`;
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center py-12">
+                        <div class="flex flex-col items-center justify-center">
+                            <span class="material-symbols-outlined text-4xl text-slate-600 mb-2">badge</span>
+                            <p class="text-slate-300 text-sm font-bold font-jakarta">No Staff Members Found</p>
+                            <p class="text-slate-500 text-xs mt-1 font-inter max-w-sm">You haven't added any staff or employees to your business yet. Click "+ Add New Staff" to create employee accounts.</p>
+                            <button class="btn btn-primary text-xs mt-4 py-2 px-4 font-outfit font-bold bg-blue-600 hover:bg-blue-500" onclick="Users.showModal()">
+                                <span class="material-symbols-outlined text-sm">person_add</span> Add New Staff Member
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
             return;
         }
 
