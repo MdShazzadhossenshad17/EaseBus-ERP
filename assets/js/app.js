@@ -173,15 +173,40 @@ window.App = {
         });
 
         // Logout handlers
-        const handleLogout = (e) => {
-            if (e) e.preventDefault();
-            API.setCurrentUser(null);
-            API.request('auth/logout', 'POST').catch(() => {});
-            this.checkAuth();
-        };
+        const handleLogout = (e) => this.logout(e);
 
         document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
         document.getElementById('header-logout-btn')?.addEventListener('click', handleLogout);
+        document.querySelectorAll('.btn-logout-trigger').forEach(btn => {
+            btn.onclick = handleLogout;
+        });
+    },
+
+    async logout(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        try { UI.setLoading(true); } catch(err) {}
+
+        if (window.Creator && typeof window.Creator.stopLivePolling === 'function') {
+            window.Creator.stopLivePolling();
+        }
+
+        API.setCurrentUser(null);
+        if (window.APP_CONFIG) {
+            window.APP_CONFIG.username = null;
+            window.APP_CONFIG.userRole = null;
+            window.APP_CONFIG.userId = 0;
+        }
+        try { localStorage.removeItem('easebus_active_user'); } catch(err) {}
+        try { sessionStorage.clear(); } catch(err) {}
+
+        try {
+            await API.request('auth/logout', 'POST');
+        } catch(err) {}
+
+        window.location.href = 'login.php';
     },
 
     setupSidebar() {

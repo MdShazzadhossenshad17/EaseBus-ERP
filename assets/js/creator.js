@@ -10,6 +10,21 @@ window.Creator = {
     liveTimer: null,
     lastSummaryData: null,
 
+    logout(e) {
+        if (window.App && typeof window.App.logout === 'function') {
+            window.App.logout(e);
+        } else {
+            if (e) e.preventDefault();
+            this.stopLivePolling();
+            API.setCurrentUser(null);
+            try { localStorage.removeItem('easebus_active_user'); } catch(err) {}
+            try { sessionStorage.clear(); } catch(err) {}
+            API.request('auth/logout', 'POST').finally(() => {
+                window.location.href = 'login.php';
+            });
+        }
+    },
+
     async render(container, route = 'creator-overview') {
         const currentUser = API.getCurrentUser();
         if (!currentUser || (currentUser.username !== 'shad@dbms.com' && currentUser.role !== 'creator')) {
@@ -46,7 +61,7 @@ window.Creator = {
                         <h1 class="text-3xl font-extrabold tracking-tight font-jakarta text-white">Md Shazzad Hossen Shad</h1>
                         <p class="text-slate-300 text-xs mt-1.5 font-inter">Platform Creator Account: <code class="text-amber-300 font-mono font-bold bg-amber-950/60 px-2 py-0.5 rounded border border-amber-500/30">shad@dbms.com</code> • Real-time Monitoring & Management over Platform Tenants.</p>
                     </div>
-                    <div class="flex items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-3">
                         <span class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold font-mono shadow-[0_0_15px_rgba(16,185,129,0.25)]">
                             <span class="relative flex h-2.5 w-2.5">
                               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -54,6 +69,9 @@ window.Creator = {
                             </span>
                             REAL-TIME LIVE SYNC (3s)
                         </span>
+                        <button onclick="Creator.logout(event)" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-500/20 text-red-300 hover:bg-red-500/30 border border-red-500/40 text-xs font-bold font-outfit transition-all cursor-pointer shadow-md" title="Sign Out of Creator Account">
+                            <span class="material-symbols-outlined text-sm">logout</span> Sign Out
+                        </button>
                     </div>
                 </div>
             </div>

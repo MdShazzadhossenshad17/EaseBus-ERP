@@ -175,7 +175,7 @@ $avatarInitial = esc(mb_substr($username, 0, 1));
                     <p class="text-sm font-medium text-white"><?php echo esc($_SESSION['username'] ?? ''); ?></p>
                     <p class="text-xs text-slate-400 capitalize"><?php echo esc($userRole); ?></p>
                 </div>
-                <button id="logout-btn" class="ml-auto text-slate-400 hover:text-white p-1 rounded-md hover:bg-slate-800" title="Log out">
+                <button id="logout-btn" onclick="App.logout(event)" class="ml-auto text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-red-500/20 hover:text-red-400 border border-transparent hover:border-red-500/30 transition-all cursor-pointer" title="Log out">
                     <span class="material-symbols-outlined text-lg">logout</span>
                 </button>
             </div>
@@ -200,6 +200,9 @@ $avatarInitial = esc(mb_substr($username, 0, 1));
                 <button class="text-slate-400 hover:text-white relative">
                     <span class="material-symbols-outlined">notifications</span>
                     <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-slate-900 hidden" id="notif-badge"></span>
+                </button>
+                <button id="header-logout-btn" onclick="App.logout(event)" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold font-outfit rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30 transition-all cursor-pointer" title="Log Out">
+                    <span class="material-symbols-outlined text-sm">logout</span> Log Out
                 </button>
             </div>
         </header>
