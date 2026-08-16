@@ -4,6 +4,7 @@
 
 window.App = {
     currentRoute: 'dashboard',
+    userNavHTML: null,
     
     init() {
         // Sync session with real PHP backend first
@@ -186,31 +187,35 @@ window.App = {
     setupSidebar() {
         const user = API.getCurrentUser();
         const mainNav = document.getElementById('main-nav');
+        if (!mainNav) return;
+
+        if (!this.userNavHTML && !document.getElementById('creator-suite-header')) {
+            this.userNavHTML = mainNav.innerHTML;
+        }
 
         if (user && (user.role === 'creator' || user.username === 'shad@dbms.com') && (!window.Creator || !window.Creator.isReadOnlyMode)) {
-            if (mainNav && !document.getElementById('creator-suite-header')) {
-                const creatorHTML = `
-                    <div id="creator-suite-header" class="px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5 border-b border-slate-800/80 mb-2">
-                        <span class="material-symbols-outlined text-base text-amber-400">shield</span> Creator Master Suite
-                    </div>
-                    <a href="#creator-overview" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
-                        <span class="material-symbols-outlined mr-3 text-lg text-amber-400">dashboard</span> Platform Overview
-                    </a>
-                    <a href="#creator-stores" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
-                        <span class="material-symbols-outlined mr-3 text-lg text-blue-400">store</span> Stores & Tenants
-                    </a>
-                    <a href="#creator-transactions" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
-                        <span class="material-symbols-outlined mr-3 text-lg text-emerald-400">swap_horiz</span> Live Transactions
-                    </a>
-                    <a href="#creator-inventory" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
-                        <span class="material-symbols-outlined mr-3 text-lg text-purple-400">inventory_2</span> Global Inventory
-                    </a>
-                    <a href="#creator-health" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white mb-3 pb-2 border-b border-slate-800">
-                        <span class="material-symbols-outlined mr-3 text-lg text-cyan-400">dns</span> Server & DB Health
-                    </a>
-                `;
-                mainNav.insertAdjacentHTML('afterbegin', creatorHTML);
-            }
+            mainNav.innerHTML = `
+                <div id="creator-suite-header" class="px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5 border-b border-slate-800/80 mb-2">
+                    <span class="material-symbols-outlined text-base text-amber-400">shield</span> Creator Master Suite
+                </div>
+                <a href="#creator-overview" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                    <span class="material-symbols-outlined mr-3 text-lg text-amber-400">dashboard</span> Platform Overview
+                </a>
+                <a href="#creator-stores" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                    <span class="material-symbols-outlined mr-3 text-lg text-blue-400">store</span> Stores & Tenants
+                </a>
+                <a href="#creator-transactions" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                    <span class="material-symbols-outlined mr-3 text-lg text-emerald-400">swap_horiz</span> Live Transactions
+                </a>
+                <a href="#creator-inventory" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                    <span class="material-symbols-outlined mr-3 text-lg text-purple-400">inventory_2</span> Global Inventory
+                </a>
+                <a href="#creator-health" class="nav-item group flex items-center px-3 py-2 text-sm font-semibold rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white">
+                    <span class="material-symbols-outlined mr-3 text-lg text-cyan-400">dns</span> Server & DB Health
+                </a>
+            `;
+        } else if (this.userNavHTML) {
+            mainNav.innerHTML = this.userNavHTML;
         }
 
         const sidebar = document.getElementById('sidebar');

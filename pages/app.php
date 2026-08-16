@@ -74,9 +74,9 @@ $avatarInitial = esc(mb_substr($username, 0, 1));
     <!-- Sidebar -->
     <aside id="sidebar" class="bg-slate-900 text-white w-64 flex-shrink-0 flex flex-col h-full transition-transform duration-300 transform -translate-x-full md:translate-x-0 absolute md:relative z-20 border-r border-slate-800">
         <div class="h-16 flex items-center px-5 border-b border-slate-800">
-            <a href="#dashboard" class="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
+            <a id="brand-logo-link" href="#dashboard" class="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
                 <img src="../assets/img/logo.png" alt="EaseBus Logo" class="w-8 h-8 rounded-lg object-cover shadow-sm ring-1 ring-white/10">
-                <h1 class="font-geist text-xl font-semibold tracking-tight text-white"><?php echo esc($biz['name']); ?></h1>
+                <h1 id="brand-name-display" class="font-geist text-xl font-semibold tracking-tight text-white">EaseBus</h1>
             </a>
             <button id="close-sidebar" class="ml-auto md:hidden text-slate-400 hover:text-white">
                 <span class="material-symbols-outlined">close</span>
