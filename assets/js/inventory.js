@@ -285,55 +285,55 @@ window.Inventory = {
 
     showAdjustModal(variantId = null, sku = '', name = '') {
         const modal = document.getElementById('inv-modal');
-        const selectOptions = this.inventoryData.map(v => 
+        const selectOptions = (this.inventoryData || []).map(v => 
             `<option value="${v.variant_id}" ${v.variant_id == variantId ? 'selected' : ''}>${v.product_name} (${v.variant_sku}) - Current Stock: ${v.current_stock}</option>`
         ).join('');
 
         modal.innerHTML = `
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 animate-fade-in">
-                <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/80">
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-blue-600">tune</span>
-                        <h3 class="font-geist font-semibold text-lg text-slate-900">Stock Adjustment</h3>
+            <div class="bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-800 animate-fade-in font-jakarta">
+                <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/80">
+                    <div class="flex items-center gap-2.5">
+                        <span class="material-symbols-outlined text-blue-400">tune</span>
+                        <h3 class="font-outfit font-bold text-lg text-white">Stock Adjustment Inflow / Outflow</h3>
                     </div>
-                    <button class="text-slate-400 hover:text-slate-600 p-1" onclick="document.getElementById('inv-modal').classList.add('hidden')">
+                    <button class="text-slate-400 hover:text-white p-1 transition-colors cursor-pointer" onclick="document.getElementById('inv-modal').classList.add('hidden')">
                         <span class="material-symbols-outlined text-xl">close</span>
                     </button>
                 </div>
                 
                 <form id="adjust-form" class="p-6 space-y-4">
                     <div>
-                        <label class="form-label text-xs font-semibold uppercase text-slate-500">Select Product Variant *</label>
-                        <select name="variant_id" class="form-input text-xs" required ${variantId ? 'disabled' : ''}>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 font-outfit">Select Product Variant *</label>
+                        <select name="select_variant_id" id="adj-select-variant" class="form-input bg-slate-950 border-slate-800 text-white font-semibold text-xs py-2.5" required>
                             ${variantId ? `<option value="${variantId}" selected>${name} (${sku})</option>` : selectOptions}
                         </select>
-                        ${variantId ? `<input type="hidden" name="variant_id" value="${variantId}">` : ''}
+                        <input type="hidden" name="variant_id" id="adj-hidden-variant" value="${variantId || ''}">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="form-label text-xs font-semibold uppercase text-slate-500">Adjustment Type *</label>
-                            <select name="adjustment_type" class="form-input text-xs" required>
-                                <option value="manual_add">Manual Add (+ Stock Inflow)</option>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 font-outfit">Adjustment Type *</label>
+                            <select name="adjustment_type" id="adj-type" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2.5" required>
+                                <option value="manual_add" selected>Manual Add (+ Stock Inflow)</option>
                                 <option value="manual_remove">Manual Remove (- Stock Outflow)</option>
                                 <option value="damage">Damage (- Damaged Items)</option>
                                 <option value="lost">Lost (- Lost/Stolen Stock)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="form-label text-xs font-semibold uppercase text-slate-500">Quantity *</label>
-                            <input type="number" name="quantity" class="form-input text-xs" min="1" required placeholder="e.g. 10">
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 font-outfit">Quantity *</label>
+                            <input type="number" name="quantity" id="adj-qty" class="form-input bg-slate-950 border-slate-800 text-white font-digit text-xs py-2.5" min="1" required placeholder="e.g. 50">
                         </div>
                     </div>
 
                     <div>
-                        <label class="form-label text-xs font-semibold uppercase text-slate-500">Reason / Notes *</label>
-                        <input type="text" name="reason" class="form-input text-xs" required placeholder="e.g. Restock from supplier shipment #104">
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 font-outfit">Reason / Notes *</label>
+                        <input type="text" name="reason" id="adj-reason" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2.5" required placeholder="e.g. Restock from supplier / Warehouse shipment">
                     </div>
 
-                    <div class="pt-4 flex justify-end gap-2 border-t border-slate-100">
-                        <button type="button" class="btn btn-secondary text-xs px-4 py-2" onclick="document.getElementById('inv-modal').classList.add('hidden')">Cancel</button>
-                        <button type="submit" class="btn btn-primary text-xs px-4 py-2" id="save-adj-btn">Confirm Stock Adjustment</button>
+                    <div class="pt-4 flex justify-end gap-2 border-t border-slate-800/80 font-outfit">
+                        <button type="button" class="btn btn-secondary text-xs px-4 py-2 bg-slate-800 text-slate-300 hover:text-white" onclick="document.getElementById('inv-modal').classList.add('hidden')">Cancel</button>
+                        <button type="submit" class="btn btn-primary text-xs px-5 py-2 bg-blue-600 hover:bg-blue-500 font-bold shadow-md border border-blue-400/30" id="save-adj-btn">Confirm Stock Adjustment</button>
                     </div>
                 </form>
             </div>
@@ -343,25 +343,29 @@ window.Inventory = {
 
         document.getElementById('adjust-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const form = e.target;
             const btn = document.getElementById('save-adj-btn');
             btn.disabled = true;
             btn.textContent = 'Saving...';
 
+            const sel = document.getElementById('adj-select-variant');
+            const hid = document.getElementById('adj-hidden-variant');
+            const selectedVariantId = hid.value || sel.value;
+
             try {
                 await API.post('inventory/adjust', {
-                    variant_id: form.variant_id.value,
-                    adjustment_type: form.adjustment_type.value,
-                    quantity: form.quantity.value,
-                    reason: form.reason.value
+                    variant_id: selectedVariantId,
+                    adjustment_type: document.getElementById('adj-type').value,
+                    quantity: document.getElementById('adj-qty').value,
+                    reason: document.getElementById('adj-reason').value
                 });
 
                 modal.classList.add('hidden');
-                UI.toast('Stock adjusted successfully');
+                UI.toast('Stock adjusted successfully!', 'success');
                 await Promise.all([this.loadSummary(), this.loadInventory()]);
 
             } catch (err) {
-                UI.toast(err.message, 'error');
+                UI.toast(err.message || 'Failed to adjust stock', 'error');
+            } finally {
                 btn.disabled = false;
                 btn.textContent = 'Confirm Stock Adjustment';
             }

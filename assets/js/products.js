@@ -172,11 +172,14 @@ window.Products = {
                             p.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-700 border-slate-200'
                         }">${p.status}</span>
                     </td>
-                    <td class="text-right py-3">
-                        <button class="btn btn-secondary text-[11px] py-0.5 px-2 mr-1" onclick="Products.viewDetails(${p.id})">
+                    <td class="text-right py-3 font-outfit">
+                        <button class="btn btn-primary bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] py-1 px-2.5 mr-1 inline-flex items-center gap-1 font-bold rounded-lg shadow-sm border border-emerald-400/30 cursor-pointer" onclick="Products.showQuickAddStockModal(${p.id}, '${p.name.replace(/'/g, "\\'")}', '${p.sku}')">
+                            <span class="material-symbols-outlined text-xs">add_box</span> + Stock
+                        </button>
+                        <button class="btn btn-secondary text-[11px] py-1 px-2 mr-1 inline-flex items-center gap-1" onclick="Products.viewDetails(${p.id})">
                             <span class="material-symbols-outlined text-xs">visibility</span> View
                         </button>
-                        <button class="btn btn-secondary text-[11px] py-0.5 px-2" onclick="Products.edit(${p.id})">
+                        <button class="btn btn-secondary text-[11px] py-1 px-2 inline-flex items-center gap-1" onclick="Products.edit(${p.id})">
                             <span class="material-symbols-outlined text-xs">edit</span> Edit
                         </button>
                     </td>
@@ -196,6 +199,75 @@ window.Products = {
         if (input) input.value = c.name || '';
     },
 
+    showQuickAddStockModal(productId, productName, sku) {
+        const modal = document.getElementById('product-modal');
+        modal.innerHTML = `
+            <div class="bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-800 animate-fade-in font-jakarta">
+                <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/80">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-emerald-400">add_box</span>
+                        <h3 class="font-outfit font-bold text-lg text-white">Add Stock Inflow</h3>
+                    </div>
+                    <button class="text-slate-400 hover:text-white p-1 transition-colors cursor-pointer" onclick="document.getElementById('product-modal').classList.add('hidden')">
+                        <span class="material-symbols-outlined text-xl">close</span>
+                    </button>
+                </div>
+
+                <form id="quick-stock-form" class="p-6 space-y-4">
+                    <input type="hidden" name="product_id" value="${productId}">
+                    <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800">
+                        <div class="text-xs font-bold text-white font-outfit">${productName}</div>
+                        <div class="text-[11px] text-slate-400 font-mono">SKU: ${sku}</div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 font-outfit">Quantity to Add (+ Items) *</label>
+                        <input type="number" name="quantity" class="form-input bg-slate-950 border-slate-800 text-white font-digit text-xs py-2.5" min="1" value="50" required placeholder="e.g. 50">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 font-outfit">Stock Notes / Supplier Reference *</label>
+                        <input type="text" name="reason" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2.5" required value="Quick stock restock for ${productName}">
+                    </div>
+
+                    <div class="pt-3 flex justify-end gap-2 border-t border-slate-800 font-outfit">
+                        <button type="button" class="btn btn-secondary text-xs px-4 py-2 bg-slate-800 text-slate-300 hover:text-white" onclick="document.getElementById('product-modal').classList.add('hidden')">Cancel</button>
+                        <button type="submit" class="btn btn-primary text-xs px-5 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold shadow-md border border-emerald-400/30 cursor-pointer" id="save-quick-stock-btn">Add Stock Now</button>
+                    </div>
+                </form>
+            </div>
+        `;
+
+        modal.classList.remove('hidden');
+
+        document.getElementById('quick-stock-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const btn = document.getElementById('save-quick-stock-btn');
+            btn.disabled = true;
+            btn.textContent = 'Adding Stock...';
+
+            try {
+                await API.post('inventory/adjust', {
+                    product_id: form.product_id.value,
+                    adjustment_type: 'manual_add',
+                    quantity: form.quantity.value,
+                    reason: form.reason.value
+                });
+
+                modal.classList.add('hidden');
+                UI.toast('Stock added successfully!', 'success');
+                await Promise.all([this.loadSummary(), this.loadProducts()]);
+
+            } catch (err) {
+                UI.toast(err.message || 'Failed to add stock', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Add Stock Now';
+            }
+        };
+    },
+
     showCreateModal() {
         const modal = document.getElementById('product-modal');
         const catOptions = (this.categories || []).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
@@ -203,17 +275,17 @@ window.Products = {
         const popularPills = ['Apparel & Clothing', 'Electronics & Gadgets', 'Footwear & Shoes', 'Bags & Accessories', 'Home & Living', 'General Sales', 'Groceries & Foods', 'Health & Beauty'];
 
         const pillButtons = (inputId) => popularPills.map(pill => 
-            `<button type="button" class="px-2 py-0.5 text-[10px] rounded-full border border-slate-200 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition font-medium" onclick="document.getElementById('${inputId}').value='${pill}'">${pill}</button>`
+            `<button type="button" class="px-2 py-0.5 text-[10px] rounded-full border border-slate-700 bg-slate-800 hover:bg-blue-600 hover:text-white transition font-medium text-slate-300" onclick="document.getElementById('${inputId}').value='${pill}'">${pill}</button>`
         ).join('');
 
         modal.innerHTML = `
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 animate-fade-in">
-                <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/80">
+            <div class="bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-800 animate-fade-in font-jakarta">
+                <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/80">
                     <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-blue-600">add_box</span>
-                        <h3 class="font-geist font-semibold text-lg text-slate-900">Add New Product</h3>
+                        <span class="material-symbols-outlined text-blue-400">add_box</span>
+                        <h3 class="font-outfit font-bold text-lg text-white">Add New Product & Initial Stock</h3>
                     </div>
-                    <button class="text-slate-400 hover:text-slate-600 p-1" onclick="document.getElementById('product-modal').classList.add('hidden')">
+                    <button class="text-slate-400 hover:text-white p-1 transition-colors cursor-pointer" onclick="document.getElementById('product-modal').classList.add('hidden')">
                         <span class="material-symbols-outlined text-xl">close</span>
                     </button>
                 </div>
@@ -221,53 +293,68 @@ window.Products = {
                 <form id="product-form" class="p-6 space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="form-label text-xs font-semibold uppercase text-slate-600">Product Name *</label>
-                            <input type="text" name="name" class="form-input text-xs" placeholder="e.g. Leather Jacket, T-Shirt" required>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 font-outfit">Product Name *</label>
+                            <input type="text" name="name" class="form-input bg-slate-950 border-slate-800 text-white font-semibold text-xs py-2" placeholder="e.g. Leather Jacket, T-Shirt" required>
                         </div>
                         <div>
-                            <label class="form-label text-xs font-semibold uppercase text-slate-600">SKU Code *</label>
-                            <input type="text" name="sku" class="form-input text-xs font-mono" value="PRD-${Math.floor(1000 + Math.random() * 9000)}" required>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 font-outfit">SKU Code *</label>
+                            <input type="text" name="sku" class="form-input bg-slate-950 border-slate-800 text-white font-mono text-xs py-2" value="PRD-${Math.floor(1000 + Math.random() * 9000)}" required>
+                        </div>
+                    </div>
+
+                    <!-- Initial Opening Stock Quantity & Min Stock Alert -->
+                    <div class="grid grid-cols-2 gap-4 p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+                        <div>
+                            <label class="block text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1 font-outfit">Initial Stock Quantity *</label>
+                            <input type="number" name="initial_stock" class="form-input bg-slate-900 border-slate-700 text-white font-digit font-bold text-xs py-2" min="0" value="50" placeholder="e.g. 50" required>
+                            <span class="text-[10px] text-slate-400 font-inter mt-0.5 block">Opening item count</span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1 font-outfit">Min Stock Alert Level</label>
+                            <input type="number" name="min_stock_level" class="form-input bg-slate-900 border-slate-700 text-white font-digit font-bold text-xs py-2" min="1" value="5" placeholder="e.g. 5">
+                            <span class="text-[10px] text-slate-400 font-inter mt-0.5 block">Triggers low-stock alert</span>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="form-label text-xs font-semibold uppercase text-slate-600">Selling Price (৳) *</label>
-                            <input type="number" step="0.01" name="selling_price" class="form-input text-xs font-mono" min="0" placeholder="0.00" required>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 font-outfit">Selling Price (৳) *</label>
+                            <input type="number" step="0.01" name="selling_price" class="form-input bg-slate-950 border-slate-800 text-white font-digit text-xs py-2" min="0" placeholder="0.00" required>
                         </div>
                         <div>
-                            <label class="form-label text-xs font-semibold uppercase text-slate-600">Purchase Price / Cost (৳)</label>
-                            <input type="number" step="0.01" name="purchase_price" class="form-input text-xs font-mono" min="0" placeholder="0.00">
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 font-outfit">Purchase Cost (৳)</label>
+                            <input type="number" step="0.01" name="purchase_price" class="form-input bg-slate-950 border-slate-800 text-white font-digit text-xs py-2" min="0" placeholder="0.00">
                         </div>
                     </div>
 
                     <div>
                         <div class="flex justify-between items-center mb-1">
-                            <label class="form-label text-xs font-semibold uppercase text-slate-600 mb-0">Category (Write Directly) *</label>
-                            <select class="text-xs text-blue-600 bg-transparent border-none py-0 font-medium hover:underline cursor-pointer" onchange="Products.fillExistingCategory(this.value, 'create-write-category')">
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider font-outfit">Category *</label>
+                            <select class="text-xs text-blue-400 bg-transparent border-none py-0 font-medium hover:underline cursor-pointer" onchange="Products.fillExistingCategory(this.value, 'create-write-category')">
                                 <option value="">Or Pick Category...</option>
                                 ${catOptions}
                             </select>
                         </div>
-                        <input type="text" id="create-write-category" name="category_name" class="form-input text-xs" placeholder="Write e.g. Apparel & Clothing, Electronics, Footwear..." required>
-                        <div class="flex flex-wrap gap-1 mt-1.5">
+                        <input type="text" id="create-write-category" name="category_name" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2" placeholder="Write e.g. Apparel & Clothing, Electronics, Footwear..." required>
+                        <div class="flex flex-wrap gap-1 mt-1.5 font-outfit">
                             ${pillButtons('create-write-category')}
                         </div>
                     </div>
 
-                    <div>
-                        <label class="form-label text-xs font-semibold uppercase text-slate-600">Brand</label>
-                        <input type="text" name="brand" class="form-input text-xs" placeholder="e.g. EaseBus Signature">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 font-outfit">Brand</label>
+                            <input type="text" name="brand" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2" placeholder="e.g. EaseBus Signature">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1 font-outfit">Description</label>
+                            <input type="text" name="description" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2" placeholder="Product specs, features...">
+                        </div>
                     </div>
 
-                    <div>
-                        <label class="form-label text-xs font-semibold uppercase text-slate-600">Description</label>
-                        <textarea name="description" class="form-input text-xs h-20" placeholder="Product details, specs, features..."></textarea>
-                    </div>
-
-                    <div class="pt-4 flex justify-end gap-2 border-t border-slate-100">
-                        <button type="button" class="btn btn-secondary text-xs px-4" onclick="document.getElementById('product-modal').classList.add('hidden')">Cancel</button>
-                        <button type="submit" class="btn btn-primary text-xs px-4" id="save-product-btn">Save Product</button>
+                    <div class="pt-4 flex justify-end gap-2 border-t border-slate-800 font-outfit">
+                        <button type="button" class="btn btn-secondary text-xs px-4 py-2 bg-slate-800 text-slate-300 hover:text-white" onclick="document.getElementById('product-modal').classList.add('hidden')">Cancel</button>
+                        <button type="submit" class="btn btn-primary text-xs px-5 py-2 bg-blue-600 hover:bg-blue-500 font-bold shadow-md border border-blue-400/30 cursor-pointer" id="save-product-btn">Save Product & Initial Stock</button>
                     </div>
                 </form>
             </div>
@@ -285,6 +372,8 @@ window.Products = {
                 await API.post('products/create', {
                     name: form.name.value,
                     sku: form.sku.value,
+                    initial_stock: form.initial_stock.value || 0,
+                    min_stock_level: form.min_stock_level.value || 5,
                     selling_price: form.selling_price.value,
                     purchase_price: form.purchase_price.value || 0,
                     category_name: form.category_name.value,
@@ -293,13 +382,13 @@ window.Products = {
                 });
 
                 modal.classList.add('hidden');
-                UI.toast('Product created successfully');
+                UI.toast('Product and initial stock created successfully!', 'success');
                 await Promise.all([this.loadSummary(), this.loadProducts()]);
             } catch (err) {
-                UI.toast(err.message, 'error');
+                UI.toast(err.message || 'Failed to save product', 'error');
             } finally {
                 btn.disabled = false;
-                btn.textContent = 'Save Product';
+                btn.textContent = 'Save Product & Initial Stock';
             }
         };
     },

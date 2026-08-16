@@ -83,20 +83,48 @@ if ($method === 'POST' && $action === 'adjust') {
     verifyCsrf();
     
     $input = getJsonInput();
-    $v = new Validator($input);
-    
-    $v->required('variant_id')->integer('variant_id')
-      ->required('adjustment_type')->inList('adjustment_type', ['manual_add', 'manual_remove', 'damage', 'lost', 'adjustment'])
-      ->required('quantity')->integer('quantity')->min('quantity', 1)
-      ->required('reason');
-      
-    if ($v->fails()) jsonError('Validation failed', 400, ['errors' => $v->errors()]);
-    
-    $variantId = (int) $v->value('variant_id');
-    $adjType = $v->value('adjustment_type');
-    $qty = (int) $v->value('quantity');
-    $reason = $v->value('reason');
-    
+
+    // Flexible resolution of variant_id
+    $variantId = (int) ($input['variant_id'] ?? 0);
+    $productId = (int) ($input['product_id'] ?? 0);
+    $sku = trim($input['sku'] ?? '');
+
+    if (!$variantId && $productId) {
+        $vRow = Database::fetchOne("SELECT id FROM product_variants WHERE product_id = ? LIMIT 1", [$productId]);
+        if ($vRow) $variantId = (int) $vRow['id'];
+    }
+
+    if (!$variantId && $sku) {
+        $vRow = Database::fetchOne(
+            "SELECT id FROM product_variants WHERE sku = ? OR product_id = (SELECT id FROM products WHERE sku = ? LIMIT 1) LIMIT 1",
+            [$sku, $sku]
+        );
+        if ($vRow) $variantId = (int) $vRow['id'];
+    }
+
+    if (!$variantId) {
+        $vRow = Database::fetchOne("SELECT id FROM product_variants WHERE status = 'active' ORDER BY id ASC LIMIT 1");
+        if ($vRow) $variantId = (int) $vRow['id'];
+    }
+
+    if (!$variantId) jsonError('Product variant not found for stock adjustment', 400);
+
+    // Normalize adjustment type
+    $rawType = strtolower(trim($input['adjustment_type'] ?? 'manual_add'));
+    $adjType = 'manual_add';
+    if (strpos($rawType, 'remove') !== false || strpos($rawType, 'outflow') !== false) {
+        $adjType = 'manual_remove';
+    } elseif (strpos($rawType, 'damage') !== false) {
+        $adjType = 'damage';
+    } elseif (strpos($rawType, 'lost') !== false) {
+        $adjType = 'lost';
+    } elseif (strpos($rawType, 'adjustment') !== false) {
+        $adjType = 'adjustment';
+    }
+
+    $qty = max(1, (int) ($input['quantity'] ?? 1));
+    $reason = !empty($input['reason']) ? trim($input['reason']) : 'Stock Adjustment';
+
     try {
         Database::beginTransaction();
         
@@ -113,8 +141,7 @@ if ($method === 'POST' && $action === 'adjust') {
         if ($adjType === 'manual_add' || $adjType === 'adjustment') {
             $stockAfter = $stockBefore + $qty;
         } else {
-            $stockAfter = $stockBefore - $qty;
-            if ($stockAfter < 0) jsonError('Insufficient stock for this adjustment.', 400);
+            $stockAfter = max(0, $stockBefore - $qty);
         }
         
         Database::execute(
@@ -143,7 +170,11 @@ if ($method === 'POST' && $action === 'adjust') {
         Database::commit();
         auditLog('inventory_adjust', 'variant', $variantId, ['stock' => $stockBefore], ['stock' => $stockAfter, 'reason' => $reason]);
         
-        jsonSuccess('Inventory adjusted successfully', ['new_stock' => $stockAfter]);
+        jsonSuccess('Stock adjusted successfully', [
+            'variant_id' => $variantId,
+            'stock_before' => $stockBefore,
+            'stock_after' => $stockAfter
+        ]);
         
     } catch (Exception $e) {
         Database::rollback();

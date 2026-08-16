@@ -188,11 +188,24 @@ if ($method === 'POST' && $action === 'create') {
                 );
             }
         } else {
-            // Create default variant
-            Database::insert(
-                "INSERT INTO product_variants (product_id, sku, variant_name, location_id) VALUES (?, ?, 'Default', ?)",
-                [$productId, $v->value('sku') . '-DEF', $defaultLocationId]
+            $initialStock = max(0, (int) ($input['initial_stock'] ?? $input['opening_stock'] ?? $input['quantity'] ?? 0));
+            $costPrice = (float) $v->value('purchase_price', 0);
+            
+            // Create default variant with initial stock
+            $variantId = Database::insert(
+                "INSERT INTO product_variants (product_id, sku, variant_name, current_stock, avg_cost_price, location_id) VALUES (?, ?, 'Default', ?, ?, ?)",
+                [$productId, $v->value('sku') . '-DEF', $initialStock, $costPrice, $defaultLocationId]
             );
+
+            if ($initialStock > 0) {
+                Database::insert(
+                    "INSERT INTO inventory_movements (
+                        product_id, variant_id, movement_type, quantity, 
+                        stock_before, stock_after, location_id, reason, created_by
+                    ) VALUES (?, ?, 'initial', ?, 0, ?, ?, 'Initial Stock on Product Creation', ?)",
+                    [$productId, $variantId, $initialStock, $initialStock, $defaultLocationId, getCurrentUserId()]
+                );
+            }
         }
         
         Database::commit();
