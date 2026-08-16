@@ -38,6 +38,11 @@ if ($method === 'POST' && $action === 'create') {
     verifyCsrf();
     
     $input = getJsonInput();
+    if (empty($input['role_id']) && !empty($input['role_name'])) {
+        $r = Database::fetchOne("SELECT id FROM roles WHERE name = ?", [$input['role_name']]);
+        if ($r) $input['role_id'] = (int)$r['id'];
+    }
+
     $v = new Validator($input);
     $v->required('username')->minLength('username', 3)->unique('username', 'users', 'username')
       ->required('password')->minLength('password', 8)
@@ -87,6 +92,11 @@ if ($method === 'PUT' && $action === 'update') {
     
     if (!$id) jsonError('User ID is required');
 
+    if (empty($input['role_id']) && !empty($input['role_name'])) {
+        $r = Database::fetchOne("SELECT id FROM roles WHERE name = ?", [$input['role_name']]);
+        if ($r) $input['role_id'] = (int)$r['id'];
+    }
+
     $v = new Validator($input);
     $v->required('full_name')
       ->email('email')->unique('email', 'users', 'email', $id)
@@ -134,6 +144,75 @@ if ($method === 'PUT' && $action === 'update') {
 if ($method === 'GET' && $action === 'roles') {
     $roles = Database::fetchAll("SELECT id, name, description FROM roles ORDER BY id ASC");
     jsonSuccess('Roles loaded', ['roles' => $roles]);
+}
+
+if ($method === 'GET' && $action === 'creator_summary') {
+    requirePermission('users', 'read');
+    
+    $users = Database::fetchAll(
+        "SELECT u.id, u.username, u.full_name, u.email, u.phone, u.status, u.created_at, 
+                COALESCE(r.name, 'admin') as role, u.full_name as business_name
+         FROM users u
+         LEFT JOIN user_roles ur ON ur.user_id = u.id
+         LEFT JOIN roles r ON r.id = ur.role_id
+         ORDER BY u.id DESC"
+    );
+
+    foreach ($users as &$u) {
+        $u['total_products'] = (int)(Database::fetchOne("SELECT COUNT(*) as c FROM products")['c'] ?? 0);
+        $u['total_orders'] = (int)(Database::fetchOne("SELECT COUNT(*) as c FROM orders WHERE order_status != 'cancelled'")['c'] ?? 0);
+        $u['total_revenue'] = (float)(Database::fetchOne("SELECT SUM(total_amount) as s FROM orders WHERE order_status != 'cancelled'")['s'] ?? 0);
+    }
+    unset($u);
+
+    $totalStores = count($users);
+    $totalOrders = (int)(Database::fetchOne("SELECT COUNT(*) as c FROM orders WHERE order_status != 'cancelled'")['c'] ?? 0);
+    $totalProducts = (int)(Database::fetchOne("SELECT COUNT(*) as c FROM products")['c'] ?? 0);
+    $totalRevenue = (float)(Database::fetchOne("SELECT SUM(total_amount) as s FROM orders WHERE order_status != 'cancelled'")['s'] ?? 0);
+
+    jsonSuccess('Creator summary loaded', [
+        'users' => $users,
+        'platform_totals' => [
+            'total_stores' => $totalStores,
+            'total_orders' => $totalOrders,
+            'total_products' => $totalProducts,
+            'total_revenue' => $totalRevenue
+        ]
+    ]);
+}
+
+if ($method === 'GET' && $action === 'inspect_user') {
+    requirePermission('users', 'read');
+    
+    $userId = (int) ($_GET['user_id'] ?? 0);
+    $targetUser = Database::fetchOne("SELECT id, username, full_name, email, phone, status FROM users WHERE id = ?", [$userId]);
+    if (!$targetUser) jsonError('User not found', 404);
+
+    $products = Database::fetchAll("SELECT p.*, c.name as category FROM products p LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.id DESC LIMIT 50");
+    $orders = Database::fetchAll("SELECT o.*, c.name as customer_name FROM orders o LEFT JOIN customers c ON o.customer_id = c.id ORDER BY o.id DESC LIMIT 50");
+    $expenses = Database::fetchAll("SELECT e.*, c.name as category FROM expenses e LEFT JOIN expense_categories c ON e.category_id = c.id ORDER BY e.id DESC LIMIT 50");
+
+    $totalRevenue = (float)(Database::fetchOne("SELECT SUM(total_amount) as s FROM orders WHERE order_status != 'cancelled'")['s'] ?? 0);
+    $totalExpenses = (float)(Database::fetchOne("SELECT SUM(amount) as s FROM expenses")['s'] ?? 0);
+
+    jsonSuccess('User inspected', [
+        'user' => [
+            'id' => $targetUser['id'],
+            'username' => $targetUser['username'],
+            'full_name' => $targetUser['full_name'],
+            'email' => $targetUser['email'],
+            'business_name' => $targetUser['full_name'] . "'s Store"
+        ],
+        'metrics' => [
+            'total_products' => count($products),
+            'total_orders' => count($orders),
+            'total_revenue' => $totalRevenue,
+            'net_profit' => $totalRevenue - $totalExpenses
+        ],
+        'products' => $products,
+        'orders' => $orders,
+        'expenses' => $expenses
+    ]);
 }
 
 jsonError('Endpoint not found', 404);
