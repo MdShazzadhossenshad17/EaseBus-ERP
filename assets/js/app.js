@@ -96,6 +96,10 @@ window.App = {
                 window.Deliveries.loadDeliveries();
             } else if (this.currentRoute === 'returns' && window.Returns && typeof window.Returns.loadReturns === 'function') {
                 window.Returns.loadReturns();
+            } else if (this.currentRoute === 'reports' && window.Reports && typeof window.Reports.generatePL === 'function') {
+                window.Reports.generatePL();
+            } else if (this.currentRoute === 'users' && window.Users && typeof window.Users.loadUsers === 'function') {
+                window.Users.loadUsers();
             }
         };
 
@@ -111,6 +115,33 @@ window.App = {
                 };
             } catch(e) {}
         }
+
+        this.startGlobalLivePoller();
+    },
+
+    _globalPollerActive: false,
+
+    startGlobalLivePoller() {
+        if (this._globalPollerActive) return;
+        this._globalPollerActive = true;
+
+        setInterval(() => {
+            if (document.hidden) return;
+            const currentUser = API.getCurrentUser();
+            if (!currentUser) return;
+
+            if (this.currentRoute === 'dashboard' && window.Dashboard?.loadSummary) {
+                window.Dashboard.loadSummary(true);
+            } else if (this.currentRoute === 'orders' && window.Orders?.loadOrders) {
+                window.Orders.loadOrders();
+            } else if (this.currentRoute === 'users' && window.Users?.loadUsers) {
+                window.Users.loadUsers();
+            } else if (this.currentRoute === 'deliveries' && window.Deliveries?.loadDeliveries) {
+                window.Deliveries.loadDeliveries();
+            } else if (this.currentRoute === 'reports' && window.Reports?.generatePL) {
+                window.Reports.generatePL();
+            }
+        }, 3000);
     },
 
     checkAuth() {
