@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/*.php",
-      "use": "vercel-php"
-    }
-  ],
   "routes": [
     {
       "src": "/api/(.*)",
@@ -24,16 +18,8 @@
       "dest": "/sw.js"
     },
     {
-      "src": "/login",
-      "dest": "/login.php"
-    },
-    {
-      "src": "/register",
-      "dest": "/register.php"
-    },
-    {
-      "src": "/app",
-      "dest": "/pages/app.php"
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
     },
     {
       "src": "/(.*)",
