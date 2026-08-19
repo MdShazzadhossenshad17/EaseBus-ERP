@@ -99,7 +99,7 @@ if ($method === 'GET' && $action === 'inventory_valuation') {
     requirePermission('reports', 'read');
     
     $valuation = Database::fetchAll(
-        "SELECT p.name as product_name, COALESCE(c.name, 'Uncategorized') as category_name, SUM(v.current_stock) as total_qty, SUM(v.current_stock * v.avg_cost_price) as total_value
+        "SELECT p.name as product_name, COALESCE(c.name, 'Uncategorized') as category_name, SUM(v.current_stock) as total_qty, SUM(v.current_stock * COALESCE(v.selling_price, 0)) as total_value
          FROM product_variants v
          JOIN products p ON v.product_id = p.id
          LEFT JOIN categories c ON p.category_id = c.id
