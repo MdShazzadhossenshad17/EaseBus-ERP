@@ -10,21 +10,32 @@ class Database {
 
     public static function getInstance(): PDO {
         if (self::$instance === null) {
-            $dsn = 'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
-            $options = [
-                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES   => false,
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'"
-            ];
+            $driver = defined('DB_DRIVER') ? DB_DRIVER : 'mysql';
+            if ($driver === 'pgsql') {
+                $dsn = 'pgsql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME;
+                $options = [
+                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES   => false
+                ];
+            } else {
+                $dsn = 'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
+                $options = [
+                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES   => false,
+                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'"
+                ];
+            }
             try {
                 self::$instance = new PDO($dsn, DB_USER, DB_PASS, $options);
                 self::runAutoMigrations();
             } catch (PDOException $e) {
-                http_response_code(500);
+                http_response_code(200);
                 echo json_encode([
                     'success' => false,
-                    'message' => 'Database connection failed. Please ensure MySQL is running.'
+                    'status' => 'error',
+                    'message' => 'Database connection offline. Routing via client PWA engine.'
                 ]);
                 exit;
             }

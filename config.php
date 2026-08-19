@@ -12,12 +12,20 @@ if ($scriptDir === '/' || $scriptDir === '\\' || $scriptDir === '.' || empty($sc
     $actualUrl = "{$scheme}://{$host}/businessM";
 }
 
-// Database
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_PORT', getenv('DB_PORT') ?: '3306');
-define('DB_NAME', getenv('DB_NAME') ?: 'businessm');
-define('DB_USER', getenv('DB_USER') ?: 'root');
-define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
+// Database & Vercel Storage Config
+$dbHost = getenv('DB_HOST') ?: getenv('POSTGRES_HOST') ?: getenv('POSTGRES_HOST_UNPOOLED') ?: 'localhost';
+$dbPort = getenv('DB_PORT') ?: getenv('POSTGRES_PORT') ?: '3306';
+$dbName = getenv('DB_NAME') ?: getenv('POSTGRES_DATABASE') ?: 'businessm';
+$dbUser = getenv('DB_USER') ?: getenv('POSTGRES_USER') ?: 'root';
+$dbPass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : (getenv('POSTGRES_PASSWORD') !== false ? getenv('POSTGRES_PASSWORD') : '');
+$dbDriver = (getenv('POSTGRES_HOST') || getenv('POSTGRES_URL') || getenv('DATABASE_URL')) ? 'pgsql' : 'mysql';
+
+define('DB_HOST', $dbHost);
+define('DB_PORT', $dbPort);
+define('DB_NAME', $dbName);
+define('DB_USER', $dbUser);
+define('DB_PASS', $dbPass);
+define('DB_DRIVER', $dbDriver);
 define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
 
 // App
