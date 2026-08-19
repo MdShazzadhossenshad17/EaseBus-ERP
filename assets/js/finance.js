@@ -23,6 +23,9 @@ window.Finance = {
                     <button class="btn btn-secondary flex items-center gap-1 text-xs" onclick="Finance.showTransferModal()">
                         <span class="material-symbols-outlined text-sm">sync_alt</span> Transfer Funds
                     </button>
+                    <button class="btn btn-secondary flex items-center gap-1 text-xs text-red-700 bg-red-50 hover:bg-red-100 border-red-200 font-bold" onclick="Finance.showAddExpenseModal()">
+                        <span class="material-symbols-outlined text-sm">receipt_long</span> + Add Expense
+                    </button>
                     <button class="btn btn-primary flex items-center gap-1 text-xs" onclick="Finance.showNewAccountModal()">
                         <span class="material-symbols-outlined text-sm">add_card</span> New Account
                     </button>
@@ -528,6 +531,99 @@ window.Finance = {
         } catch (e) {
             UI.toast(e.message, 'error');
         }
+    },
+
+    showAddExpenseModal() {
+        const modal = document.getElementById('finance-modal');
+        const accOptions = this.accountsData.map(a => 
+            `<option value="${a.id}">${a.name} (${UI.formatMoney(a.current_balance)})</option>`
+        ).join('');
+
+        const today = new Date().toISOString().split('T')[0];
+
+        modal.innerHTML = `
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 animate-fade-in">
+                <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/80">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-red-600">receipt_long</span>
+                        <h3 class="font-geist font-semibold text-lg text-slate-900">Record Business Expense</h3>
+                    </div>
+                    <button class="text-slate-400 hover:text-slate-600 p-1" onclick="document.getElementById('finance-modal').classList.add('hidden')">
+                        <span class="material-symbols-outlined text-xl">close</span>
+                    </button>
+                </div>
+
+                <form id="fin-expense-form" class="p-6 space-y-4">
+                    <div>
+                        <label class="form-label text-xs font-semibold uppercase text-slate-600">Expense Category *</label>
+                        <input type="text" name="category_name" class="form-input text-xs" placeholder="Write category e.g. Rent, Utilities, Transport, Salaries..." required>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="form-label text-xs font-semibold uppercase text-slate-600">Expense Amount (৳) *</label>
+                            <input type="number" step="0.01" name="amount" class="form-input text-xs font-mono" min="0.01" placeholder="0.00" required>
+                        </div>
+                        <div>
+                            <label class="form-label text-xs font-semibold uppercase text-slate-600">Expense Date *</label>
+                            <input type="date" name="expense_date" class="form-input text-xs" value="${today}" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label text-xs font-semibold uppercase text-slate-600">Paid From Account *</label>
+                        <select name="account_id" class="form-input text-xs" required>
+                            <option value="">-- Choose Account --</option>
+                            ${accOptions}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label text-xs font-semibold uppercase text-slate-600">Description / Details *</label>
+                        <input type="text" name="description" class="form-input text-xs" placeholder="e.g. Office rent payment for current month" required>
+                    </div>
+
+                    <div>
+                        <label class="form-label text-xs font-semibold uppercase text-slate-600">Receipt / Ref # (Optional)</label>
+                        <input type="text" name="receipt_reference" class="form-input text-xs font-mono" placeholder="e.g. REC-9921">
+                    </div>
+
+                    <div class="pt-4 flex justify-end gap-2 border-t border-slate-100">
+                        <button type="button" class="btn btn-secondary text-xs px-4" onclick="document.getElementById('finance-modal').classList.add('hidden')">Cancel</button>
+                        <button type="submit" class="btn btn-primary text-xs px-4" id="submit-fin-exp-btn">Record Expense</button>
+                    </div>
+                </form>
+            </div>
+        `;
+        modal.classList.remove('hidden');
+
+        document.getElementById('fin-expense-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const btn = document.getElementById('submit-fin-exp-btn');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            try {
+                await API.post('expenses/create', {
+                    category_name: form.category_name.value,
+                    amount: form.amount.value,
+                    expense_date: form.expense_date.value,
+                    account_id: form.account_id.value,
+                    description: form.description.value,
+                    receipt_reference: form.receipt_reference.value || ''
+                });
+
+                modal.classList.add('hidden');
+                UI.toast('Expense recorded successfully!');
+                await Promise.all([this.loadSummary(), this.loadAccounts(), this.loadTransactions()]);
+            } catch (err) {
+                UI.toast(err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Record Expense';
+            }
+        };
     }
 };
 

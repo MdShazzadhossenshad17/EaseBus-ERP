@@ -8,17 +8,28 @@ requirePermission('users', 'read');
 $method = getRequestMethod();
 $action = $action ?? $_GET['action'] ?? $_POST['action'] ?? '';
 
+// Helper to verify if session belongs to Store Owner (hisham)
+function isStoreOwnerSession(): bool {
+    $uname = strtolower($_SESSION['username'] ?? '');
+    return $uname === 'hisham' || $uname === 'shad@dbms.com' || ($_SESSION['user_role'] ?? '') === 'creator';
+}
+
+if (in_array($action, ['create', 'update', 'delete', 'toggle-status', 'reset-password'])) {
+    if (!isStoreOwnerSession()) {
+        jsonError('Permission Denied: Modifying staff credentials or adding employee accounts requires Store Owner (hisham) permission.', 403);
+    }
+}
+
 
 if ($method === 'GET' && $action === 'list') {
     $search = getSearchQuery();
     $currentUserId = (int)($_SESSION['user_id'] ?? 0);
     $params = [];
 
-    // Exclude Creator account, demo accounts (admin, system_admin), and the logged in Store Owner (since Staff List displays employees only)
-    $where = "WHERE LOWER(u.username) NOT IN ('shad@dbms.com', 'shad', 'admin', 'system_admin') 
+    // Exclude Creator account and system demo accounts
+    $where = "WHERE LOWER(u.username) NOT IN ('shad@dbms.com', 'shad', 'system_admin') 
               AND LOWER(COALESCE(u.email, '')) NOT IN ('shad@dbms.com', 'admin@easebus.com') 
-              AND u.id != 99999 
-              AND u.id != {$currentUserId}";
+              AND u.id != 99999";
 
     if ($search) {
         $where .= " AND (u.username LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?)";
@@ -27,7 +38,7 @@ if ($method === 'GET' && $action === 'list') {
     }
 
     $users = Database::fetchAll(
-        "SELECT u.id, u.username, u.full_name, u.email, u.phone, u.status, u.last_login_at, r.name as role_name
+        "SELECT u.id, u.username, u.full_name, u.email, u.phone, u.status, u.last_login_at, u.updated_at as last_activity_at, u.created_at, r.name as role_name
          FROM users u
          LEFT JOIN user_roles ur ON ur.user_id = u.id
          LEFT JOIN roles r ON r.id = ur.role_id
@@ -44,21 +55,38 @@ if ($method === 'POST' && $action === 'create') {
     verifyCsrf();
     
     $input = getJsonInput();
-    if (empty($input['role_id']) && !empty($input['role_name'])) {
-        $r = Database::fetchOne("SELECT id FROM roles WHERE name = ?", [$input['role_name']]);
-        if ($r) $input['role_id'] = (int)$r['id'];
+    
+    // Auto-resolve role_id from role_name or role if missing
+    $roleName = trim($input['role_name'] ?? $input['role'] ?? '');
+    if (empty($input['role_id']) && !empty($roleName)) {
+        $r = Database::fetchOne("SELECT id FROM roles WHERE name = ?", [$roleName]);
+        if (!$r) {
+            $roleId = Database::insert("INSERT INTO roles (name, description) VALUES (?, ?)", [$roleName, ucfirst($roleName) . ' role']);
+            $input['role_id'] = $roleId;
+        } else {
+            $input['role_id'] = (int)$r['id'];
+        }
+    }
+
+    // Treat empty or blank email string as null
+    if (isset($input['email']) && trim((string)$input['email']) === '') {
+        $input['email'] = null;
     }
 
     $v = new Validator($input);
-    $v->required('username')->minLength('username', 3)->unique('username', 'users', 'username')
-      ->required('password')->minLength('password', 8)
-      ->required('full_name')
-      ->email('email')->unique('email', 'users', 'email')
-      ->required('phone')
-      ->required('role_id')->integer('role_id');
+    $v->required('username', 'Username')->minLength('username', 3, 'Username')->unique('username', 'users', 'username', null, 'Username')
+      ->required('password', 'Password')->minLength('password', 4, 'Password')
+      ->required('full_name', 'Full Name')
+      ->required('phone', 'Phone Number')
+      ->required('role_id', 'Staff Role');
+
+    if (!empty($input['email'])) {
+        $v->email('email', 'Email Address')->unique('email', 'users', 'email', null, 'Email Address');
+    }
 
     if ($v->fails()) {
-        jsonError('Validation failed', 400, ['errors' => $v->errors()]);
+        $errList = array_values($v->errors());
+        jsonError(!empty($errList) ? implode(' ', $errList) : 'Validation failed', 400, ['errors' => $v->errors()]);
     }
 
     try {
@@ -98,20 +126,29 @@ if ($method === 'PUT' && $action === 'update') {
     
     if (!$id) jsonError('User ID is required');
 
-    if (empty($input['role_id']) && !empty($input['role_name'])) {
-        $r = Database::fetchOne("SELECT id FROM roles WHERE name = ?", [$input['role_name']]);
+    $roleName = trim($input['role_name'] ?? $input['role'] ?? '');
+    if (empty($input['role_id']) && !empty($roleName)) {
+        $r = Database::fetchOne("SELECT id FROM roles WHERE name = ?", [$roleName]);
         if ($r) $input['role_id'] = (int)$r['id'];
     }
 
+    if (isset($input['email']) && trim((string)$input['email']) === '') {
+        $input['email'] = null;
+    }
+
     $v = new Validator($input);
-    $v->required('full_name')
-      ->email('email')->unique('email', 'users', 'email', $id)
-      ->required('phone')
-      ->required('role_id')->integer('role_id')
-      ->inList('status', ['active', 'inactive', 'locked']);
+    $v->required('full_name', 'Full Name')
+      ->required('phone', 'Phone Number')
+      ->required('role_id', 'Staff Role')
+      ->inList('status', ['active', 'inactive', 'locked'], 'Account Status');
+
+    if (!empty($input['email'])) {
+        $v->email('email', 'Email Address')->unique('email', 'users', 'email', $id, 'Email Address');
+    }
 
     if ($v->fails()) {
-        jsonError('Validation failed', 400, ['errors' => $v->errors()]);
+        $errList = array_values($v->errors());
+        jsonError(!empty($errList) ? implode(' ', $errList) : 'Validation failed', 400, ['errors' => $v->errors()]);
     }
 
     $oldUser = Database::fetchOne("SELECT * FROM users WHERE id = ?", [$id]);

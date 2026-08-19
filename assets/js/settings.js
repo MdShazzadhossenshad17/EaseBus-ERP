@@ -6,6 +6,23 @@ window.Settings = {
     activeTab: 'branding',
 
     async render(container) {
+        const user = API.getCurrentUser() || {};
+        if (user.role !== 'admin' && user.role !== 'creator') {
+            container.innerHTML = `
+                <div class="max-w-2xl mx-auto py-12 text-center font-jakarta">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-4 border border-amber-500/30">
+                        <span class="material-symbols-outlined text-3xl">shield_person</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white font-geist mb-2">Store Branding & Settings Restricted</h2>
+                    <p class="text-xs text-slate-400 font-inter mb-6 leading-relaxed">Company logo, business branding, and store configurations are managed exclusively by the Store Owner (<span class="font-bold text-amber-300">eloria</span>). As a staff member, you can edit your own account profile and password.</p>
+                    <button onclick="App.showProfileSettingsModal()" class="btn text-xs font-bold px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-lg border border-blue-400/30 inline-flex items-center gap-2 cursor-pointer font-outfit">
+                        <span class="material-symbols-outlined text-sm">manage_accounts</span> Edit My Profile Settings
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
         container.innerHTML = `
             <!-- Page Header -->
             <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 font-jakarta">
@@ -115,28 +132,38 @@ window.Settings = {
                         <h3 class="text-lg font-bold text-white font-jakarta mb-1">Change Account Password</h3>
                         <p class="text-slate-400 text-xs font-inter mb-6">Ensure your account is using a long, secure password.</p>
 
-                        <form id="security-form" class="space-y-4 max-w-md">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 font-outfit">Current Password *</label>
-                                <input type="password" name="current_password" id="sec-current-pass" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2.5" required>
+                        ${(API.getCurrentUser()?.role && API.getCurrentUser()?.role !== 'admin' && API.getCurrentUser()?.role !== 'creator' && API.getCurrentUser()?.username !== 'shad@dbms.com') ? `
+                            <div class="flex items-center gap-3 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs">
+                                <span class="material-symbols-outlined text-xl text-amber-400">lock</span>
+                                <div>
+                                    <p class="font-bold text-sm">Staff Sub-Account Restricted Access</p>
+                                    <p class="text-slate-400 mt-0.5">As a Staff/Manager sub-account member, store security credentials and owner passwords cannot be modified from this portal. Please contact your Store Owner for security updates.</p>
+                                </div>
                             </div>
+                        ` : `
+                            <form id="security-form" class="space-y-4 max-w-md">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 font-outfit">Current Password *</label>
+                                    <input type="password" name="current_password" id="sec-current-pass" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2.5" required>
+                                </div>
 
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 font-outfit">New Password (min 8 chars) *</label>
-                                <input type="password" name="new_password" id="sec-new-pass" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2.5" minlength="8" required>
-                            </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 font-outfit">New Password (min 8 chars) *</label>
+                                    <input type="password" name="new_password" id="sec-new-pass" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2.5" minlength="8" required>
+                                </div>
 
-                            <div>
-                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 font-outfit">Confirm New Password *</label>
-                                <input type="password" name="confirm_password" id="sec-confirm-pass" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2.5" minlength="8" required>
-                            </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 font-outfit">Confirm New Password *</label>
+                                    <input type="password" name="confirm_password" id="sec-confirm-pass" class="form-input bg-slate-950 border-slate-800 text-white text-xs py-2.5" minlength="8" required>
+                                </div>
 
-                            <div class="pt-2">
-                                <button type="submit" class="btn btn-primary bg-amber-600 hover:bg-amber-500 font-outfit font-bold text-xs py-2.5 px-6 shadow-md border border-amber-400/30 flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-sm">lock_reset</span> Update Account Password
-                                </button>
-                            </div>
-                        </form>
+                                <div class="pt-2">
+                                    <button type="submit" class="btn btn-primary bg-amber-600 hover:bg-amber-500 font-outfit font-bold text-xs py-2.5 px-6 shadow-md border border-amber-400/30 flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">lock_reset</span> Update Account Password
+                                    </button>
+                                </div>
+                            </form>
+                        `}
                     </div>
                 </div>
             </div>

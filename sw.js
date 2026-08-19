@@ -2,7 +2,7 @@
  * EaseBus — Progressive Web App (PWA) Service Worker
  */
 
-const CACHE_NAME = 'easebus-cache-v4.0';
+const CACHE_NAME = 'easebus-cache-v25.0';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

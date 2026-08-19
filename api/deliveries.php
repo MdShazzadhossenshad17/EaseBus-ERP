@@ -188,7 +188,7 @@ if ($method === 'PUT' && $action === 'status') {
                     Database::execute("UPDATE orders SET order_status = 'delivered', payment_status = 'paid' WHERE id = ?", [$order['id']]);
                 }
             } elseif ($newStatus === 'returned') {
-                // Auto-create Customer Return entry and restock inventory
+                // Auto-create Customer Return entry with initial status 'pending' (Pending Review)
                 $existingReturn = Database::fetchOne("SELECT id FROM returns WHERE order_id = ?", [$delivery['order_id']]);
                 if (!$existingReturn) {
                     $orderInfo = Database::fetchOne("SELECT id, customer_id, total_amount, location_id FROM orders WHERE id = ?", [$delivery['order_id']]);
@@ -196,7 +196,7 @@ if ($method === 'PUT' && $action === 'status') {
                         $returnNo = generateRefNo('RET', 'returns', 'return_no');
                         $returnId = Database::insert(
                             "INSERT INTO returns (return_no, order_id, customer_id, total_refund, reason, status, return_date, notes, created_by)
-                             VALUES (?, ?, ?, ?, 'other', 'completed', NOW(), 'Delivery Shipment Returned by Courier Partner', ?)",
+                             VALUES (?, ?, ?, ?, 'other', 'pending', NOW(), 'Delivery Shipment Returned by Courier Partner (Pending Review)', ?)",
                             [
                                 $returnNo, $orderInfo['id'], $orderInfo['customer_id'],
                                 $orderInfo['total_amount'], getCurrentUserId()
@@ -210,17 +210,6 @@ if ($method === 'PUT' && $action === 'status') {
                                  VALUES (?, ?, ?, ?, ?, ?)",
                                 [$returnId, $item['id'], $item['product_id'], $item['variant_id'], $item['quantity'], $item['quantity'] * $item['unit_price']]
                             );
-
-                            $variant = Database::fetchOne("SELECT current_stock FROM product_variants WHERE id = ?", [$item['variant_id']]);
-                            if ($variant) {
-                                $newStock = $variant['current_stock'] + $item['quantity'];
-                                Database::execute("UPDATE product_variants SET current_stock = ? WHERE id = ?", [$newStock, $item['variant_id']]);
-                                Database::insert(
-                                    "INSERT INTO inventory_movements (product_id, variant_id, movement_type, quantity, stock_before, stock_after, reference_type, reference_id, location_id, reason, created_by)
-                                     VALUES (?, ?, 'return', ?, ?, ?, 'return', ?, ?, 'Delivery Returned Restock', ?)",
-                                    [$item['product_id'], $item['variant_id'], $item['quantity'], $variant['current_stock'], $newStock, $returnId, $orderInfo['location_id'] ?? 1, getCurrentUserId()]
-                                );
-                            }
                         }
 
                         Database::execute("UPDATE orders SET order_status = 'returned' WHERE id = ?", [$orderInfo['id']]);

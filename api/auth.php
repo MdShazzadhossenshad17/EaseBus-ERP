@@ -48,7 +48,7 @@ if ($method === 'POST' && $action === 'login') {
     }
 
     $user = Database::fetchOne(
-        "SELECT u.id, u.username, u.email, u.password_hash, u.full_name, u.status, u.must_change_password, u.login_attempts, r.name as role_name
+        "SELECT u.id, u.username, u.email, u.password_hash, u.full_name, u.status, u.must_change_password, u.login_attempts, u.created_by, u.business_name, r.name as role_name
          FROM users u
          LEFT JOIN user_roles ur ON ur.user_id = u.id
          LEFT JOIN roles r ON r.id = ur.role_id
@@ -87,6 +87,8 @@ if ($method === 'POST' && $action === 'login') {
     $_SESSION['user_id'] = (int) $user['id'];
     $_SESSION['username'] = $user['username'];
     $_SESSION['user_role'] = $user['role_name'] ?? 'guest';
+    $_SESSION['created_by'] = $user['created_by'];
+    $_SESSION['business_name'] = $user['business_name'] ?? 'eloria';
     
     Database::execute("UPDATE users SET login_attempts = 0, last_login_at = NOW() WHERE id = ?", [$user['id']]);
     auditLog('login', 'user', $user['id']);
@@ -97,6 +99,8 @@ if ($method === 'POST' && $action === 'login') {
             'username' => $user['username'],
             'full_name' => $user['full_name'],
             'role' => $user['role_name'],
+            'created_by' => $user['created_by'],
+            'business_name' => $user['business_name'] ?? 'eloria',
             'must_change_password' => (bool) $user['must_change_password']
         ],
         'csrf_token' => generateCsrfToken()
@@ -259,6 +263,100 @@ if ($method === 'POST' && $action === 'change-password') {
 
     auditLog('password_changed', 'user', $_SESSION['user_id']);
     jsonSuccess('Password changed successfully.');
+}
+
+if ($method === 'POST' && ($action === 'update-profile' || $action === 'update_profile')) {
+    requireAuth();
+    verifyCsrf();
+    
+    $input = getJsonInput();
+    $userId = (int) $_SESSION['user_id'];
+    
+    $fullName = trim($input['full_name'] ?? '');
+    $email = trim($input['email'] ?? '');
+    $phone = trim($input['phone'] ?? '');
+    $username = trim($input['username'] ?? '');
+    $businessName = trim($input['business_name'] ?? '');
+    $newPassword = trim($input['password'] ?? $input['new_password'] ?? '');
+
+    if (empty($fullName)) {
+        jsonError('Full name is required.', 400);
+    }
+    
+    if (!empty($username) && strlen($username) < 3) {
+        jsonError('Username must be at least 3 characters.', 400);
+    }
+    
+    if (!empty($username)) {
+        $dup = Database::fetchOne("SELECT id FROM users WHERE username = ? AND id != ?", [$username, $userId]);
+        if ($dup) {
+            jsonError('Username is already taken by another account.', 400);
+        }
+    }
+
+    if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        jsonError('Please enter a valid email address.', 400);
+    }
+
+    if (!empty($email)) {
+        $dupEmail = Database::fetchOne("SELECT id FROM users WHERE email = ? AND id != ?", [$email, $userId]);
+        if ($dupEmail) {
+            jsonError('Email address is already in use.', 400);
+        }
+    }
+
+    $setParts = ["full_name = ?", "phone = ?", "email = ?"];
+    $params = [$fullName, $phone, $email ?: null];
+    
+    if (!empty($username)) {
+        $setParts[] = "username = ?";
+        $params[] = $username;
+        $_SESSION['username'] = $username;
+    }
+    
+    if (!empty($businessName)) {
+        $setParts[] = "business_name = ?";
+        $params[] = $businessName;
+        $_SESSION['business_name'] = $businessName;
+    }
+    
+    if (!empty($newPassword)) {
+        if (strlen($newPassword) < 4) {
+            jsonError('Password must be at least 4 characters long.', 400);
+        }
+        $setParts[] = "password_hash = ?";
+        $setParts[] = "must_change_password = 0";
+        $params[] = password_hash($newPassword, PASSWORD_BCRYPT);
+    }
+
+    $params[] = $userId;
+    $sql = "UPDATE users SET " . implode(', ', $setParts) . " WHERE id = ?";
+
+    Database::execute($sql, $params);
+    
+    // Fetch updated user state
+    $updatedUser = Database::fetchOne(
+        "SELECT u.id, u.username, u.full_name, u.business_name, u.business_logo, u.email, u.phone, u.status, r.name as role_name
+         FROM users u
+         LEFT JOIN user_roles ur ON ur.user_id = u.id
+         LEFT JOIN roles r ON r.id = ur.role_id
+         WHERE u.id = ?",
+        [$userId]
+    );
+
+    $userPayload = [
+        'id' => $updatedUser['id'],
+        'username' => $updatedUser['username'],
+        'full_name' => $updatedUser['full_name'],
+        'business_name' => $updatedUser['business_name'] ?? ($updatedUser['full_name'] . "'s Store"),
+        'email' => $updatedUser['email'] ?? '',
+        'phone' => $updatedUser['phone'] ?? '',
+        'role' => $updatedUser['role_name']
+    ];
+
+    auditLog('profile_updated', 'user', $userId);
+
+    jsonSuccess('Profile settings updated successfully!', ['user' => $userPayload]);
 }
 
 jsonError('Endpoint not found', 404);

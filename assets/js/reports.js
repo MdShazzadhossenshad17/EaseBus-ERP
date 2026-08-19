@@ -28,28 +28,30 @@ window.Reports = {
             <div class="card p-4 mb-6 bg-white border border-slate-200 shadow-sm">
                 <form id="pl-form" class="flex flex-wrap items-center justify-between gap-4">
                     <div class="flex items-center gap-2">
-                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date Range Presets:</span>
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Date Range Presets:</span>
                         <div class="flex flex-wrap items-center gap-1.5" id="preset-btn-group">
-                            <button type="button" class="preset-btn px-3 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors" onclick="Reports.setPreset(7, this)">7 Days</button>
-                            <button type="button" class="preset-btn px-3 py-1 text-xs font-medium rounded-full bg-blue-600 text-white shadow-sm" id="btn-preset-default" onclick="Reports.setPreset(30, this)">30 Days</button>
-                            <button type="button" class="preset-btn px-3 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors" onclick="Reports.setPreset(90, this)">90 Days</button>
-                            <button type="button" class="preset-btn px-3 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors" onclick="Reports.setPreset(365, this)">This Year</button>
-                            <button type="button" class="px-3 py-1 text-xs font-medium rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300 flex items-center gap-1 transition-colors" onclick="Reports.resetRange()">
-                                <span class="material-symbols-outlined text-xs">restart_alt</span> Reset Range
+                            <button type="button" class="preset-btn px-3 py-1 text-xs font-bold rounded-full bg-blue-600 text-white shadow-sm" id="btn-preset-default" onclick="Reports.setPreset(7, this)">7 Days</button>
+                            <button type="button" class="preset-btn px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors" onclick="Reports.setPreset(30, this)">30 Days</button>
+                            <button type="button" class="preset-btn px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors" onclick="Reports.setPreset(90, this)">90 Days</button>
+                            <button type="button" class="preset-btn px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors" onclick="Reports.setPreset(365, this)">This Year</button>
+                            <button type="button" class="px-3 py-1 text-xs font-semibold rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300 flex items-center gap-1 transition-colors" onclick="Reports.resetRange()">
+                                <span class="material-symbols-outlined text-xs">restart_alt</span> Reset (7D)
                             </button>
                         </div>
                     </div>
                     
                     <div class="flex items-center gap-3">
                         <div class="flex items-center gap-2">
-                            <label class="text-xs text-slate-500 font-medium">From:</label>
-                            <input type="date" id="pl-start" class="form-input text-xs py-1 px-2 border-slate-300 rounded" required>
+                            <label class="text-xs text-slate-600 font-bold">From:</label>
+                            <input type="date" id="pl-start" class="form-input text-xs py-1.5 px-2.5 border-slate-300 rounded font-semibold" required>
                         </div>
                         <div class="flex items-center gap-2">
-                            <label class="text-xs text-slate-500 font-medium">To:</label>
-                            <input type="date" id="pl-end" class="form-input text-xs py-1 px-2 border-slate-300 rounded" required>
+                            <label class="text-xs text-slate-600 font-bold">To:</label>
+                            <input type="date" id="pl-end" class="form-input text-xs py-1.5 px-2.5 border-slate-300 rounded font-semibold" required>
                         </div>
-                        <button type="submit" class="btn btn-primary py-1 px-3 text-xs">Apply Filter</button>
+                        <button type="submit" class="btn-filter-apply py-1.5 px-4 text-xs font-bold rounded-lg flex items-center gap-1 transition-all cursor-pointer">
+                            <span class="material-symbols-outlined text-sm">filter_alt</span> Apply Filter
+                        </button>
                     </div>
                 </form>
             </div>
@@ -149,10 +151,10 @@ window.Reports = {
             </div>
         `;
         
-        // Setup initial date values (last 30 days)
+        // Setup initial date values (last 7 days)
         const end = new Date();
         const start = new Date();
-        start.setDate(start.getDate() - 30);
+        start.setDate(start.getDate() - 7);
         
         const startInput = document.getElementById('pl-start');
         const endInput = document.getElementById('pl-end');
@@ -201,7 +203,7 @@ window.Reports = {
 
     resetRange() {
         const defaultBtn = document.getElementById('btn-preset-default');
-        this.setPreset(30, defaultBtn);
+        this.setPreset(7, defaultBtn);
     },
     
     async generatePL(showToast = false) {

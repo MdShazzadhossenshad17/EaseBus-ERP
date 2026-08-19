@@ -279,6 +279,21 @@ if ($method === 'POST' && $action === 'create') {
         
         Database::execute("UPDATE customers SET total_orders = total_orders + 1, last_order_date = NOW() WHERE id = ?", [$customerId]);
         
+        // Update financial treasury accounts with payment inflow
+        $paidAmount = (float) ($input['paid_amount'] ?? $totalAmount);
+        if ($paidAmount > 0) {
+            $account = Database::fetchOne("SELECT id FROM financial_accounts WHERE status = 'active' ORDER BY id ASC LIMIT 1");
+            if ($account) {
+                $acctId = (int)$account['id'];
+                Database::execute("UPDATE financial_accounts SET current_balance = current_balance + ? WHERE id = ?", [$paidAmount, $acctId]);
+                Database::insert(
+                    "INSERT INTO financial_transactions (account_id, type, amount, category, reference_type, reference_id, description, created_by)
+                     VALUES (?, 'income', ?, 'Sales Revenue', 'order', ?, ?, ?)",
+                    [$acctId, $paidAmount, $orderId, "Sales revenue for Order #{$orderNo}", getCurrentUserId()]
+                );
+            }
+        }
+        
         // Auto-create delivery shipment tracking entry
         $trackingNo = 'TRK-' . strtoupper(substr(md5($orderNo . time()), 0, 8));
         $custInfo = Database::fetchOne("SELECT phone, address FROM customers WHERE id = ?", [$customerId]);

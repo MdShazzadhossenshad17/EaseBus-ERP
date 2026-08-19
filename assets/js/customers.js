@@ -277,6 +277,51 @@ window.Customers = {
                             <input type="text" name="notes" class="form-input text-xs py-2" value="${cust?.notes || ''}" placeholder="e.g. Preferred delivery time 2PM - 6PM">
                         </div>
 
+                        ${!id ? `
+                            <!-- Optional Initial Order Details -->
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-3">
+                                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                                    <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-blue-600 text-sm">shopping_bag</span> Log Initial Product Order (Optional)
+                                    </span>
+                                    <span class="text-[10px] text-slate-500 font-medium">Real-time KPI Sync</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="form-label text-[11px] font-semibold text-slate-600">Product / Item Name</label>
+                                        <input type="text" name="product_name" class="form-input text-xs py-1.5" placeholder="e.g. Smart Watch Pro">
+                                    </div>
+                                    <div>
+                                        <label class="form-label text-[11px] font-semibold text-slate-600">Quantity (Qty)</label>
+                                        <input type="number" name="quantity" class="form-input text-xs py-1.5" value="1" min="1">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="form-label text-[11px] font-semibold text-slate-600">Unit Price (৳)</label>
+                                        <input type="number" name="unit_price" class="form-input text-xs py-1.5" placeholder="0.00" min="0">
+                                    </div>
+                                    <div>
+                                        <label class="form-label text-[11px] font-semibold text-slate-600">Sold Price / Rate (৳)</label>
+                                        <input type="number" name="sold_price" class="form-input text-xs py-1.5" placeholder="0.00" min="0">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="form-label text-[11px] font-semibold text-slate-600">Discount Amount (৳)</label>
+                                        <input type="number" name="discount_amount" class="form-input text-xs py-1.5" value="0" min="0">
+                                    </div>
+                                    <div>
+                                        <label class="form-label text-[11px] font-semibold text-slate-600">Payment Status</label>
+                                        <select name="payment_status" class="form-input text-xs py-1.5">
+                                            <option value="unpaid">Unpaid (Cash on Delivery)</option>
+                                            <option value="paid">Paid (Payment Received)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+
                         <div class="pt-4 flex justify-end gap-3 border-t border-slate-100">
                             <button type="button" class="btn btn-secondary text-xs px-4 py-2" onclick="document.getElementById('cust-modal').classList.add('hidden')">Cancel</button>
                             <button type="submit" class="btn btn-primary text-xs px-4 py-2" id="save-cust-btn">
@@ -304,7 +349,18 @@ window.Customers = {
                 notes: form.notes.value
             };
 
-            if (form.id.value) payload.id = parseInt(form.id.value);
+            if (form.id.value) {
+                payload.id = parseInt(form.id.value);
+            } else {
+                if (form.product_name && form.product_name.value) {
+                    payload.product_name = form.product_name.value;
+                    payload.quantity = parseInt(form.quantity?.value || 1);
+                    payload.unit_price = parseFloat(form.unit_price?.value || 0);
+                    payload.sold_price = parseFloat(form.sold_price?.value || 0);
+                    payload.discount_amount = parseFloat(form.discount_amount?.value || 0);
+                    payload.payment_status = form.payment_status?.value || 'unpaid';
+                }
+            }
 
             try {
                 if (payload.id) {

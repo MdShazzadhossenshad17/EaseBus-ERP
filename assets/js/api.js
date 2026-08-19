@@ -97,19 +97,43 @@ function registerGlobalUser(user) {
     } catch(e) {}
 }
 
-// Initialize localStorage DB scoped by active User ID
+function getStoreOwnerId() {
+    try {
+        const u = localStorage.getItem('easebus_active_user');
+        if (u) {
+            const parsed = JSON.parse(u);
+            if (parsed.owner_id) return parsed.owner_id;
+            if (parsed.created_by) return parsed.created_by;
+            if (parsed.username && parsed.username.toLowerCase() === 'hisham') return parsed.id;
+            if (parsed.username && parsed.username.toLowerCase() === 'shad@dbms.com') return parsed.id;
+        }
+    } catch(e) {}
+    try {
+        const globalUsers = getGlobalUsers();
+        const owner = globalUsers.find(gu => (gu.username && gu.username.toLowerCase() === 'hisham') || gu.role === 'creator');
+        if (owner && owner.id) return owner.id;
+        const owner2 = globalUsers.find(gu => !gu.created_by && gu.id != 99999);
+        if (owner2 && owner2.id) return owner2.id;
+    } catch(e) {}
+    return 1;
+}
+
+// Initialize localStorage DB shared across store staff
 function getStorage(key, fallback) {
     try {
-        const uid = getCurrentUserId();
-        const stored = localStorage.getItem('easebus_u' + uid + '_' + key);
+        const storeId = getStoreOwnerId();
+        const stored = localStorage.getItem('easebus_u' + storeId + '_' + key)
+            || localStorage.getItem('easebus_u1_' + key)
+            || localStorage.getItem('easebus_' + key);
         return stored ? JSON.parse(stored) : fallback;
     } catch(e) { return fallback; }
 }
 
 function setStorage(key, data) {
     try {
-        const uid = getCurrentUserId();
-        localStorage.setItem('easebus_u' + uid + '_' + key, JSON.stringify(data));
+        const storeId = getStoreOwnerId();
+        localStorage.setItem('easebus_u' + storeId + '_' + key, JSON.stringify(data));
+        localStorage.setItem('easebus_' + key, JSON.stringify(data));
     } catch(e) {}
 }
 
@@ -145,9 +169,17 @@ const API = {
         if (window.APP_CONFIG) window.APP_CONFIG.csrfToken = token;
     },
 
+    broadcastChannel: (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('easebus_realtime_sync') : null,
+
     emitDataChange(endpoint) {
         const module = (endpoint || '').replace(/^\//, '').split('/')[0];
-        window.dispatchEvent(new CustomEvent('easebus:data-changed', { detail: { endpoint, module } }));
+        const detail = { endpoint, module, timestamp: Date.now() };
+        window.dispatchEvent(new CustomEvent('easebus:data-changed', { detail }));
+        if (this.broadcastChannel) {
+            try {
+                this.broadcastChannel.postMessage(detail);
+            } catch(e) {}
+        }
     },
 
     getCurrentUser() {
@@ -261,6 +293,22 @@ const API = {
         }
     },
 
+    get(endpoint) {
+        return this.request(endpoint, 'GET');
+    },
+
+    post(endpoint, data) {
+        return this.request(endpoint, 'POST', data);
+    },
+
+    put(endpoint, data) {
+        return this.request(endpoint, 'PUT', data);
+    },
+
+    delete(endpoint) {
+        return this.request(endpoint, 'DELETE');
+    },
+
     async remoteRequest(endpoint, method, data) {
         const cleanEp = endpoint.replace(/^\//, '');
         const url = `${this.getBaseUrl()}/${cleanEp}`;
@@ -367,6 +415,20 @@ const API = {
                     return { status: 'error', success: false, message: 'Not logged in' };
                 }
             }
+            if (action === 'update-profile' || action === 'update_profile') {
+                const curr = API.getCurrentUser() || {};
+                const updated = {
+                    ...curr,
+                    full_name: data.full_name || curr.full_name,
+                    username: data.username || curr.username,
+                    email: data.email || curr.email,
+                    phone: data.phone || curr.phone,
+                    business_name: data.business_name || curr.business_name
+                };
+                API.setCurrentUser(updated);
+                registerGlobalUser(updated);
+                return { status: 'success', success: true, message: 'Profile settings updated successfully!', data: { user: updated } };
+            }
         }
 
         // 1. Dashboard
@@ -376,6 +438,7 @@ const API = {
             const products = getStorage('products', SEED_DATA.products);
             const finance = getStorage('finance', SEED_DATA.finance);
             const expenses = getStorage('expenses', SEED_DATA.expenses);
+            const returns = getStorage('returns', SEED_DATA.returns);
 
             const totalSales = orders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
             const totalCash = finance.accounts.reduce((sum, a) => sum + (a.current_balance || 0), 0);
@@ -394,7 +457,11 @@ const API = {
                             monthly_revenue: totalSales,
                             monthly_expenses: expenses.reduce((sum, e) => sum + (e.amount || 0), 0),
                             monthly_net_profit: totalSales - expenses.reduce((sum, e) => sum + (e.amount || 0), 0),
+                            today_expenses: expenses.reduce((sum, e) => sum + (e.amount || 0), 0),
+                            today_returns: returns.reduce((sum, r) => sum + (r.refund_amount || 0), 0),
                             recent_orders: orders.slice(0, 5),
+                            low_stock_list: products.filter(p => p.current_stock <= 10).map(p => ({ id: p.id, name: p.name, sku: p.sku || 'SKU-01', current_stock: p.current_stock, reorder_level: 5 })),
+                            accounts_breakdown: finance.accounts || [],
                             alerts: [
                                 { type: 'success', icon: 'verified', text: 'EaseBus ERP live & running — all systems operational.', color: 'text-emerald-500' },
                                 products.filter(p => p.current_stock <= (p.min_stock_level || 5)).length > 0
@@ -1026,6 +1093,51 @@ const API = {
                 investors = investors.map(i => i.id == data.investor_id ? { ...i, total_returns_paid: (i.total_returns_paid || 0) + parseFloat(data.amount || 0) } : i);
                 setStorage('investors', investors);
                 return { status: 'success', message: 'Return payment recorded' };
+            }
+        }
+
+        // 15. Users & Staff Management
+        if (module === 'users') {
+            let users = getGlobalUsers();
+            if (action === 'list') {
+                return { status: 'success', data: { users } };
+            }
+            if (action === 'roles') {
+                return {
+                    status: 'success',
+                    data: {
+                        roles: [
+                            { id: 1, name: 'admin', display_name: 'Administrator' },
+                            { id: 2, name: 'manager', display_name: 'Store Manager' },
+                            { id: 3, name: 'sales', display_name: 'Sales Representative' },
+                            { id: 4, name: 'accountant', display_name: 'Staff Accountant' }
+                        ]
+                    }
+                };
+            }
+            if (action === 'create') {
+                const newU = {
+                    id: Date.now(),
+                    username: (data.username || '').trim(),
+                    full_name: data.full_name || data.username,
+                    email: data.email || (data.username + '@easebus.com'),
+                    phone: data.phone || '01700000000',
+                    role: data.role_name || data.role || 'sales',
+                    role_name: data.role_name || data.role || 'sales',
+                    status: data.status || 'active',
+                    created_at: new Date().toISOString()
+                };
+                registerGlobalUser(newU);
+                return { status: 'success', message: 'Staff user account created successfully', data: { id: newU.id } };
+            }
+            if (action === 'update') {
+                const globalUsers = getGlobalUsers();
+                const idx = globalUsers.findIndex(u => String(u.id) === String(data.id));
+                if (idx >= 0) {
+                    globalUsers[idx] = { ...globalUsers[idx], ...data, role: data.role_name || data.role || globalUsers[idx].role };
+                    localStorage.setItem('easebus_global_users', JSON.stringify(globalUsers));
+                }
+                return { status: 'success', message: 'Staff member updated successfully' };
             }
         }
 

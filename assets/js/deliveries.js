@@ -64,13 +64,14 @@ window.Deliveries = {
                                 <th>Customer & Delivery Address</th>
                                 <th>Courier Partner</th>
                                 <th>Tracking Number</th>
+                                <th class="text-right">Total Order Price</th>
                                 <th class="text-right">Shipping Fee</th>
                                 <th class="text-center">Delivery Status</th>
                                 <th class="text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="del-list">
-                            <tr><td colspan="7" class="text-center py-8 text-slate-400 text-xs">Loading deliveries...</td></tr>
+                            <tr><td colspan="8" class="text-center py-8 text-slate-400 text-xs">Loading deliveries...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -134,12 +135,12 @@ window.Deliveries = {
         if (!tbody) return;
 
         try {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400 text-xs">Loading deliveries...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400 text-xs">Loading deliveries...</td></tr>`;
             const res = await API.get(`deliveries/list?status=${status}&search=${encodeURIComponent(search)}`);
             const deliveries = res.data.deliveries;
 
             if (!deliveries || deliveries.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400 text-xs">No matching delivery shipments found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400 text-xs">No matching delivery shipments found.</td></tr>`;
                 return;
             }
 
@@ -181,9 +182,10 @@ window.Deliveries = {
                         </div>
                     </td>
                     <td class="font-mono text-xs py-3 font-semibold text-slate-700">${d.tracking_number}</td>
+                    <td class="data-number text-right font-bold text-blue-600 py-3">${UI.formatMoney(d.total_amount || 0)}</td>
                     <td class="data-number text-right font-medium text-slate-900 py-3">${UI.formatMoney(d.delivery_fee)}</td>
                     <td class="text-center py-3">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border ${getStatusColor(d.status)}">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${getStatusColor(d.status)}">
                             ${d.status.replace(/_/g, ' ')}
                         </span>
                     </td>

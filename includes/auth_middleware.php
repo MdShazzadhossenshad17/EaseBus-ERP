@@ -60,6 +60,7 @@ function hasPermission(string $module, string $action): bool {
     if (empty($_SESSION['user_id'])) return false;
     if (($_SESSION['user_role'] ?? '') === 'admin') return true;
     if (($_SESSION['user_role'] ?? '') === 'creator') return true;
+    if ($module === 'dashboard' && $action === 'read') return true;
 
     $perm = Database::fetchOne(
         "SELECT 1 FROM role_permissions rp

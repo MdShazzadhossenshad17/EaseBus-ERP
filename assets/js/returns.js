@@ -177,19 +177,36 @@ window.Returns = {
                         </span>
                     </td>
                     <td class="text-right py-3">
-                        <select class="form-input text-[11px] py-1 px-2 inline-block w-32 rounded border-slate-300 bg-white" onchange="Returns.updateStatus(${r.id}, this.value)">
-                            <option value="">Status...</option>
-                            ${['completed', 'approved', 'pending', 'rejected']
-                                .filter(s => s !== r.status)
-                                .map(s => `<option value="${s}">${s.toUpperCase()}</option>`)
-                                .join('')}
-                        </select>
+                        <div class="flex items-center justify-end gap-1.5">
+                            <select class="form-input text-[11px] py-1 px-2 inline-block w-28 rounded border-slate-300 bg-white" onchange="Returns.updateStatus(${r.id}, this.value)">
+                                <option value="">Status...</option>
+                                ${['pending', 'approved', 'completed', 'rejected']
+                                    .filter(s => s !== r.status)
+                                    .map(s => `<option value="${s}">${s.toUpperCase()}</option>`)
+                                    .join('')}
+                            </select>
+                            <button type="button" onclick="Returns.deleteReturn(${r.id}, '${r.return_no}')" class="px-2 py-1 text-[11px] font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded border border-red-200 transition-colors flex items-center gap-0.5 cursor-pointer" title="Remove Return Order">
+                                <span class="material-symbols-outlined text-xs">delete</span> Remove
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
 
         } catch (e) {
             tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-red-500 text-xs">Failed to load customer returns.</td></tr>`;
+        }
+    },
+
+    async deleteReturn(id, returnNo) {
+        if (!confirm(`Are you sure you want to remove Return Order #${returnNo}?`)) return;
+
+        try {
+            await API.request(`returns?action=delete&id=${id}`, 'DELETE');
+            UI.toast(`Return Order #${returnNo} removed successfully!`, 'success');
+            await Promise.all([this.loadSummary(), this.loadReturns()]);
+        } catch (e) {
+            UI.toast(e.message || 'Failed to remove return order', 'error');
         }
     },
 

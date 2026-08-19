@@ -159,6 +159,52 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
 }
 
+/* Customer Write Box styling */
+.customer-info-box {
+    background-color: #0b1329 !important;
+    border: 1px solid #1e293b !important;
+    border-radius: 0.75rem !important;
+    color: #f8fafc !important;
+}
+
+/* High contrast Printable Invoice typography */
+#invoice-printable {
+    color: #0f172a !important;
+}
+#invoice-printable .invoice-header {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+}
+#invoice-printable label, 
+#invoice-printable th {
+    color: #1e293b !important;
+    font-weight: 700 !important;
+}
+#invoice-printable td, 
+#invoice-printable p, 
+#invoice-printable span {
+    color: #0f172a !important;
+}
+#invoice-printable .text-slate-400 {
+    color: #475569 !important;
+}
+#invoice-printable .text-slate-500,
+#invoice-printable .text-slate-600 {
+    color: #334155 !important;
+}
+
+/* Filter button contrast styling */
+.btn-filter-apply {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    border: 1px solid #3b82f6 !important;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3) !important;
+}
+.btn-filter-apply:hover {
+    background-color: #1d4ed8 !important;
+}
+
 /* ============================================================
    PRINT STYLESHEET — Full Page Invoice & Clean Report Printing
    ============================================================ */
@@ -227,3 +273,4 @@
         size: auto;
     }
 }
+

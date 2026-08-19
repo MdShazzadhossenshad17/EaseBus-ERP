@@ -19,6 +19,7 @@ class Database {
             ];
             try {
                 self::$instance = new PDO($dsn, DB_USER, DB_PASS, $options);
+                self::runAutoMigrations();
             } catch (PDOException $e) {
                 http_response_code(500);
                 echo json_encode([
@@ -96,5 +97,51 @@ class Database {
             'tax_enabled' => 0,
             'tax_rate' => 0
         ];
+    }
+
+    /** Ensure DB ENUM fields and roles are updated for dynamic role portals and status support */
+    private static function runAutoMigrations(): void {
+        static $migrated = false;
+        if ($migrated) return;
+        $migrated = true;
+        try {
+            self::$instance->exec("ALTER TABLE deliveries MODIFY COLUMN status VARCHAR(50) NOT NULL DEFAULT 'order_placed'");
+            self::$instance->exec("ALTER TABLE returns MODIFY COLUMN status VARCHAR(50) NOT NULL DEFAULT 'pending'");
+            self::$instance->exec("ALTER TABLE orders MODIFY COLUMN order_status VARCHAR(50) NOT NULL DEFAULT 'pending'");
+
+            // Ensure roles table has all staff management roles
+            $roles = [
+                ['admin', 'Full store owner access'],
+                ['manager', 'Store Manager - Business operations and analytics'],
+                ['sales', 'Sales Representative - Counter sales, POS, and customer management'],
+                ['accountant', 'Staff Accountant - Financial ledger, accounts, expenses and reports'],
+                ['staff', 'General Staff member']
+            ];
+            foreach ($roles as $r) {
+                self::$instance->exec("INSERT IGNORE INTO roles (name, description) VALUES ('" . $r[0] . "', '" . addslashes($r[1]) . "')");
+            }
+
+            // Assign role permissions dynamically if empty
+            $rolePermissionsMap = [
+                'admin' => "SELECT (SELECT id FROM roles WHERE name = 'admin'), id FROM permissions",
+                'manager' => "SELECT (SELECT id FROM roles WHERE name = 'manager'), id FROM permissions WHERE module IN ('dashboard', 'products', 'inventory', 'suppliers', 'orders', 'deliveries', 'returns', 'customers', 'reports', 'notifications') AND action IN ('read', 'create', 'update')",
+                'sales' => "SELECT (SELECT id FROM roles WHERE name = 'sales'), id FROM permissions WHERE module IN ('dashboard', 'products', 'sales', 'orders', 'customers', 'deliveries', 'notifications') AND action IN ('read', 'create', 'update')",
+                'accountant' => "SELECT (SELECT id FROM roles WHERE name = 'accountant'), id FROM permissions WHERE module IN ('dashboard', 'finance', 'expenses', 'returns', 'reports', 'analytics', 'investors', 'notifications') AND action IN ('read', 'create', 'update')",
+                'staff' => "SELECT (SELECT id FROM roles WHERE name = 'staff'), id FROM permissions WHERE module IN ('dashboard', 'products', 'sales', 'orders', 'customers', 'deliveries', 'notifications') AND action IN ('read', 'create', 'update')"
+            ];
+
+            foreach ($rolePermissionsMap as $roleName => $selectSql) {
+                $roleId = self::fetchOne("SELECT id FROM roles WHERE name = ?", [$roleName])['id'] ?? null;
+                if ($roleId) {
+                    $hasPerms = self::fetchOne("SELECT COUNT(*) as cnt FROM role_permissions WHERE role_id = ?", [$roleId])['cnt'] ?? 0;
+                    if ((int)$hasPerms === 0) {
+                        self::$instance->exec("INSERT IGNORE INTO role_permissions (role_id, permission_id) {$selectSql}");
+                    }
+                }
+            }
+
+        } catch (Throwable $e) {
+            // Silently ignore if schema already updated or permissions restricted
+        }
     }
 }

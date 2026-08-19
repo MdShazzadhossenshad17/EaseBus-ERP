@@ -80,28 +80,28 @@ window.Orders = {
                         <form id="create-order-form" class="space-y-6">
                             
                             <!-- 1. Customer Write Section -->
-                            <div class="border border-slate-200 rounded-lg p-5 bg-slate-50/60">
+                            <div class="customer-info-box border border-slate-800 rounded-xl p-5 bg-slate-900/90 shadow-lg">
                                 <div class="flex justify-between items-center mb-3">
-                                    <h4 class="font-semibold text-sm text-slate-900 flex items-center gap-2">
-                                        <span class="material-symbols-outlined text-blue-600 text-base">person</span> Customer Information (Write Directly)
+                                    <h4 class="font-semibold text-sm text-white flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-blue-400 text-base">person</span> Customer Information (Write Directly)
                                     </h4>
-                                    <select id="pick-cust-dropdown" class="form-input text-xs w-56 py-1 px-2 border-slate-300" onchange="Orders.fillExistingCustomer(this.value)">
+                                    <select id="pick-cust-dropdown" class="form-input text-xs w-56 py-1 px-2 border-slate-700 bg-slate-950 text-white" onchange="Orders.fillExistingCustomer(this.value)">
                                         <option value="">Or Pick Existing Customer...</option>
                                     </select>
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div>
-                                        <label class="form-label text-xs font-medium text-slate-600">Customer Name *</label>
-                                        <input type="text" id="cust-write-name" class="form-input text-xs" required placeholder="Write customer full name...">
+                                        <label class="form-label text-xs font-semibold text-slate-300">Customer Name *</label>
+                                        <input type="text" id="cust-write-name" class="form-input text-xs bg-slate-950 border-slate-700 text-white" required placeholder="Write customer full name...">
                                     </div>
                                     <div>
-                                        <label class="form-label text-xs font-medium text-slate-600">Phone Number *</label>
-                                        <input type="tel" id="cust-write-phone" class="form-input text-xs" required placeholder="Write phone e.g. 01711223344">
+                                        <label class="form-label text-xs font-semibold text-slate-300">Phone Number *</label>
+                                        <input type="tel" id="cust-write-phone" class="form-input text-xs bg-slate-950 border-slate-700 text-white" required placeholder="Write phone e.g. 01711223344">
                                     </div>
                                     <div>
-                                        <label class="form-label text-xs font-medium text-slate-600">Delivery Address</label>
-                                        <input type="text" id="cust-write-address" class="form-input text-xs" placeholder="Write delivery address e.g. Mirpur, Dhaka">
+                                        <label class="form-label text-xs font-semibold text-slate-300">Delivery Address</label>
+                                        <input type="text" id="cust-write-address" class="form-input text-xs bg-slate-950 border-slate-700 text-white" placeholder="Write delivery address e.g. Mirpur, Dhaka">
                                     </div>
                                 </div>
                             </div>
@@ -181,11 +181,11 @@ window.Orders = {
 
                                 <div class="p-5 bg-slate-50 rounded-lg border border-slate-200 space-y-2.5">
                                     <div class="flex justify-between text-xs text-slate-600">
-                                        <span>Items Subtotal:</span>
-                                        <span class="font-mono-data font-semibold text-slate-900" id="summary-subtotal">৳ 0.00</span>
+                                        <span class="font-medium">Items Subtotal (Before Discount):</span>
+                                        <span class="font-mono-data font-bold text-slate-900 text-sm" id="summary-subtotal">৳ 0.00</span>
                                     </div>
                                     <div class="flex justify-between items-center text-xs">
-                                        <span class="text-slate-600 font-medium">Order Discount:</span>
+                                        <span class="text-slate-600 font-medium">Order Discount Rate:</span>
                                         <div class="flex items-center gap-1">
                                             <input type="number" id="ord-discount" class="form-input text-xs w-20 text-right py-1" value="0" min="0" onkeyup="Orders.recalculateTotals()" onchange="Orders.recalculateTotals()">
                                             <select id="ord-discount-type" class="form-input text-xs w-20 py-1 px-1 border-slate-300 rounded bg-white" onchange="Orders.recalculateTotals()">
@@ -193,6 +193,14 @@ window.Orders = {
                                                 <option value="percent">% Off</option>
                                             </select>
                                         </div>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-slate-600">
+                                        <span class="font-medium">Calculated Discount Deduction:</span>
+                                        <span class="font-mono-data font-bold text-red-600" id="summary-discount-deduction">-৳ 0.00</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-slate-600 pt-1 border-t border-slate-200">
+                                        <span class="font-medium">Subtotal (After Discount):</span>
+                                        <span class="font-mono-data font-bold text-slate-800" id="summary-after-discount">৳ 0.00</span>
                                     </div>
                                     <div class="flex justify-between items-center text-xs">
                                         <span class="text-slate-600 font-medium">Shipping Charge (৳):</span>
@@ -551,12 +559,17 @@ window.Orders = {
         }
 
         actualDiscount = Math.min(subtotal, Math.max(0, actualDiscount));
-        const grandTotal = Math.max(0, subtotal - actualDiscount + shipping);
+        const subAfterDiscount = Math.max(0, subtotal - actualDiscount);
+        const grandTotal = Math.max(0, subAfterDiscount + shipping);
 
         const subEl = document.getElementById('summary-subtotal');
+        const discDedEl = document.getElementById('summary-discount-deduction');
+        const afterDiscEl = document.getElementById('summary-after-discount');
         const grandEl = document.getElementById('summary-grandtotal');
 
         if (subEl) subEl.textContent = UI.formatMoney(subtotal);
+        if (discDedEl) discDedEl.textContent = `-${UI.formatMoney(actualDiscount)}`;
+        if (afterDiscEl) afterDiscEl.textContent = UI.formatMoney(subAfterDiscount);
         if (grandEl) grandEl.textContent = UI.formatMoney(grandTotal);
 
         return { subtotal, actualDiscount, shipping, grandTotal };
@@ -566,7 +579,7 @@ window.Orders = {
         const modal = document.getElementById('ord-modal');
         modal.innerHTML = `
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-200 animate-fade-in">
-                <div class="p-8 text-center text-slate-400 text-xs">Loading invoice details...</div>
+                <div class="p-8 text-center text-slate-500 text-xs">Loading invoice details...</div>
             </div>
         `;
         modal.classList.remove('hidden');
@@ -578,73 +591,73 @@ window.Orders = {
             const biz = res.data.business;
 
             modal.innerHTML = `
-                <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-200 animate-fade-in" id="invoice-printable">
+                <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-300 animate-fade-in" id="invoice-printable">
                     <!-- Invoice Header Bar -->
-                    <div class="p-6 bg-slate-900 text-white flex justify-between items-center">
+                    <div class="p-6 bg-slate-900 text-white flex justify-between items-center border-b border-slate-800">
                         <div class="flex items-center gap-3">
                             <img src="../assets/img/logo.png" alt="EaseBus Logo" class="w-10 h-10 rounded-lg object-cover ring-1 ring-white/20">
                             <div>
-                                <h2 class="font-geist font-bold text-xl tracking-tight text-white">${biz.name || 'EaseBus'}</h2>
-                                <p class="text-xs text-slate-400">Official Sales Tax Invoice</p>
+                                <h2 class="font-geist font-extrabold text-xl tracking-tight text-white">${biz.name || 'EaseBus'}</h2>
+                                <p class="text-xs text-slate-300 font-medium">Official Sales Tax Invoice</p>
                             </div>
                         </div>
                         <div class="text-right">
-                            <span class="font-mono-data font-bold text-lg block text-blue-400">${o.order_no}</span>
-                            <span class="text-xs text-slate-400">${UI.formatDate(o.order_date)}</span>
+                            <span class="font-mono-data font-extrabold text-lg block text-blue-400">${o.order_no}</span>
+                            <span class="text-xs text-slate-300 font-semibold">${UI.formatDate(o.order_date)}</span>
                         </div>
                     </div>
 
-                    <div class="p-6 space-y-6">
+                    <div class="p-6 space-y-6 bg-white text-slate-900">
                         <!-- Addresses Grid -->
-                        <div class="grid grid-cols-2 gap-6 text-xs pb-4 border-b border-slate-200">
+                        <div class="grid grid-cols-2 gap-6 text-xs pb-4 border-b border-slate-300">
                             <div>
-                                <p class="font-semibold text-slate-400 uppercase tracking-wider mb-1">Billed From:</p>
-                                <p class="font-bold text-slate-900 text-sm">${biz.name}</p>
-                                <p class="text-slate-600 mt-1">${biz.address || 'Dhaka, Bangladesh'}</p>
-                                <p class="text-slate-600">Phone: ${biz.phone || '--'}</p>
+                                <p class="font-bold text-slate-700 uppercase tracking-wider mb-1">BILLED FROM:</p>
+                                <p class="font-extrabold text-slate-900 text-sm">${biz.name}</p>
+                                <p class="text-slate-800 font-medium mt-1">${biz.address || 'Dhaka, Bangladesh'}</p>
+                                <p class="text-slate-800 font-medium">Phone: ${biz.phone || '--'}</p>
                             </div>
                             <div class="text-right">
-                                <p class="font-semibold text-slate-400 uppercase tracking-wider mb-1">Billed To:</p>
-                                <p class="font-bold text-slate-900 text-sm">${o.customer_name}</p>
-                                <p class="text-slate-600 mt-1">${o.customer_address || 'Customer Delivery Address'}</p>
-                                <p class="text-slate-600">Phone: ${o.customer_phone}</p>
+                                <p class="font-bold text-slate-700 uppercase tracking-wider mb-1">BILLED TO:</p>
+                                <p class="font-extrabold text-slate-900 text-sm">${o.customer_name}</p>
+                                <p class="text-slate-800 font-medium mt-1">${o.customer_address || 'Customer Delivery Address'}</p>
+                                <p class="text-slate-800 font-medium">Phone: ${o.customer_phone}</p>
                             </div>
                         </div>
 
                         <!-- Status Bar -->
-                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded border border-slate-200 text-xs">
+                        <div class="flex justify-between items-center p-3 bg-slate-100 rounded border border-slate-300 text-xs">
                             <div>
-                                <span class="text-slate-500 mr-2">Payment Status:</span>
-                                <span class="font-bold uppercase px-2 py-0.5 rounded text-[10px] ${o.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${o.payment_status}</span>
+                                <span class="text-slate-700 font-bold mr-2">Payment Status:</span>
+                                <span class="font-extrabold uppercase px-2.5 py-1 rounded text-[11px] ${o.payment_status === 'paid' ? 'bg-emerald-200 text-emerald-950 border border-emerald-400' : 'bg-red-200 text-red-950 border border-red-400'}">${o.payment_status}</span>
                             </div>
                             <div>
-                                <span class="text-slate-500 mr-2">Order Status:</span>
-                                <span class="font-bold uppercase px-2 py-0.5 rounded text-[10px] bg-blue-100 text-blue-800">${o.order_status}</span>
+                                <span class="text-slate-700 font-bold mr-2">Order Status:</span>
+                                <span class="font-extrabold uppercase px-2.5 py-1 rounded text-[11px] bg-blue-200 text-blue-950 border border-blue-400">${o.order_status}</span>
                             </div>
                         </div>
 
                         <!-- Items Table -->
-                        <div class="overflow-x-auto border border-slate-200 rounded">
-                            <table class="data-table text-xs">
+                        <div class="overflow-x-auto border border-slate-300 rounded">
+                            <table class="data-table text-xs w-full text-slate-900">
                                 <thead>
-                                    <tr class="bg-slate-100">
-                                        <th>#</th>
-                                        <th>Item Description</th>
-                                        <th class="text-right">Unit Price</th>
-                                        <th class="text-right">Qty</th>
-                                        <th class="text-right">Total</th>
+                                    <tr class="bg-slate-200 text-slate-900 font-bold border-b border-slate-300">
+                                        <th class="text-slate-900 font-bold">#</th>
+                                        <th class="text-slate-900 font-bold">Item Description</th>
+                                        <th class="text-right text-slate-900 font-bold">Unit Price</th>
+                                        <th class="text-right text-slate-900 font-bold">Qty</th>
+                                        <th class="text-right text-slate-900 font-bold">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     ${items.map((item, idx) => `
-                                        <tr>
-                                            <td class="text-slate-400 py-2.5">${idx + 1}</td>
-                                            <td class="font-medium text-slate-900 py-2.5">
-                                                ${item.product_name} <span class="text-slate-400 font-mono text-[11px]">(${item.variant_sku})</span>
+                                        <tr class="border-b border-slate-200">
+                                            <td class="text-slate-700 font-bold py-2.5">${idx + 1}</td>
+                                            <td class="font-bold text-slate-900 py-2.5">
+                                                ${item.product_name} <span class="text-slate-700 font-mono text-[11px]">(${item.variant_sku})</span>
                                             </td>
-                                            <td class="data-number text-right py-2.5">${UI.formatMoney(item.unit_price)}</td>
-                                            <td class="data-number text-right font-bold py-2.5">${item.quantity}</td>
-                                            <td class="data-number text-right font-semibold text-slate-900 py-2.5">${UI.formatMoney(item.total_price)}</td>
+                                            <td class="data-number text-right py-2.5 font-bold text-slate-900">${UI.formatMoney(item.unit_price)}</td>
+                                            <td class="data-number text-right font-extrabold py-2.5 text-slate-900">${item.quantity}</td>
+                                            <td class="data-number text-right font-extrabold text-slate-900 py-2.5">${UI.formatMoney(item.total_price)}</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
@@ -653,26 +666,26 @@ window.Orders = {
 
                         <!-- Summary -->
                         <div class="flex justify-end text-xs">
-                            <div class="w-64 space-y-1.5 pt-2">
-                                <div class="flex justify-between text-slate-600">
-                                    <span>Subtotal:</span>
-                                    <span class="font-mono-data font-semibold text-slate-900">${UI.formatMoney(o.subtotal)}</span>
+                            <div class="w-72 space-y-2 pt-2">
+                                <div class="flex justify-between text-slate-800 font-medium">
+                                    <span class="font-semibold text-slate-700">Subtotal:</span>
+                                    <span class="font-mono-data font-bold text-slate-900">${UI.formatMoney(o.subtotal)}</span>
                                 </div>
                                 ${parseFloat(o.discount_amount) > 0 ? `
-                                    <div class="flex justify-between text-slate-600">
-                                        <span>Discount:</span>
-                                        <span class="font-mono-data text-red-600">-${UI.formatMoney(o.discount_amount)}</span>
+                                    <div class="flex justify-between text-slate-800 font-medium">
+                                        <span class="font-semibold text-slate-700">Discount:</span>
+                                        <span class="font-mono-data font-extrabold text-red-700">-${UI.formatMoney(o.discount_amount)}</span>
                                     </div>
                                 ` : ''}
                                 ${parseFloat(o.delivery_charge) > 0 ? `
-                                    <div class="flex justify-between text-slate-600">
-                                        <span>Delivery Fee:</span>
-                                        <span class="font-mono-data text-slate-900">${UI.formatMoney(o.delivery_charge)}</span>
+                                    <div class="flex justify-between text-slate-800 font-medium">
+                                        <span class="font-semibold text-slate-700">Delivery Fee:</span>
+                                        <span class="font-mono-data font-bold text-slate-900">${UI.formatMoney(o.delivery_charge)}</span>
                                     </div>
                                 ` : ''}
-                                <div class="flex justify-between text-sm font-bold text-slate-900 pt-2 border-t border-slate-300">
+                                <div class="flex justify-between text-sm font-extrabold text-slate-950 pt-2 border-t-2 border-slate-900">
                                     <span>Total Amount:</span>
-                                    <span class="font-mono-data text-blue-700 text-base">${UI.formatMoney(o.total_amount)}</span>
+                                    <span class="font-mono-data font-extrabold text-blue-900 text-lg">${UI.formatMoney(o.total_amount)}</span>
                                 </div>
                             </div>
                         </div>

@@ -94,7 +94,7 @@ if ($method === 'POST' && $action === 'create') {
         
         $returnId = Database::insert(
             "INSERT INTO returns (return_no, order_id, customer_id, total_refund, reason, status, return_date, notes, created_by)
-             VALUES (?, ?, ?, ?, ?, 'completed', NOW(), ?, ?)",
+             VALUES (?, ?, ?, ?, ?, 'pending', NOW(), ?, ?)",
             [
                 $returnNo, $orderId, $order['customer_id'],
                 $customRefund,
@@ -130,20 +130,6 @@ if ($method === 'POST' && $action === 'create') {
                  VALUES (?, ?, ?, ?, ?, ?)",
                 [$returnId, $item['order_item_id'] ?? null, $item['product_id'] ?? 1, $variantId, $qty, $refundAmount]
             );
-
-            if ($shouldRestock && $variantId > 0) {
-                $variant = Database::fetchOne("SELECT current_stock FROM product_variants WHERE id = ? FOR UPDATE", [$variantId]);
-                if ($variant) {
-                    $newStock = $variant['current_stock'] + $qty;
-                    Database::execute("UPDATE product_variants SET current_stock = ? WHERE id = ?", [$newStock, $variantId]);
-                    
-                    Database::insert(
-                        "INSERT INTO inventory_movements (product_id, variant_id, movement_type, quantity, stock_before, stock_after, reference_type, reference_id, location_id, reason, created_by)
-                         VALUES (?, ?, 'return', ?, ?, ?, 'return', ?, ?, 'Customer Return Restock', ?)",
-                        [$item['product_id'] ?? 1, $variantId, $qty, $variant['current_stock'], $newStock, $returnId, $order['location_id'], getCurrentUserId()]
-                    );
-                }
-            }
         }
         
         // Sync order status to returned
@@ -152,7 +138,7 @@ if ($method === 'POST' && $action === 'create') {
         Database::commit();
         auditLog('create', 'return', $returnId, null, ['return_no' => $returnNo]);
         
-        jsonSuccess('Return created successfully', ['return_id' => $returnId, 'return_no' => $returnNo]);
+        jsonSuccess('Return created in pending status', ['return_id' => $returnId, 'return_no' => $returnNo]);
         
     } catch (Exception $e) {
         Database::rollback();
@@ -175,11 +161,68 @@ if ($method === 'PUT' && $action === 'status') {
     }
     
     try {
+        Database::beginTransaction();
+
+        $existing = Database::fetchOne("SELECT * FROM returns WHERE id = ? FOR UPDATE", [$id]);
+        if (!$existing) jsonError('Return record not found', 404);
+
+        $oldStatus = $existing['status'];
         Database::execute("UPDATE returns SET status = ? WHERE id = ?", [$newStatus, $id]);
-        auditLog('update_status', 'return', $id, null, ['status' => $newStatus]);
+
+        // Trigger stock restock on approval/completion if coming from pending
+        if (($newStatus === 'approved' || $newStatus === 'completed') && $oldStatus === 'pending') {
+            $returnItems = Database::fetchAll("SELECT * FROM return_items WHERE return_id = ?", [$id]);
+            $order = Database::fetchOne("SELECT location_id FROM orders WHERE id = ?", [$existing['order_id']]);
+            $locId = $order['location_id'] ?? 1;
+
+            foreach ($returnItems as $item) {
+                if ($item['variant_id'] > 0) {
+                    $variant = Database::fetchOne("SELECT current_stock FROM product_variants WHERE id = ? FOR UPDATE", [$item['variant_id']]);
+                    if ($variant) {
+                        $newStock = $variant['current_stock'] + $item['quantity'];
+                        Database::execute("UPDATE product_variants SET current_stock = ? WHERE id = ?", [$newStock, $item['variant_id']]);
+                        
+                        Database::insert(
+                            "INSERT INTO inventory_movements (product_id, variant_id, movement_type, quantity, stock_before, stock_after, reference_type, reference_id, location_id, reason, created_by)
+                             VALUES (?, ?, 'return', ?, ?, ?, 'return', ?, ?, 'Customer Return Approved Restock', ?)",
+                            [$item['product_id'], $item['variant_id'], $item['quantity'], $variant['current_stock'], $newStock, $id, $locId, getCurrentUserId()]
+                        );
+                    }
+                }
+            }
+        }
+
+        Database::commit();
+        auditLog('update_status', 'return', $id, ['old_status' => $oldStatus], ['status' => $newStatus]);
         jsonSuccess('Return status updated successfully');
     } catch (Exception $e) {
+        Database::rollback();
         jsonError('Failed to update status: ' . $e->getMessage(), 500);
+    }
+}
+
+// DELETE /api/returns?action=delete&id=123
+if ($method === 'DELETE' && $action === 'delete') {
+    requirePermission('returns', 'delete');
+    verifyCsrf();
+
+    $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
+    if (!$id) jsonError('Return ID required');
+
+    $return = Database::fetchOne("SELECT id, return_no FROM returns WHERE id = ?", [$id]);
+    if (!$return) jsonError('Return record not found', 404);
+
+    try {
+        Database::beginTransaction();
+        Database::execute("DELETE FROM return_items WHERE return_id = ?", [$id]);
+        Database::execute("DELETE FROM returns WHERE id = ?", [$id]);
+        Database::commit();
+        
+        auditLog('delete', 'return', $id, ['return_no' => $return['return_no']], null);
+        jsonSuccess('Return order removed successfully');
+    } catch (Exception $e) {
+        Database::rollback();
+        jsonError('Failed to delete return order: ' . $e->getMessage(), 500);
     }
 }
 

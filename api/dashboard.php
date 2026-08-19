@@ -20,7 +20,7 @@ if ($method === 'GET' && $action === 'summary') {
     // Pending Orders
     $pendingOrders = Database::fetchOne("SELECT COUNT(*) as count FROM orders WHERE order_status IN ('pending', 'confirmed', 'processing')");
     // Low Stock
-    $lowStock = Database::fetchOne("SELECT COUNT(*) as count FROM product_variants WHERE current_stock <= 5");
+    $lowStock = Database::fetchOne("SELECT COUNT(*) as count FROM product_variants WHERE current_stock <= 10");
     // Total Liquidity Cash
     $totalCash = Database::fetchOne("SELECT COALESCE(SUM(current_balance), 0) as total FROM financial_accounts WHERE status = 'active'");
     
@@ -55,6 +55,26 @@ if ($method === 'GET' && $action === 'summary') {
         $alerts[] = ['type' => 'success', 'icon' => 'verified', 'text' => "All business operations & logistics are running smoothly.", 'color' => 'text-emerald-500'];
     }
 
+    // Low Stock Products List
+    $lowStockList = Database::fetchAll(
+        "SELECT p.id, p.name, pv.sku, pv.current_stock, pv.reorder_level
+         FROM product_variants pv
+         JOIN products p ON p.id = pv.product_id
+         WHERE pv.current_stock <= 10
+         ORDER BY pv.current_stock ASC LIMIT 8"
+    );
+
+    // Financial Accounts Breakdown
+    $accountsBreakdown = Database::fetchAll(
+        "SELECT id, name, type, current_balance FROM financial_accounts WHERE status = 'active' ORDER BY id ASC"
+    );
+
+    // Today's Expenses
+    $todayExp = Database::fetchOne("SELECT COALESCE(SUM(amount), 0) as total, COUNT(*) as cnt FROM expenses WHERE DATE(expense_date) = CURDATE()")['total'] ?? 0;
+
+    // Today's Returns / Refunds
+    $todayRet = Database::fetchOne("SELECT COALESCE(SUM(refund_amount), 0) as total, COUNT(*) as cnt FROM returns WHERE DATE(created_at) = CURDATE()")['total'] ?? 0;
+
     $summary = [
         'total_sales_today' => (float) ($salesToday['total'] ?? 0),
         'sales_today_count' => (int) ($salesToday['cnt'] ?? 0),
@@ -65,7 +85,11 @@ if ($method === 'GET' && $action === 'summary') {
         'monthly_revenue' => $revVal,
         'monthly_expenses' => $expVal,
         'monthly_net_profit' => $profVal - $expVal,
+        'today_expenses' => (float)$todayExp,
+        'today_returns' => (float)$todayRet,
         'recent_orders' => $recentOrders,
+        'low_stock_list' => $lowStockList,
+        'accounts_breakdown' => $accountsBreakdown,
         'alerts' => $alerts
     ];
     
@@ -74,7 +98,7 @@ if ($method === 'GET' && $action === 'summary') {
 
 // GET /api/dashboard?action=revenue_chart
 if ($method === 'GET' && $action === 'revenue_chart') {
-    requirePermission('reports', 'read');
+    requirePermission('dashboard', 'read');
     
     $days = isset($_GET['days']) ? (int) $_GET['days'] : 30;
     

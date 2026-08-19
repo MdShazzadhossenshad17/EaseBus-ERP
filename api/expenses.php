@@ -178,6 +178,85 @@ if ($method === 'POST' && $action === 'create') {
     }
 }
 
+// PUT /api/expenses?action=update
+if ($method === 'PUT' && $action === 'update') {
+    requirePermission('expenses', 'update');
+    verifyCsrf();
+
+    $input = getJsonInput();
+    $id = (int) ($input['id'] ?? 0);
+    if (!$id) jsonError('Expense ID required');
+
+    $existing = Database::fetchOne("SELECT * FROM expenses WHERE id = ?", [$id]);
+    if (!$existing) jsonError('Expense not found', 404);
+
+    $v = new Validator($input);
+    $v->required('amount')->numeric('amount')->min('amount', 0.01)
+      ->required('account_id')->integer('account_id')
+      ->required('expense_date')->date('expense_date')
+      ->required('description');
+
+    if ($v->fails()) jsonError('Validation failed', 400, ['errors' => $v->errors()]);
+
+    $newAccountId = (int) $v->value('account_id');
+    $newAmount = (float) $v->value('amount');
+
+    // Resolve Category
+    $categoryId = null;
+    $categoryName = trim($input['category_name'] ?? '');
+    if (!empty($categoryName)) {
+        $existingCat = Database::fetchOne("SELECT id FROM expense_categories WHERE name = ?", [$categoryName]);
+        if ($existingCat) {
+            $categoryId = (int) $existingCat['id'];
+        } else {
+            $categoryId = Database::insert("INSERT INTO expense_categories (name, status) VALUES (?, 'active')", [$categoryName]);
+        }
+    } elseif (!empty($input['category_id'])) {
+        $categoryId = (int) $input['category_id'];
+    } else {
+        $categoryId = $existing['category_id'];
+    }
+
+    try {
+        Database::beginTransaction();
+
+        // 1. Revert old amount on old account
+        Database::execute("UPDATE financial_accounts SET current_balance = current_balance + ? WHERE id = ?", [$existing['amount'], $existing['account_id']]);
+
+        // 2. Check balance on new account
+        $newAcc = Database::fetchOne("SELECT current_balance FROM financial_accounts WHERE id = ? FOR UPDATE", [$newAccountId]);
+        if (!$newAcc) jsonError('Selected financial account not found.');
+        if ((float) $newAcc['current_balance'] < $newAmount) {
+            jsonError('Insufficient balance in selected account.');
+        }
+
+        // 3. Deduct new amount from new account
+        Database::execute("UPDATE financial_accounts SET current_balance = current_balance - ? WHERE id = ?", [$newAmount, $newAccountId]);
+
+        // 4. Update expense record
+        Database::execute(
+            "UPDATE expenses SET category_id = ?, amount = ?, account_id = ?, description = ?, receipt_reference = ?, expense_date = ? WHERE id = ?",
+            [
+                $categoryId,
+                $newAmount,
+                $newAccountId,
+                $v->value('description'),
+                $v->value('receipt_reference') ?? '',
+                $v->value('expense_date'),
+                $id
+            ]
+        );
+
+        Database::commit();
+        auditLog('update', 'expense', $id, ['old_amount' => $existing['amount']], ['new_amount' => $newAmount]);
+        jsonSuccess('Expense updated successfully');
+
+    } catch (Exception $e) {
+        Database::rollback();
+        jsonError('Failed to update expense: ' . $e->getMessage(), 500);
+    }
+}
+
 // DELETE /api/expenses?action=delete&id=123
 if ($method === 'DELETE' && $action === 'delete') {
     requirePermission('expenses', 'delete');

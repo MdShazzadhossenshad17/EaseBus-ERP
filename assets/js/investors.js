@@ -7,6 +7,26 @@ window.Investors = {
     searchTimeout: null,
 
     async render(container) {
+        const u = API.getCurrentUser() || {};
+        const ownerId = typeof getStoreOwnerId === 'function' ? getStoreOwnerId() : 1;
+        const isOwner = (u.role === 'admin' || u.role === 'creator') && (!u.created_by || String(u.id) === String(ownerId) || u.username === 'hisham');
+
+        if (!isOwner) {
+            container.innerHTML = `
+                <div class="max-w-2xl mx-auto py-12 text-center font-jakarta">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-4 border border-amber-500/30">
+                        <span class="material-symbols-outlined text-3xl">shield_person</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white font-geist mb-2">Investor Ledger Restricted</h2>
+                    <p class="text-xs text-slate-400 font-inter mb-6 leading-relaxed">Shareholder capital, equity percentages, and dividend distributions are strictly confidential and managed exclusively by the primary Store Owner (<span class="font-bold text-amber-300">hisham</span>).</p>
+                    <button onclick="App.navigate('dashboard')" class="btn text-xs font-bold px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-lg border border-blue-400/30 inline-flex items-center gap-2 cursor-pointer font-outfit">
+                        <span class="material-symbols-outlined text-sm">dashboard</span> Return to Operations Hub
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
         container.innerHTML = `
             <!-- Top Bar -->
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
