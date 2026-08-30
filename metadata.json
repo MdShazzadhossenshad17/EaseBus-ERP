@@ -1,0 +1,8 @@
+{
+  "name": "EaseBus ERP",
+  "description": "Smart Enterprise & Business Management Suite featuring Sales Orders, Courier Logistics, Inventory Movements, Treasury Accounts, and Customer Returns.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

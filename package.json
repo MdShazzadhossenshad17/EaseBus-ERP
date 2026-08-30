@@ -1,0 +1,15 @@
+{
+  "name": "easebus-erp",
+  "version": "1.0.0",
+  "description": "EaseBus ERP - Smart Business Management Suite",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "echo 'Build complete'"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
