@@ -1,0 +1,133 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Global user accounts, platform creator, and store owner records",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique user account ID" },
+        "username": { "type": "string", "description": "Login identifier" },
+        "full_name": { "type": "string", "description": "Full name" },
+        "business_name": { "type": "string", "description": "Business or store name" },
+        "role": { "type": "string", "description": "User access role e.g. creator, admin, manager, sales, accountant" },
+        "email": { "type": "string", "description": "Email address" },
+        "phone": { "type": "string", "description": "Phone number" },
+        "created_at": { "type": "string", "description": "Creation timestamp" }
+      },
+      "required": ["id", "username", "role"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Store sales order including customer details, item breakdown, monetary totals, and fulfillment status.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the order" },
+        "order_no": { "type": "string", "description": "Formatted order number e.g. ORD-1001" },
+        "customer_id": { "type": "string", "description": "Reference ID to customer" },
+        "customer_name": { "type": "string", "description": "Full name of the customer" },
+        "customer_phone": { "type": "string", "description": "Contact phone number" },
+        "total_amount": { "type": "number", "description": "Total gross amount in BDT" },
+        "paid_amount": { "type": "number", "description": "Amount paid by customer in BDT" },
+        "order_status": { "type": "string", "description": "Current order lifecycle status e.g. pending, in_transit, delivered, cancelled" },
+        "payment_status": { "type": "string", "description": "Payment settlement status e.g. paid, unpaid, partial" },
+        "created_at": { "type": "string", "description": "Creation timestamp in ISO 8601 string or Firestore timestamp" }
+      },
+      "required": ["id", "total_amount", "created_at"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Stock inventory item with SKU, unit pricing, and stock quantity.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique product ID" },
+        "name": { "type": "string", "description": "Product name" },
+        "sku": { "type": "string", "description": "Stock keeping unit code" },
+        "selling_price": { "type": "number", "description": "Retail selling price" },
+        "cost_price": { "type": "number", "description": "Unit cost price" },
+        "current_stock": { "type": "number", "description": "Quantity currently in stock" }
+      },
+      "required": ["id", "name", "selling_price", "current_stock"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Customer profile with phone, address, and purchase balance",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique customer ID" },
+        "name": { "type": "string", "description": "Customer full name" },
+        "phone": { "type": "string", "description": "Contact number" },
+        "total_spent": { "type": "number", "description": "Cumulative amount spent" },
+        "balance": { "type": "number", "description": "Outstanding receivable balance" }
+      },
+      "required": ["id", "name", "phone"]
+    },
+    "Delivery": {
+      "title": "Delivery",
+      "description": "Shipment package dispatched to courier with tracking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique delivery tracking ID" },
+        "order_id": { "type": "string", "description": "Associated order ID" },
+        "courier": { "type": "string", "description": "Courier company name" },
+        "status": { "type": "string", "description": "Delivery status" },
+        "charge": { "type": "number", "description": "Delivery charge amount" }
+      },
+      "required": ["id", "order_id", "status"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Store operational expense or overhead transaction",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique expense record ID" },
+        "category": { "type": "string", "description": "Expense category" },
+        "amount": { "type": "number", "description": "Monetary expenditure amount" },
+        "date": { "type": "string", "description": "Date of transaction" }
+      },
+      "required": ["id", "amount", "category"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Master audit trail and database operations log for creator",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique log entry ID" },
+        "actor": { "type": "string", "description": "Username or ID of operator" },
+        "action": { "type": "string", "description": "Action performed e.g. QUERY, BACKUP, EDIT_DOC, PURGE_DEMO" },
+        "details": { "type": "string", "description": "Detailed payload or query string" },
+        "timestamp": { "type": "string", "description": "ISO timestamp" }
+      },
+      "required": ["id", "actor", "action", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/global_users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Global user accounts registry managed by creator"
+    },
+    "/stores/{storeId}/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Orders collection per store tenant for real-time sales reporting and dashboard daily trends"
+    },
+    "/stores/{storeId}/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Products inventory collection per store tenant"
+    },
+    "/stores/{storeId}/customers/{customerId}": {
+      "schema": { "$ref": "#/entities/Customer" },
+      "description": "Customers collection per store tenant"
+    },
+    "/stores/{storeId}/deliveries/{deliveryId}": {
+      "schema": { "$ref": "#/entities/Delivery" },
+      "description": "Deliveries and shipments collection"
+    },
+    "/stores/{storeId}/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/Expense" },
+      "description": "Operating expenses per store"
+    },
+    "/audit_logs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Platform creator audit trail logs"
+    }
+  }
+}

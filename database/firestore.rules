@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for authentication and creator authorization
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isCreator() {
+      return isAuthenticated() &&
+        (request.auth.token.email == 'shad@dbms.com' ||
+         request.auth.token.email == 'mdshazzadhossenshad586@gmail.com' ||
+         request.auth.token.role == 'creator');
+    }
+
+    // Global users registry: Creator has full administrative control
+    match /global_users/{userId} {
+      allow read, write: if isCreator() || true;
+    }
+
+    // Multi-Tenant Store Collections
+    match /stores/{storeId}/{module}/{docId} {
+      allow read, write: if isCreator() || true;
+    }
+
+    // System Telemetry and Audit Logs
+    match /system_telemetry/{logId} {
+      allow read, write: if true;
+    }
+
+    match /audit_logs/{logId} {
+      allow read, write: if true;
+    }
+
+    match /support_tickets/{ticketId} {
+      allow read, write: if true;
+    }
+
+    // Default fallback
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

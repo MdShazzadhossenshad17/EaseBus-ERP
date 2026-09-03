@@ -1,12 +1,15 @@
 {
-  "name": "EaseBus — Smart Enterprise & Business Management Suite",
+  "id": "/?source=pwa",
+  "name": "EaseBus ERP — Enterprise & Business Management Suite",
   "short_name": "EaseBus",
-  "description": "Complete Business Management, Inventory, Sales, Logistics & Financial ERP Suite",
+  "description": "Smart Enterprise & Business Management Suite featuring Sales Orders, Courier Logistics, Inventory Movements, Treasury Accounts, and Customer Returns.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
+  "background_color": "#020617",
   "theme_color": "#0f172a",
   "orientation": "any",
+  "categories": ["business", "finance", "productivity"],
   "icons": [
     {
       "src": "assets/img/logo.png",
@@ -19,6 +22,36 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View real-time business performance and KPI metrics",
+      "url": "/#dashboard",
+      "icons": [{ "src": "assets/img/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Orders & Sales",
+      "short_name": "Orders",
+      "description": "Create and manage customer orders and deliveries",
+      "url": "/#orders",
+      "icons": [{ "src": "assets/img/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Products & Stock",
+      "short_name": "Products",
+      "description": "Track stock levels, variants, and pricing",
+      "url": "/#products",
+      "icons": [{ "src": "assets/img/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Finance & Cash",
+      "short_name": "Finance",
+      "description": "Monitor cash balances, accounts, and ledger transactions",
+      "url": "/#finance",
+      "icons": [{ "src": "assets/img/logo.png", "sizes": "192x192" }]
     }
   ]
 }
